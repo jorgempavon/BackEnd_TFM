@@ -1,11 +1,19 @@
 package com.example.library.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserRegisterDTO {
+    @NotBlank(message = "El dni es obligatorio")
     private String dni;
+    @NotBlank(message = "El email es obligatorio")
     private String email;
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
+    @NotBlank(message = "La confirmación de contraseña es obligatoria")
     private String repeatPassword;
+    @NotBlank(message = "El nombre es obligatorio")
     private String name;
+
     private String lastName;
 
 
