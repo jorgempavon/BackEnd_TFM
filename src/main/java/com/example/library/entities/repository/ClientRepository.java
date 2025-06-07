@@ -1,7 +1,7 @@
-package com.example.library.repository;
+package com.example.library.entities.repository;
 
-import com.example.library.model.Client;
-import com.example.library.model.User;
+import com.example.library.entities.model.Client;
+import com.example.library.entities.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
