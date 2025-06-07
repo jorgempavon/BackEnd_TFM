@@ -1,6 +1,6 @@
 package com.example.library.controller;
-import com.example.library.api.exceptions.BadRequestException;
-import com.example.library.api.exceptions.ConflictException;
+import com.example.library.api.exceptions.models.BadRequestException;
+import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
 import com.example.library.entities.model.Client;

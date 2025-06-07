@@ -1,6 +1,10 @@
 package com.example.library.entities.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "admin", schema = "library")
 public class Admin {
@@ -12,21 +16,5 @@ public class Admin {
     @OneToOne
     @JoinColumn(name = "UserId", referencedColumnName = "id", unique = true)
     private User user;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
 }

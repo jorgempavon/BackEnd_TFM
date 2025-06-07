@@ -1,4 +1,4 @@
-package com.example.library.api.exceptions;
+package com.example.library.api.exceptions.models;
 
 public class ConflictException extends RuntimeException {
     private static final String DESCRIPTION = "Conflict Exception";
