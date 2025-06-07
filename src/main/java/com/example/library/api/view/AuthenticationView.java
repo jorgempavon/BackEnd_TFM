@@ -1,7 +1,7 @@
 package com.example.library.api.view;
 
-import com.example.library.dto.UserDTO;
-import com.example.library.dto.UserRegisterDTO;
+import com.example.library.entities.dto.UserDTO;
+import com.example.library.entities.dto.UserRegisterDTO;
 import com.example.library.controller.AuthenticationController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

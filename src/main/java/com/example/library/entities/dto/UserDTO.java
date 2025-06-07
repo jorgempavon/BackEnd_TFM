@@ -1,4 +1,4 @@
-package com.example.library.dto;
+package com.example.library.entities.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -14,11 +14,11 @@ public class UserDTO {
     private String name;
     private String lastName;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
-    public void setId(String dni) {
-        this.dni = dni;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getDni() {

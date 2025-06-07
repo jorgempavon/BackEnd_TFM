@@ -1,4 +1,6 @@
 package com.example.library.entities.model;
+import com.example.library.entities.dto.UserDTO;
+import com.example.library.entities.dto.UserRegisterDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -70,5 +72,29 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public UserDTO getUserDTO(){
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setId(this.id);
+        newUserDTO.setDni(this.dni);
+        newUserDTO.setEmail(this.email);
+        newUserDTO.setName(this.name);
+        newUserDTO.setLastName(this.lastName);
+        return newUserDTO;
+    }
+
+    public void updateFromUserDTO(UserDTO userDTO){
+        this.dni = userDTO.getDni();
+        this.email = userDTO.getEmail();
+        this.name = userDTO.getName();
+        this.lastName = userDTO.getLastName();
+    }
+    public void updateFromUserRegisterDTO(UserRegisterDTO userRegisterDTO){
+        this.dni = userRegisterDTO.getDni();
+        this.email = userRegisterDTO.getEmail();
+        this.name = userRegisterDTO.getName();
+        this.lastName = userRegisterDTO.getLastName();
+        this.password = userRegisterDTO.getPassword();
     }
 }
