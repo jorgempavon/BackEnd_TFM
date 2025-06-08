@@ -15,19 +15,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Dni", nullable = false, unique = true, length = 9)
+    @Column(name = "dni", nullable = false, unique = true, length = 9)
     private String dni;
 
-    @Column(name = "Email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "Password", nullable = false, length = 100)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "LastName", length = 100)
+    @Column(name = "lastname", length = 100)
     private String lastName;
 
 
@@ -47,11 +47,11 @@ public class User {
         this.name = userDTO.getName();
         this.lastName = userDTO.getLastName();
     }
+
     public void updateFromUserRegisterDTO(UserRegisterDTO userRegisterDTO){
         this.dni = userRegisterDTO.getDni();
         this.email = userRegisterDTO.getEmail();
         this.name = userRegisterDTO.getName();
         this.lastName = userRegisterDTO.getLastName();
-        this.password = userRegisterDTO.getPassword();
     }
 }

@@ -9,10 +9,8 @@ import lombok.Setter;
 @Getter
 public class UserDTO {
     private Long id;
-    @NotNull(message = "El dni es obligatorio")
     @NotBlank(message = "El dni es obligatorio")
     private String dni;
-    @NotNull(message = "El email es obligatorio")
     @NotBlank(message = "El email es obligatorio")
     private String email;
     @NotBlank(message = "El nombre es obligatorio")

@@ -2,6 +2,8 @@ package com.example.library.api.exceptions;
 
 import com.example.library.api.exceptions.models.*;
 import com.example.library.api.exceptions.response.ErrorMessage;
+import com.github.dockerjava.api.exception.InternalServerErrorException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,25 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(InternalServerErrorException.class)
+    public ResponseEntity<ErrorMessage> handleInternalServerError(InternalServerErrorException ex) {
+        return new ResponseEntity<>(
+                new ErrorMessage(ex, INTERNAL_SERVER_ERROR.value()),
+                INTERNAL_SERVER_ERROR
+        );
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(violation -> {
+            String field = violation.getPropertyPath().toString();
+            String message = violation.getMessage();
+            errors.put(field, message);
+        });
+
+        return ResponseEntity.badRequest().body(errors);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
