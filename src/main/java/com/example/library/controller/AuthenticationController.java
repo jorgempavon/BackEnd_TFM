@@ -25,7 +25,6 @@ public class AuthenticationController {
 
     public AuthenticationController(UserRepository userRepository,
                           ClientRepository clientRepository,
-                          AdminRepository adminRepository,
                                     PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
