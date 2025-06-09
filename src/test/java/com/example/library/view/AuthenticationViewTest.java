@@ -2,11 +2,14 @@ package com.example.library.view;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
+import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.api.view.AuthenticationView;
 import com.example.library.controller.AuthenticationController;
+import com.example.library.entities.dto.LoginDTO;
+import com.example.library.entities.dto.SessionDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.entities.model.User;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -101,6 +104,54 @@ public class AuthenticationViewTest {
 
         assertThrows(BadRequestException.class, () -> {
             authView.register(newUserRegisterDto);
+        });
+    }
+
+    @Test
+    void register_whenEmptyDto_throwsException() {
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
+
+        assertThrows(Exception.class, () -> {
+            authView.register(userRegisterDTO);
+        });
+    }
+
+    @Test
+    void login_successful() {
+        String MOCKED_JWT = "mockedJwtToken";
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(EXAMPLE_EMAIL);
+        loginDTO.setPassword(EXAMPLE_PASSWORD);
+
+        SessionDTO sessionDTO = new SessionDTO();
+        sessionDTO.setEmail(EXAMPLE_EMAIL);
+        sessionDTO.setJwt(MOCKED_JWT);
+        when(this.authController.login(loginDTO)).thenReturn(sessionDTO);
+
+        ResponseEntity<?> result = authView.login(loginDTO);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    void login_whenEmptyLoginDto_throwsException() {
+        LoginDTO loginDTO = new LoginDTO();
+
+        assertThrows(Exception.class, () -> {
+            authView.login(loginDTO);
+        });
+    }
+
+    @Test
+    void login_whenInvalidCredentials_throwsUnauthorizedException(){
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setEmail(EXAMPLE_EMAIL);
+        loginDTO.setPassword(EXAMPLE_PASSWORD);
+
+        when(this.authController.login(loginDTO))
+                .thenThrow(new UnauthorizedException("El email o contraseña proporcionados son incorrectos"));
+
+        assertThrows(UnauthorizedException.class, () -> {
+            authView.login(loginDTO);
         });
     }
 }
