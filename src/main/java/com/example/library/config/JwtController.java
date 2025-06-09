@@ -4,19 +4,21 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
 public class JwtController {
     @Value("${jwt.secret}")
-    private final String SECRET_KEY;
+    private  String SECRET_KEY;
 
-    public String generateToken(CustomUserDetails userDetails) {
+    public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities())
@@ -35,7 +37,7 @@ public class JwtController {
                 .getSubject();
     }
 
-    public boolean isTokenValid(String token, CustomUserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername()) && !isExpired(token);
     }
 

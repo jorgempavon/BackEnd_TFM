@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,9 +17,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtController jwtController;
-    private final CustomUserDetailsController userDetailsController;
+    private final UserDetailsService userDetailsController;
 
-    public JwtAuthenticationFilter(JwtController jwtController, CustomUserDetailsController userDetailsController) {
+    public JwtAuthenticationFilter(JwtController jwtController, UserDetailsService userDetailsController) {
         this.jwtController = jwtController;
         this.userDetailsController = userDetailsController;
     }
@@ -40,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         email = jwtController.extractUsername(jwt);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            CustomUserDetails userDetails = userDetailsController.loadUserByUsername(email);
+            UserDetails userDetails = userDetailsController.loadUserByUsername(email);
 
-            if (jwtController.isTokenValid(jwt, (CustomUserDetails) userDetails)) {
+            if (jwtController.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
