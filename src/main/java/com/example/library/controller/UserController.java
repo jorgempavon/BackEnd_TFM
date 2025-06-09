@@ -1,39 +1,24 @@
 package com.example.library.controller;
 
-import com.example.library.model.Admin;
-import com.example.library.model.Client;
-import com.example.library.model.User;
-import com.example.library.repository.AdminRepository;
-import com.example.library.repository.ClientRepository;
-import com.example.library.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.library.entities.repository.AdminRepository;
+import com.example.library.entities.repository.ClientRepository;
+import com.example.library.entities.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/bibliokie/users")
+@Service
 public class UserController {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
-    private AdminRepository adminRepository;
-    @GetMapping
-    public List<User> UserHome(){
-        return this.userRepository.findAll();
+
+    private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
+    private final AdminRepository adminRepository;
+
+    public UserController(UserRepository userRepository,
+                          ClientRepository clientRepository,
+                          AdminRepository adminRepository) {
+        this.userRepository = userRepository;
+        this.clientRepository = clientRepository;
+        this.adminRepository = adminRepository;
     }
 
-    @GetMapping("/clients")
-    public List<Client> ClientsHome(){
-        return clientRepository.findAll();
-    }
 
-    @GetMapping("/admin")
-    public List<Admin> Adminhome(){
-        return adminRepository.findAll();
-    }
 }
