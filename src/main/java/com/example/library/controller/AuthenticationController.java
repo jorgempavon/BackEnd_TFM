@@ -92,7 +92,7 @@ public class AuthenticationController {
         this.userRepository.save(newUser);
         this.clientRepository.save(newClient);
 
-        return newUser.getUserDTO();
+        return newUser.getUserDTO(false);
     }
 
     public SessionDTO login(LoginDTO loginDTO){
