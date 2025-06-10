@@ -31,29 +31,10 @@ public class AuthenticationController {
     }
 
     public UserDTO register(UserRegisterDTO userRegisterDTO) {
-
-        Map<String, Object> responseExistsUser = this.userController.checkUserExistence(
-                userRegisterDTO.getEmail(),
-                userRegisterDTO.getDni()
-        );
-
-        if ((Boolean) responseExistsUser.get("status")) {
-            throw new BadRequestException((String) responseExistsUser.get("message"));
-        }
-
         if (!Objects.equals(userRegisterDTO.getPassword(), userRegisterDTO.getRepeatPassword())) {
             throw new ConflictException("Las contraseñas proporcionadas no coinciden");
         }
-        String passwordEncoded = passwordEncoder.encode(userRegisterDTO.getPassword());
-        UserSaveDTO userSaveDTO = new UserSaveDTO(
-                userRegisterDTO.getDni(),
-                userRegisterDTO.getEmail(),
-                userRegisterDTO.getName(),
-                userRegisterDTO.getLastName(),
-                passwordEncoded,
-                false
-        );
-        return this.userController.create(userSaveDTO);
+        return this.userController.create(userRegisterDTO);
     }
 
     public SessionDTO login(LoginDTO loginDTO){

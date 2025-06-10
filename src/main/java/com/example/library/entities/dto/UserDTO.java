@@ -15,6 +15,5 @@ public class UserDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
     private String lastName;
-
     private Boolean isAdmin;
 }

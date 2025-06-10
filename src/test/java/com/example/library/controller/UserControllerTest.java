@@ -51,5 +51,28 @@ public class UserControllerTest {
             userController.findById(EXAMPLE_ID);
         });
     }
+/*
+    @Test
+    void create_successful(){
+        User user = new User("example", "test@example.com", "12345678A", "Last example");
+        UserDTO userDTO = user.getUserDTO(false);
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
+        when(userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
+        UserDTO result = this.userController.findById(EXAMPLE_ID);
+
+        assertEquals(userDTO.getDni(), result.getDni());
+        assertEquals(userDTO.getEmail(), result.getEmail());
+        assertEquals(userDTO.getName(), result.getName());
+        assertEquals(userDTO.getLastName(), result.getLastName());
+    }
+
+    @Test
+    void create_whenNotExistsId_throwsNotFoundException(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            userController.findById(EXAMPLE_ID);
+        });
+    }*/
 
 }

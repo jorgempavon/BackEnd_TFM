@@ -54,10 +54,6 @@ public class AuthenticationControllerTest {
     );
     private final String EXAMPLE_ENCODED_PASSWORD = "encodedPassword";
 
-    private final Map<String, Object> responseCheckUserExistence = new HashMap<String, Object>() {{
-        put("status", false);
-        put("message", "");
-    }};
     @Test
     void register_successful() {
         UserDTO userDTO  = new UserDTO();
@@ -68,20 +64,7 @@ public class AuthenticationControllerTest {
         userDTO.setDni(EXAMPLE_DNI);
         userDTO.setIsAdmin(false);
 
-        UserSaveDTO userSaveDTO = new UserSaveDTO(
-                userRegisterDTO.getDni(),
-                userRegisterDTO.getEmail(),
-                userRegisterDTO.getName(),
-                userRegisterDTO.getLastName(),
-                EXAMPLE_ENCODED_PASSWORD,
-                false
-        );
-
-        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI))
-                .thenReturn(responseCheckUserExistence);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD))
-                .thenReturn(EXAMPLE_ENCODED_PASSWORD);
-        when(this.userController.create(any(UserSaveDTO.class)))
+        when(this.userController.create(any(UserRegisterDTO.class)))
                 .thenReturn(userDTO);
 
         UserDTO result = authController.register(userRegisterDTO);
@@ -103,8 +86,6 @@ public class AuthenticationControllerTest {
         String EXAMPLE_BAD_PASSWORD = "pass";
         newUserRegisterDto.setRepeatPassword(EXAMPLE_BAD_PASSWORD);
 
-        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI))
-                .thenReturn(responseCheckUserExistence);
         assertThrows(ConflictException.class, () -> {
             authController.register(newUserRegisterDto);
         });
@@ -112,11 +93,9 @@ public class AuthenticationControllerTest {
 
     @Test
     void register_whenUserExists_throwsBadRequestException() {
-        Map<String, Object> responseExistsUser = new HashMap<>();
-        responseExistsUser.put("status",true);
-        responseExistsUser.put("message","El dni o email proporcionados pertenenen a otro usuario");
+        when(this.userController.create(userRegisterDTO))
+                .thenThrow(BadRequestException.class);
 
-        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(responseExistsUser);
         assertThrows(BadRequestException.class, () -> {
             authController.register(userRegisterDTO);
         });

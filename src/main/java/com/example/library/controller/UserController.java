@@ -4,6 +4,7 @@ import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
+import com.example.library.entities.dto.UserRegisterDTO;
 import com.example.library.entities.dto.UserSaveDTO;
 import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.Client;
@@ -15,12 +16,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserController {
-
+    private final PasswordGenerator passwordGenerator;
     private final PasswordEncoder passwordEncoder;
     private final EmailController emailController;
     private final UserRepository userRepository;
@@ -31,12 +31,14 @@ public class UserController {
                           ClientRepository clientRepository,
                           AdminRepository adminRepository,
                           EmailController emailController,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          PasswordGenerator passwordGenerator) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
         this.emailController = emailController;
         this.passwordEncoder = passwordEncoder;
+        this.passwordGenerator = passwordGenerator;
     }
     public Map<String, Object> checkUserExistence(String email, String dni) {
         Map<String, Object> validationResult = new HashMap<>();
@@ -81,8 +83,8 @@ public class UserController {
         if ((Boolean) responseExistsUser.get("status")) {
             throw new BadRequestException((String) responseExistsUser.get("message"));
         }
-
-        String passwordEncoded = passwordEncoder.encode(this.generateStrongPassword());
+        String generatedPassword = this.passwordGenerator.generateStrongPassword();
+        String passwordEncoded = passwordEncoder.encode(generatedPassword);
         UserSaveDTO userSaveDTO = new UserSaveDTO(
                 userCreateDTO.getDni(),
                 userCreateDTO.getEmail(),
@@ -91,11 +93,34 @@ public class UserController {
                 passwordEncoded,
                 false
         );
-        return this.create(userSaveDTO);
+        UserDTO responseCreate =  this.save(userSaveDTO);
+        this.sendEmail(responseCreate.getEmail(),generatedPassword);
+        return responseCreate;
     }
 
+    public UserDTO create(UserRegisterDTO userRegisterDTO){
+        Map<String, Object> responseExistsUser = this.checkUserExistence(
+                userRegisterDTO.getEmail(),
+                userRegisterDTO.getDni()
+        );
+
+        if ((Boolean) responseExistsUser.get("status")) {
+            throw new BadRequestException((String) responseExistsUser.get("message"));
+        }
+
+        String passwordEncoded = passwordEncoder.encode(userRegisterDTO.getPassword());
+        UserSaveDTO userSaveDTO = new UserSaveDTO(
+                userRegisterDTO.getDni(),
+                userRegisterDTO.getEmail(),
+                userRegisterDTO.getName(),
+                userRegisterDTO.getLastName(),
+                passwordEncoded,
+                false
+        );
+        return this.save(userSaveDTO);
+    }
     @Transactional
-    public UserDTO create(UserSaveDTO userSaveDTO){
+    private UserDTO save(UserSaveDTO userSaveDTO){
         boolean isAdmin = userSaveDTO.getIsAdmin();
         User user = new User();
         user.updateFromUserSaveDTO(userSaveDTO);
@@ -108,22 +133,17 @@ public class UserController {
         }
         else {
             Client client = new Client();
-            this.clientRepository.save(client);
             client.setUser(user);
+            this.clientRepository.save(client);
         }
 
         return user.getUserDTO(isAdmin);
     }
-    public UserDTO sendEmail(String email, String password){
+    private void sendEmail(String email, String password){
         String subject = "Nueva Cuenta en Bibliokie";
         String body = "Ha sido dado de alta en la aplicación Bibliokie," +
                 " su nueva contraseña es la siguiente: "+password;
 
         this.emailController.sendSimpleMessage(email,subject,body);
-        return new UserDTO();
-    }
-
-    private String generateStrongPassword(){
-        return "root";
     }
 }
