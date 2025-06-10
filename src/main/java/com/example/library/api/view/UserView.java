@@ -1,14 +1,15 @@
 package com.example.library.api.view;
 
 import com.example.library.controller.UserController;
+import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 
 @RestController
@@ -23,5 +24,11 @@ public class UserView {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         UserDTO responseUserDTO = this.userController.findById(id);
         return ResponseEntity.ok(responseUserDTO);
+    }
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        UserDTO responseUserDTO = this.userController.create(userCreateDTO);
+        URI location = URI.create("/users/" + responseUserDTO.getId());
+        return ResponseEntity.created(location).body(responseUserDTO);
     }
 }
