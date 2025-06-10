@@ -30,7 +30,14 @@ public class User {
     @Column(name = "lastname", length = 100)
     private String lastName;
 
-
+    public User(){
+    }
+    public User(String name,String dni,String email,String lastName){
+        this.name=name;
+        this.dni=dni;
+        this.email=email;
+        this.lastName=lastName;
+    }
     public UserDTO getUserDTO(Boolean isAdmin){
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setId(this.id);

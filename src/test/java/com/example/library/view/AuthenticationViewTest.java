@@ -9,7 +9,6 @@ import com.example.library.entities.dto.LoginDTO;
 import com.example.library.entities.dto.SessionDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
