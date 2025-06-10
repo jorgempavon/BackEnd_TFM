@@ -6,8 +6,6 @@ import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetails;
 import com.example.library.config.JwtController;
 import com.example.library.entities.dto.*;
-import com.example.library.entities.repository.ClientRepository;
-import com.example.library.entities.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +15,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,110 +33,97 @@ public class AuthenticationControllerTest {
     @Mock
     private UserDetailsService userDetailsController;
     @Mock
-    private UserRepository userRepository;
-    @Mock
-    private ClientRepository clientRepository;
+    private UserController userController;
     @InjectMocks
     private AuthenticationController authController;
     private final String EXAMPLE_NAME = "example";
+    private final String EXAMPLE_LAST_NAME = "last name example";
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_PASSWORD = "pass123";
     private final String EXAMPLE_DNI = "12345678A";
-
+    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_PASSWORD,
+            EXAMPLE_PASSWORD,
+            EXAMPLE_NAME,
+            EXAMPLE_LAST_NAME
+    );
+    private final LoginDTO loginDTO = new LoginDTO(
+            EXAMPLE_EMAIL,EXAMPLE_PASSWORD
+    );
     private final String EXAMPLE_ENCODED_PASSWORD = "encodedPassword";
 
+    private final Map<String, Object> responseCheckUserExistence = new HashMap<String, Object>() {{
+        put("status", false);
+        put("message", "");
+    }};
     @Test
     void register_successful() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
+        UserDTO userDTO  = new UserDTO();
+        userDTO.setId(1L);
+        userDTO.setEmail(EXAMPLE_EMAIL);
+        userDTO.setName(EXAMPLE_NAME);
+        userDTO.setLastName(EXAMPLE_LAST_NAME);
+        userDTO.setDni(EXAMPLE_DNI);
+        userDTO.setIsAdmin(false);
 
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn("hashedPass");
-        System.out.println(clientRepository);
+        UserSaveDTO userSaveDTO = new UserSaveDTO(
+                userRegisterDTO.getDni(),
+                userRegisterDTO.getEmail(),
+                userRegisterDTO.getName(),
+                userRegisterDTO.getLastName(),
+                EXAMPLE_ENCODED_PASSWORD,
+                false
+        );
 
-        UserDTO result = authController.register(newUserRegisterDto);
+        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI))
+                .thenReturn(responseCheckUserExistence);
+        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD))
+                .thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.userController.create(any(UserSaveDTO.class)))
+                .thenReturn(userDTO);
+
+        UserDTO result = authController.register(userRegisterDTO);
         assertNotNull(result);
-        assertEquals(newUserRegisterDto.getDni(), result.getDni());
-        assertEquals(newUserRegisterDto.getEmail(), result.getEmail());
-        assertEquals(newUserRegisterDto.getName(), result.getName());
-        assertEquals(newUserRegisterDto.getLastName(), result.getLastName());
+        assertEquals(userRegisterDTO.getDni(), result.getDni());
+        assertEquals(userRegisterDTO.getEmail(), result.getEmail());
+        assertEquals(userRegisterDTO.getName(), result.getName());
+        assertEquals(userRegisterDTO.getLastName(), result.getLastName());
     }
 
     @Test
     void register_whenPasswordsDoNotMatch_throwsConflictException() {
         UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
         newUserRegisterDto.setName(EXAMPLE_NAME);
+        newUserRegisterDto.setName(EXAMPLE_LAST_NAME);
         newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
         newUserRegisterDto.setDni(EXAMPLE_DNI);
         newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
         String EXAMPLE_BAD_PASSWORD = "pass";
         newUserRegisterDto.setRepeatPassword(EXAMPLE_BAD_PASSWORD);
 
+        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI))
+                .thenReturn(responseCheckUserExistence);
         assertThrows(ConflictException.class, () -> {
             authController.register(newUserRegisterDto);
         });
     }
 
     @Test
-    void register_whenExistsDni_throwsBadRequestException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
+    void register_whenUserExists_throwsBadRequestException() {
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put("status",true);
+        responseExistsUser.put("message","El dni o email proporcionados pertenenen a otro usuario");
 
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
-
+        when(this.userController.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(responseExistsUser);
         assertThrows(BadRequestException.class, () -> {
-            authController.register(newUserRegisterDto);
-        });
-    }
-
-    @Test
-    void register_whenExistsEmail_throwsBadRequestException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
-
-        assertThrows(BadRequestException.class, () -> {
-            authController.register(newUserRegisterDto);
-        });
-    }
-
-    @Test
-    void register_whenExistsEmailAndDni_throwsBadRequestException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
-
-        assertThrows(BadRequestException.class, () -> {
-            authController.register(newUserRegisterDto);
+            authController.register(userRegisterDTO);
         });
     }
 
     @Test
     void login_successful(){
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(EXAMPLE_EMAIL);
-        loginDTO.setPassword(EXAMPLE_PASSWORD);
-
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASSWORD);
@@ -149,10 +138,6 @@ public class AuthenticationControllerTest {
 
     @Test
     void login_whenNotExistsEmail_throwsUnauthorizedException(){
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(EXAMPLE_EMAIL);
-        loginDTO.setPassword(EXAMPLE_PASSWORD);
-
         when(userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenThrow(
                 new UnauthorizedException("El email o contraseña proporcionados son incorrectos")
         );
@@ -164,10 +149,6 @@ public class AuthenticationControllerTest {
 
     @Test
     void login_whenNotMatchPassword_throwsUnauthorizedException(){
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(EXAMPLE_EMAIL);
-        loginDTO.setPassword(EXAMPLE_PASSWORD);
-
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASSWORD);

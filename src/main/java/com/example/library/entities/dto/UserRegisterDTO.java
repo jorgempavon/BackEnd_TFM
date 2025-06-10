@@ -22,4 +22,18 @@ public class UserRegisterDTO {
     private String name;
 
     private String lastName;
+
+
+    public UserRegisterDTO (){}
+
+    public UserRegisterDTO (String dni,String email,String password,
+                            String repeatPassword,String name,String lastName){
+        this.dni = dni;
+        this.email = email;
+        this.password = password;
+        this.repeatPassword = repeatPassword;
+        this.name = name;
+        this.lastName = lastName;
+    }
+
 }

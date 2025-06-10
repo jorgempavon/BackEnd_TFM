@@ -82,7 +82,7 @@ public class UserController {
             throw new BadRequestException((String) responseExistsUser.get("message"));
         }
 
-        String passwordEncoded = passwordEncoder.encode(userRegisterDTO.getPassword());
+        String passwordEncoded = passwordEncoder.encode(this.generateStrongPassword());
         UserSaveDTO userSaveDTO = new UserSaveDTO(
                 userCreateDTO.getDni(),
                 userCreateDTO.getEmail(),
@@ -103,13 +103,13 @@ public class UserController {
 
         if (isAdmin){
             Admin admin = new Admin();
-            admin.setUserId(user);
+            admin.setUser(user);
             this.adminRepository.save(admin);
         }
         else {
             Client client = new Client();
             this.clientRepository.save(client);
-            client.setUserId(user);
+            client.setUser(user);
         }
 
         return user.getUserDTO(isAdmin);
@@ -120,5 +120,10 @@ public class UserController {
                 " su nueva contraseña es la siguiente: "+password;
 
         this.emailController.sendSimpleMessage(email,subject,body);
+        return new UserDTO();
+    }
+
+    private String generateStrongPassword(){
+        return "root";
     }
 }

@@ -30,23 +30,29 @@ public class AuthenticationViewTest {
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_PASSWORD = "pass123";
     private final String EXAMPLE_DNI = "12345678A";
+    private final String EXAMPLE_LAST_NAME = "last name example";
+    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_PASSWORD,
+            EXAMPLE_PASSWORD,
+            EXAMPLE_NAME,
+            EXAMPLE_LAST_NAME
+    );
+    private final LoginDTO loginDTO = new LoginDTO(
+            EXAMPLE_EMAIL,EXAMPLE_PASSWORD
+    );
+
     @Test
     void register_successful() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
         UserDTO userDTO = new UserDTO();
         userDTO.setName(EXAMPLE_NAME);
         userDTO.setEmail(EXAMPLE_EMAIL);
         userDTO.setDni(EXAMPLE_DNI);
 
-        when(this.authController.register(newUserRegisterDto)).thenReturn(userDTO);
+        when(this.authController.register(userRegisterDTO)).thenReturn(userDTO);
 
-        ResponseEntity<?> result = authView.register(newUserRegisterDto);
+        ResponseEntity<?> result = authView.register(userRegisterDTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
 
@@ -57,71 +63,46 @@ public class AuthenticationViewTest {
 
     @Test
     void register_whenPasswordsDoNotMatch_throwsConflictException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
-        when(this.authController.register(newUserRegisterDto))
+        when(this.authController.register(userRegisterDTO))
                 .thenThrow(new ConflictException("Las contraseñas proporcionadas no coinciden"));
 
         assertThrows(ConflictException.class, () -> {
-            authView.register(newUserRegisterDto);
+            authView.register(userRegisterDTO);
         });
     }
 
     @Test
     void register_whenDniExists_throwsBadRequestException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
-        when(this.authController.register(newUserRegisterDto))
+        when(this.authController.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Dni proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authView.register(newUserRegisterDto);
+            authView.register(userRegisterDTO);
         });
     }
 
     @Test
     void register_whenEmailExists_throwsBadRequestException() {
-        UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
-        newUserRegisterDto.setName(EXAMPLE_NAME);
-        newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
-        newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_PASSWORD);
-
-        when(this.authController.register(newUserRegisterDto))
+        when(this.authController.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Email proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authView.register(newUserRegisterDto);
+            authView.register(userRegisterDTO);
         });
     }
 
     @Test
     void register_whenEmptyDto_throwsException() {
-        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
+        UserRegisterDTO newEmptyUserRegisterDTO = new UserRegisterDTO();
 
         assertThrows(Exception.class, () -> {
-            authView.register(userRegisterDTO);
+            authView.register(newEmptyUserRegisterDTO);
         });
     }
 
     @Test
     void login_successful() {
         String MOCKED_JWT = "mockedJwtToken";
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(EXAMPLE_EMAIL);
-        loginDTO.setPassword(EXAMPLE_PASSWORD);
-
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setEmail(EXAMPLE_EMAIL);
         sessionDTO.setJwt(MOCKED_JWT);
@@ -133,19 +114,15 @@ public class AuthenticationViewTest {
 
     @Test
     void login_whenEmptyLoginDto_throwsException() {
-        LoginDTO loginDTO = new LoginDTO();
+        LoginDTO emptyloginDTO = new LoginDTO();
 
         assertThrows(Exception.class, () -> {
-            authView.login(loginDTO);
+            authView.login(emptyloginDTO);
         });
     }
 
     @Test
     void login_whenInvalidCredentials_throwsUnauthorizedException(){
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(EXAMPLE_EMAIL);
-        loginDTO.setPassword(EXAMPLE_PASSWORD);
-
         when(this.authController.login(loginDTO))
                 .thenThrow(new UnauthorizedException("El email o contraseña proporcionados son incorrectos"));
 

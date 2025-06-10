@@ -1,6 +1,7 @@
 package com.example.library.entities.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ public class UserSaveDTO {
     private String lastName;
     @NotBlank(message = "La password es obligatoria")
     private String passwordEncoded;
-    @NotBlank(message = "El rol es obligatorio")
+    @NotNull(message = "El rol es obligatorio")
     private boolean isAdmin;
 
     public UserSaveDTO(){}
@@ -29,5 +30,9 @@ public class UserSaveDTO {
         this.lastName = lastName;
         this.passwordEncoded = passwordEncoded;
         this.isAdmin = isAdmin;
+    }
+
+    public boolean getIsAdmin(){
+        return this.isAdmin;
     }
 }
