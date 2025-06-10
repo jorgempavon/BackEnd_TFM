@@ -31,13 +31,14 @@ public class User {
     private String lastName;
 
 
-    public UserDTO getUserDTO(){
+    public UserDTO getUserDTO(Boolean isAdmin){
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setId(this.id);
         newUserDTO.setDni(this.dni);
         newUserDTO.setEmail(this.email);
         newUserDTO.setName(this.name);
         newUserDTO.setLastName(this.lastName);
+        newUserDTO.setIsAdmin(isAdmin);
         return newUserDTO;
     }
 
