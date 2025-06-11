@@ -19,7 +19,7 @@ public class UserResource {
     private final UserService userService;
 
     public UserResource(UserService userService){this.userService = userService;}
-
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         UserDTO responseUserDTO = this.userService.findById(id);
