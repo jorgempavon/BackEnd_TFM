@@ -8,24 +8,23 @@ import java.util.List;
 
 @Service
 public class PasswordGenerator {
-    private static final int PASSWORD_LENGTH = 12;
-    private static final String LOWERCASE_CHARS = "abcdefghijklmnopqrstuvwxyz";
-    private static final String UPPERCASE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String DIGIT_CHARS = "0123456789";
-    private static final String SPECIAL_CHARS = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~";
 
-    private static final String ALL_CHARS = LOWERCASE_CHARS + UPPERCASE_CHARS + DIGIT_CHARS + SPECIAL_CHARS;
-
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private final SecureRandom RANDOM = new SecureRandom();
 
     public String generateStrongPassword() {
         StringBuilder passwordBuilder = new StringBuilder();
+        String LOWERCASE_CHARS = "abcdefghijklmnopqrstuvwxyz";
         passwordBuilder.append(getRandomChar(LOWERCASE_CHARS));
+        String UPPERCASE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         passwordBuilder.append(getRandomChar(UPPERCASE_CHARS));
+        String DIGIT_CHARS = "0123456789";
         passwordBuilder.append(getRandomChar(DIGIT_CHARS));
+        String SPECIAL_CHARS = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~";
         passwordBuilder.append(getRandomChar(SPECIAL_CHARS));
 
+        int PASSWORD_LENGTH = 12;
         for (int i = 4; i < PASSWORD_LENGTH; i++) {
+            String ALL_CHARS = LOWERCASE_CHARS + UPPERCASE_CHARS + DIGIT_CHARS + SPECIAL_CHARS;
             passwordBuilder.append(getRandomChar(ALL_CHARS));
         }
 
