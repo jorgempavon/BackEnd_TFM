@@ -91,11 +91,12 @@ public class UserController {
                 userCreateDTO.getName(),
                 userCreateDTO.getLastName(),
                 passwordEncoded,
-                false
+                userCreateDTO.getIsAdmin()
         );
-        UserDTO responseCreate =  this.save(userSaveDTO);
-        this.sendEmail(responseCreate.getEmail(),generatedPassword);
-        return responseCreate;
+        String passwordText = ",para acceder utilice la siguiente contraseña: "+ generatedPassword
+                + "\nPorfavor, le recomendamos cambiar la contraseña lo antes posible";
+        this.sendNewAccountEmail(userCreateDTO.getEmail(),passwordText);
+        return this.save(userSaveDTO);
     }
 
     public UserDTO create(UserRegisterDTO userRegisterDTO){
@@ -117,6 +118,8 @@ public class UserController {
                 passwordEncoded,
                 false
         );
+
+        this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
         return this.save(userSaveDTO);
     }
     @Transactional
@@ -139,11 +142,16 @@ public class UserController {
 
         return user.getUserDTO(isAdmin);
     }
-    private void sendEmail(String email, String password){
-        String subject = "Nueva Cuenta en Bibliokie";
-        String body = "Ha sido dado de alta en la aplicación Bibliokie," +
-                " su nueva contraseña es la siguiente: "+password;
-
-        this.emailController.sendSimpleMessage(email,subject,body);
+    private void sendNewAccountEmail(String email, String passwordText){
+        try{
+            String subject = "Nueva Cuenta en Bibliokie";
+            String body = "Ha sido dado de alta en Bibliokie" +
+                    passwordText;
+            String endBody="\nEste correro es meramente informativo.\n\nMuchas gracias,\nUn saludo.";
+            this.emailController.sendSimpleMessage(email,subject,body+endBody);
+        }
+        catch (Exception e){
+            throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");
+        }
     }
 }
