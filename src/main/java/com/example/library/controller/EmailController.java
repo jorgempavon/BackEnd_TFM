@@ -17,7 +17,7 @@ public class EmailController {
 
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("tu_email@gmail.com");
+        message.setFrom("bibliokiejackie@gmail.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
