@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
-public class JwtController {
+public class JwtService {
     @Value("${jwt.secret}")
     private  String SECRET_KEY;
 

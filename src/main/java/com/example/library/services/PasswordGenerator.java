@@ -1,4 +1,4 @@
-package com.example.library.controller;
+package com.example.library.services;
 
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;

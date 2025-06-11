@@ -1,6 +1,6 @@
-package com.example.library.api.view;
+package com.example.library.api.resources;
 
-import com.example.library.controller.UserController;
+import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,20 +15,20 @@ import java.net.URI;
 @RestController
 @RequestMapping("/bibliokie/users")
 @SecurityRequirement(name = "bearerAuth")
-public class UserView {
-    private final UserController userController;
+public class UserResource {
+    private final UserService userService;
 
-    public UserView(UserController userController){this.userController=userController;}
+    public UserResource(UserService userService){this.userService = userService;}
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        UserDTO responseUserDTO = this.userController.findById(id);
+        UserDTO responseUserDTO = this.userService.findById(id);
         return ResponseEntity.ok(responseUserDTO);
     }
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        UserDTO responseUserDTO = this.userController.create(userCreateDTO);
+        UserDTO responseUserDTO = this.userService.create(userCreateDTO);
         URI location = URI.create("/users/" + responseUserDTO.getId());
         return ResponseEntity.created(location).body(responseUserDTO);
     }

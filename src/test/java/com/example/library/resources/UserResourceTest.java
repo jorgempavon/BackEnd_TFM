@@ -1,13 +1,11 @@
-package com.example.library.view;
+package com.example.library.resources;
 
 import com.example.library.api.exceptions.models.BadRequestException;
-import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.api.view.UserView;
-import com.example.library.controller.UserController;
+import com.example.library.api.resources.UserResource;
+import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserViewTest {
+public class UserResourceTest {
     @Mock
-    private UserController userController;
+    private UserService userService;
     @InjectMocks
-    private UserView userView;
+    private UserResource userResource;
     private final Long EXAMPLE_ID = 2L;
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_EMAIL = "test@example.com";
@@ -37,44 +35,44 @@ public class UserViewTest {
 
     @Test
     void findById_successful(){
-        when(this.userController.findById(EXAMPLE_ID)).thenReturn(userDTO);
-        ResponseEntity<?> result = userView.findById(EXAMPLE_ID);
+        when(this.userService.findById(EXAMPLE_ID)).thenReturn(userDTO);
+        ResponseEntity<?> result = userResource.findById(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
 
     @Test
     void findById_whenIdNotExists_throwsNotFoundException(){
-        when(this.userController.findById(EXAMPLE_ID))
+        when(this.userService.findById(EXAMPLE_ID))
                 .thenThrow(new NotFoundException("No existe el usuario con el id: "+EXAMPLE_ID.toString()));
         assertThrows(NotFoundException.class, () -> {
-            userView.findById(EXAMPLE_ID);
+            userResource.findById(EXAMPLE_ID);
         });
     }
 
     @Test
     void createUser_successful(){
-        when(this.userController.create(userCreateDto)).thenReturn(userDTO);
-        ResponseEntity<?> result = userView.create(userCreateDto);
+        when(this.userService.create(userCreateDto)).thenReturn(userDTO);
+        ResponseEntity<?> result = userResource.create(userCreateDto);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
 
     @Test
     void createUser_whenUserExists_throwsBadRequestException(){
-        when(this.userController.create(userCreateDto))
+        when(this.userService.create(userCreateDto))
                 .thenThrow(new BadRequestException("El dni o email proporcionados pertenecen a otro usuario"));
         assertThrows(BadRequestException.class, () -> {
-            userView.create(userCreateDto);
+            userResource.create(userCreateDto);
         });
     }
 
     @Test
     void createUser_whenEmailNotExists_throwsBadRequestException(){
-        when(this.userController.create(userCreateDto))
+        when(this.userService.create(userCreateDto))
                 .thenThrow(new BadRequestException("El email proporcionado no existe"));
         assertThrows(BadRequestException.class, () -> {
-            userView.create(userCreateDto);
+            userResource.create(userCreateDto);
         });
     }
 }

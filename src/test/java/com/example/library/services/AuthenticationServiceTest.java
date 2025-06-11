@@ -1,10 +1,10 @@
-package com.example.library.controller;
+package com.example.library.services;
 
 import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetails;
-import com.example.library.config.JwtController;
+import com.example.library.config.JwtService;
 import com.example.library.entities.dto.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,17 +21,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationControllerTest {
+public class AuthenticationServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private JwtController jwtController;
+    private JwtService jwtService;
     @Mock
     private UserDetailsService userDetailsController;
     @Mock
-    private UserController userController;
+    private UserService userService;
     @InjectMocks
-    private AuthenticationController authController;
+    private AuthenticationService authService;
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_LAST_NAME = "last name example";
     private final String EXAMPLE_EMAIL = "test@example.com";
@@ -60,10 +60,10 @@ public class AuthenticationControllerTest {
         userDTO.setDni(EXAMPLE_DNI);
         userDTO.setIsAdmin(false);
 
-        when(this.userController.create(any(UserRegisterDTO.class)))
+        when(this.userService.create(any(UserRegisterDTO.class)))
                 .thenReturn(userDTO);
 
-        UserDTO result = authController.register(userRegisterDTO);
+        UserDTO result = authService.register(userRegisterDTO);
         assertNotNull(result);
         assertEquals(userRegisterDTO.getDni(), result.getDni());
         assertEquals(userRegisterDTO.getEmail(), result.getEmail());
@@ -83,17 +83,17 @@ public class AuthenticationControllerTest {
         newUserRegisterDto.setRepeatPassword(EXAMPLE_BAD_PASSWORD);
 
         assertThrows(ConflictException.class, () -> {
-            authController.register(newUserRegisterDto);
+            authService.register(newUserRegisterDto);
         });
     }
 
     @Test
     void register_whenUserExists_throwsBadRequestException() {
-        when(this.userController.create(userRegisterDTO))
+        when(this.userService.create(userRegisterDTO))
                 .thenThrow(BadRequestException.class);
 
         assertThrows(BadRequestException.class, () -> {
-            authController.register(userRegisterDTO);
+            authService.register(userRegisterDTO);
         });
     }
 
@@ -104,9 +104,9 @@ public class AuthenticationControllerTest {
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASSWORD);
         when(passwordEncoder.matches(EXAMPLE_PASSWORD, EXAMPLE_ENCODED_PASSWORD)).thenReturn(true);
         String MOCKED_JWT = "mockedJwtToken";
-        when(jwtController.generateToken(mockUserDetails)).thenReturn(MOCKED_JWT);
+        when(jwtService.generateToken(mockUserDetails)).thenReturn(MOCKED_JWT);
 
-        SessionDTO sessionDTO = this.authController.login(loginDTO);
+        SessionDTO sessionDTO = this.authService.login(loginDTO);
 
         assertEquals(MOCKED_JWT, sessionDTO.getJwt());
     }
@@ -118,7 +118,7 @@ public class AuthenticationControllerTest {
         );
 
         assertThrows(UnauthorizedException.class, () -> {
-            authController.login(loginDTO);
+            authService.login(loginDTO);
         });
     }
 
@@ -130,7 +130,7 @@ public class AuthenticationControllerTest {
         when(passwordEncoder.matches(EXAMPLE_PASSWORD, EXAMPLE_ENCODED_PASSWORD)).thenReturn(false);
 
         assertThrows(UnauthorizedException.class, () -> {
-            authController.login(loginDTO);
+            authService.login(loginDTO);
         });
     }
 

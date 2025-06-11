@@ -1,10 +1,10 @@
-package com.example.library.view;
+package com.example.library.resources;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.api.view.AuthenticationView;
-import com.example.library.controller.AuthenticationController;
+import com.example.library.api.resources.AuthenticationResource;
+import com.example.library.services.AuthenticationService;
 import com.example.library.entities.dto.LoginDTO;
 import com.example.library.entities.dto.SessionDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationViewTest {
+public class AuthenticationResourceTest {
     @Mock
-    private AuthenticationController authController;
+    private AuthenticationService authController;
     @InjectMocks
-    private AuthenticationView authView;
+    private AuthenticationResource authResource;
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_PASSWORD = "pass123";
@@ -52,7 +52,7 @@ public class AuthenticationViewTest {
 
         when(this.authController.register(userRegisterDTO)).thenReturn(userDTO);
 
-        ResponseEntity<?> result = authView.register(userRegisterDTO);
+        ResponseEntity<?> result = authResource.register(userRegisterDTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
 
@@ -67,7 +67,7 @@ public class AuthenticationViewTest {
                 .thenThrow(new ConflictException("Las contraseñas proporcionadas no coinciden"));
 
         assertThrows(ConflictException.class, () -> {
-            authView.register(userRegisterDTO);
+            authResource.register(userRegisterDTO);
         });
     }
 
@@ -77,7 +77,7 @@ public class AuthenticationViewTest {
                 .thenThrow(new BadRequestException("El Dni proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authView.register(userRegisterDTO);
+            authResource.register(userRegisterDTO);
         });
     }
 
@@ -87,7 +87,7 @@ public class AuthenticationViewTest {
                 .thenThrow(new BadRequestException("El Email proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authView.register(userRegisterDTO);
+            authResource.register(userRegisterDTO);
         });
     }
 
@@ -96,7 +96,7 @@ public class AuthenticationViewTest {
         UserRegisterDTO newEmptyUserRegisterDTO = new UserRegisterDTO();
 
         assertThrows(Exception.class, () -> {
-            authView.register(newEmptyUserRegisterDTO);
+            authResource.register(newEmptyUserRegisterDTO);
         });
     }
 
@@ -108,7 +108,7 @@ public class AuthenticationViewTest {
         sessionDTO.setJwt(MOCKED_JWT);
         when(this.authController.login(loginDTO)).thenReturn(sessionDTO);
 
-        ResponseEntity<?> result = authView.login(loginDTO);
+        ResponseEntity<?> result = authResource.login(loginDTO);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -117,7 +117,7 @@ public class AuthenticationViewTest {
         LoginDTO emptyloginDTO = new LoginDTO();
 
         assertThrows(Exception.class, () -> {
-            authView.login(emptyloginDTO);
+            authResource.login(emptyloginDTO);
         });
     }
 
@@ -127,7 +127,7 @@ public class AuthenticationViewTest {
                 .thenThrow(new UnauthorizedException("El email o contraseña proporcionados son incorrectos"));
 
         assertThrows(UnauthorizedException.class, () -> {
-            authView.login(loginDTO);
+            authResource.login(loginDTO);
         });
     }
 }

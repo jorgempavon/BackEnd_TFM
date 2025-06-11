@@ -1,4 +1,4 @@
-package com.example.library.controller;
+package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class UserController {
+public class UserService {
     private final JavaMailSender mailSender;
     private final PasswordGenerator passwordGenerator;
     private final PasswordEncoder passwordEncoder;
@@ -29,12 +29,12 @@ public class UserController {
     private final ClientRepository clientRepository;
     private final AdminRepository adminRepository;
 
-    public UserController(UserRepository userRepository,
-                          ClientRepository clientRepository,
-                          AdminRepository adminRepository,
-                          PasswordEncoder passwordEncoder,
-                          PasswordGenerator passwordGenerator,
-                          JavaMailSender mailSender) {
+    public UserService(UserRepository userRepository,
+                       ClientRepository clientRepository,
+                       AdminRepository adminRepository,
+                       PasswordEncoder passwordEncoder,
+                       PasswordGenerator passwordGenerator,
+                       JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;

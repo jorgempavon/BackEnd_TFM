@@ -1,4 +1,4 @@
-package com.example.library.controller;
+package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserControllerTest {
+public class UserServiceTest {
     @Mock
     private JavaMailSender mailSender;
     @Mock
@@ -40,7 +40,7 @@ public class UserControllerTest {
     @Mock
     private ClientRepository clientRepository;
     @InjectMocks
-    private UserController userController;
+    private UserService userService;
 
     private final Long EXAMPLE_ID = 2L;
     private final String EXAMPLE_NAME = "example";
@@ -75,7 +75,7 @@ public class UserControllerTest {
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
         when(userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
-        UserDTO result = this.userController.findById(EXAMPLE_ID);
+        UserDTO result = this.userService.findById(EXAMPLE_ID);
 
         assertEquals(userDTO.getDni(), result.getDni());
         assertEquals(userDTO.getEmail(), result.getEmail());
@@ -87,7 +87,7 @@ public class UserControllerTest {
     void findById_whenNotExistsId_throwsNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
-            userController.findById(EXAMPLE_ID);
+            userService.findById(EXAMPLE_ID);
         });
     }
 
@@ -97,7 +97,7 @@ public class UserControllerTest {
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
         when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
 
-        UserDTO response = this.userController.create(userRegisterDTO);
+        UserDTO response = this.userService.create(userRegisterDTO);
         assertNotNull(response);
         assertEquals(EXAMPLE_NAME,response.getName());
         assertEquals(EXAMPLE_EMAIL,response.getEmail());
@@ -112,7 +112,7 @@ public class UserControllerTest {
         when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
         when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
 
-        UserDTO response = this.userController.create(userCreateDTO);
+        UserDTO response = this.userService.create(userCreateDTO);
         assertNotNull(response);
         assertEquals(EXAMPLE_NAME,response.getName());
         assertEquals(EXAMPLE_EMAIL,response.getEmail());
@@ -126,7 +126,7 @@ public class UserControllerTest {
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userRegisterDTO);
+            this.userService.create(userRegisterDTO);
         });
     }
     @Test
@@ -135,7 +135,7 @@ public class UserControllerTest {
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userRegisterDTO);
+            this.userService.create(userRegisterDTO);
         });
     }
 
@@ -145,7 +145,7 @@ public class UserControllerTest {
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userCreateDTO);
+            this.userService.create(userCreateDTO);
         });
     }
     @Test
@@ -154,7 +154,7 @@ public class UserControllerTest {
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userCreateDTO);
+            this.userService.create(userCreateDTO);
         });
     }
 
@@ -170,7 +170,7 @@ public class UserControllerTest {
                 .send(any(SimpleMailMessage.class));
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userCreateDTO);
+            this.userService.create(userCreateDTO);
         });
     }
 
@@ -185,7 +185,7 @@ public class UserControllerTest {
                 .send(any(SimpleMailMessage.class));
 
         assertThrows(BadRequestException.class, () -> {
-            this.userController.create(userRegisterDTO);
+            this.userService.create(userRegisterDTO);
         });
     }
 }

@@ -10,14 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsController implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
     private final AdminRepository adminRepository;
 
     @Autowired
-    public CustomUserDetailsController(UserRepository userRepository,
+    public CustomUserDetailsService(UserRepository userRepository,
                                     ClientRepository clientRepository,
                                     AdminRepository adminRepository) {
         this.userRepository = userRepository;
