@@ -13,6 +13,8 @@ import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,9 @@ import java.util.*;
 
 @Service
 public class UserController {
+    private final JavaMailSender mailSender;
     private final PasswordGenerator passwordGenerator;
     private final PasswordEncoder passwordEncoder;
-    private final EmailController emailController;
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
     private final AdminRepository adminRepository;
@@ -30,15 +32,15 @@ public class UserController {
     public UserController(UserRepository userRepository,
                           ClientRepository clientRepository,
                           AdminRepository adminRepository,
-                          EmailController emailController,
                           PasswordEncoder passwordEncoder,
-                          PasswordGenerator passwordGenerator) {
+                          PasswordGenerator passwordGenerator,
+                          JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
-        this.emailController = emailController;
         this.passwordEncoder = passwordEncoder;
         this.passwordGenerator = passwordGenerator;
+        this.mailSender = mailSender;
     }
     public Map<String, Object> checkUserExistence(String email, String dni) {
         Map<String, Object> validationResult = new HashMap<>();
@@ -142,13 +144,19 @@ public class UserController {
 
         return user.getUserDTO(isAdmin);
     }
-    private void sendNewAccountEmail(String email, String passwordText){
+    private void sendNewAccountEmail(String email, String passwordText) {
         try{
             String subject = "Nueva Cuenta en Bibliokie";
             String body = "Ha sido dado de alta en Bibliokie" +
                     passwordText;
             String endBody="\nEste correro es meramente informativo.\n\nMuchas gracias,\nUn saludo.";
-            this.emailController.sendSimpleMessage(email,subject,body+endBody);
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("bibliokiejackie@gmail.com");
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body + endBody);
+            mailSender.send(message);
         }
         catch (Exception e){
             throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");

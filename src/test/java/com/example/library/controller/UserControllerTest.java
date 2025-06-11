@@ -1,7 +1,6 @@
 package com.example.library.controller;
 
 import com.example.library.api.exceptions.models.BadRequestException;
-import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -15,18 +14,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
     @Mock
-    private EmailController emailController;
+    private JavaMailSender mailSender;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -153,6 +155,37 @@ public class UserControllerTest {
 
         assertThrows(BadRequestException.class, () -> {
             this.userController.create(userCreateDTO);
+        });
+    }
+
+    @Test
+    void create_createDto_whenIsNotValidEmail_throwsBadRequestException(){
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
+        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+
+        doThrow(new BadRequestException("El correo proporcionado no es válido"))
+                .when(mailSender)
+                .send(any(SimpleMailMessage.class));
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userController.create(userCreateDTO);
+        });
+    }
+
+    @Test
+    void create_regiterDto_whenIsNotValidEmail_throwsBadRequestException(){
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD)
+        ;
+        doThrow(new BadRequestException("El correo proporcionado no es válido"))
+                .when(mailSender)
+                .send(any(SimpleMailMessage.class));
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userController.create(userRegisterDTO);
         });
     }
 }
