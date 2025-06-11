@@ -48,4 +48,12 @@ public class AuthenticationService {
 
         return responseLogin;
     }
+
+    public void logOut(String token){
+        String userName = this.jwtService.extractUsername(token);
+        UserDetails userDetails = this.userDetailsController.loadUserByUsername(userName);
+        if (this.jwtService.isTokenValid(token,userDetails)){
+            this.jwtService.invalidateToken(token);
+        }
+    }
 }
