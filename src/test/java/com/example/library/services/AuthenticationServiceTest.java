@@ -37,6 +37,7 @@ public class AuthenticationServiceTest {
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_PASSWORD = "pass123";
     private final String EXAMPLE_DNI = "12345678A";
+    private final String EXAMPLE_TOKEN = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
     private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,
@@ -133,5 +134,22 @@ public class AuthenticationServiceTest {
             authService.login(loginDTO);
         });
     }
+    @Test
+    void logOut_Successful(){
+        CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
 
+        when(this.jwtService.extractUsername(EXAMPLE_TOKEN)).thenReturn(EXAMPLE_EMAIL);
+        when(this.userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
+        when(this.jwtService.isTokenValid(EXAMPLE_TOKEN, mockUserDetails)).thenReturn(true);
+
+        this.authService.logOut(EXAMPLE_TOKEN);
+    }
+    @Test
+    void logOut_whenUserNotExists_throwsUnathorizedException(){
+        when(this.jwtService.extractUsername(EXAMPLE_TOKEN)).thenThrow(UnauthorizedException.class);
+
+        assertThrows(UnauthorizedException.class, () -> {
+            authService.logOut(EXAMPLE_TOKEN);
+        });
+    }
 }

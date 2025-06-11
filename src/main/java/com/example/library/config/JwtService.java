@@ -11,12 +11,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class JwtService {
     @Value("${jwt.secret}")
     private  String SECRET_KEY;
+    private final Set<String> blacklistedTokens = Collections.synchronizedSet(new HashSet<>());
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
@@ -38,9 +42,12 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        return extractUsername(token).equals(userDetails.getUsername()) && !isExpired(token);
+        return extractUsername(token).equals(userDetails.getUsername()) && !isExpired(token) &&
+                !blacklistedTokens.contains(token);
     }
-
+    public void invalidateToken(String token) {
+        blacklistedTokens.add(token);
+    }
     private boolean isExpired(String token) {
         Date expiration = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

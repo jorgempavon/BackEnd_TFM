@@ -18,12 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationResourceTest {
     @Mock
-    private AuthenticationService authController;
+    private AuthenticationService authService;
     @InjectMocks
     private AuthenticationResource authResource;
     private final String EXAMPLE_NAME = "example";
@@ -50,7 +52,7 @@ public class AuthenticationResourceTest {
         userDTO.setEmail(EXAMPLE_EMAIL);
         userDTO.setDni(EXAMPLE_DNI);
 
-        when(this.authController.register(userRegisterDTO)).thenReturn(userDTO);
+        when(this.authService.register(userRegisterDTO)).thenReturn(userDTO);
 
         ResponseEntity<?> result = authResource.register(userRegisterDTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -63,7 +65,7 @@ public class AuthenticationResourceTest {
 
     @Test
     void register_whenPasswordsDoNotMatch_throwsConflictException() {
-        when(this.authController.register(userRegisterDTO))
+        when(this.authService.register(userRegisterDTO))
                 .thenThrow(new ConflictException("Las contraseñas proporcionadas no coinciden"));
 
         assertThrows(ConflictException.class, () -> {
@@ -73,7 +75,7 @@ public class AuthenticationResourceTest {
 
     @Test
     void register_whenDniExists_throwsBadRequestException() {
-        when(this.authController.register(userRegisterDTO))
+        when(this.authService.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Dni proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
@@ -83,7 +85,7 @@ public class AuthenticationResourceTest {
 
     @Test
     void register_whenEmailExists_throwsBadRequestException() {
-        when(this.authController.register(userRegisterDTO))
+        when(this.authService.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Email proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
@@ -106,7 +108,7 @@ public class AuthenticationResourceTest {
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setEmail(EXAMPLE_EMAIL);
         sessionDTO.setJwt(MOCKED_JWT);
-        when(this.authController.login(loginDTO)).thenReturn(sessionDTO);
+        when(this.authService.login(loginDTO)).thenReturn(sessionDTO);
 
         ResponseEntity<?> result = authResource.login(loginDTO);
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -123,11 +125,26 @@ public class AuthenticationResourceTest {
 
     @Test
     void login_whenInvalidCredentials_throwsUnauthorizedException(){
-        when(this.authController.login(loginDTO))
+        when(this.authService.login(loginDTO))
                 .thenThrow(new UnauthorizedException("El email o contraseña proporcionados son incorrectos"));
 
         assertThrows(UnauthorizedException.class, () -> {
             authResource.login(loginDTO);
+        });
+    }
+    @Test
+    void logOut_Successful(){
+        String EXAMPLE_TOKEN = "Bearer sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
+        doNothing().when(authService).logOut(anyString());
+
+        ResponseEntity<?> result = authResource.logOut(EXAMPLE_TOKEN);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    void logOut_whenTokenIsNull_throwsUnauthorizedException(){
+        assertThrows(UnauthorizedException.class, () -> {
+            authResource.logOut(null);
         });
     }
 }
