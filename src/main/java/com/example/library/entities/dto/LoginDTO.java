@@ -11,4 +11,11 @@ public class LoginDTO {
     private String email;
     @NotBlank(message = "La password es obligatoria")
     private String password;
+
+    public LoginDTO(){}
+
+    public LoginDTO(String email, String password){
+        this.email = email;
+        this.password = password;
+    }
 }

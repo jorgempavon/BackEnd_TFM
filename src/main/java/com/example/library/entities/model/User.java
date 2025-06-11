@@ -1,6 +1,7 @@
 package com.example.library.entities.model;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
+import com.example.library.entities.dto.UserSaveDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,10 +57,11 @@ public class User {
         this.lastName = userDTO.getLastName();
     }
 
-    public void updateFromUserRegisterDTO(UserRegisterDTO userRegisterDTO){
-        this.dni = userRegisterDTO.getDni();
-        this.email = userRegisterDTO.getEmail();
-        this.name = userRegisterDTO.getName();
-        this.lastName = userRegisterDTO.getLastName();
+    public void updateFromUserSaveDTO(UserSaveDTO userSaveDTO){
+        this.dni = userSaveDTO.getDni();
+        this.email = userSaveDTO.getEmail();
+        this.name = userSaveDTO.getName();
+        this.lastName = userSaveDTO.getLastName();
+        this.password = userSaveDTO.getPasswordEncoded();
     }
 }

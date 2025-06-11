@@ -15,6 +15,15 @@ public class UserDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
     private String lastName;
-
     private Boolean isAdmin;
+
+    public UserDTO (){}
+
+    public UserDTO (String name, String email,String dni,String lastName,Boolean isAdmin){
+        this.name = name;
+        this.email = email;
+        this.dni = dni;
+        this.lastName = lastName;
+        this.isAdmin = isAdmin;
+    }
 }
