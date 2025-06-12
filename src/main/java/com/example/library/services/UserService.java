@@ -114,11 +114,11 @@ public class UserService {
         validateDataToUpdate(id,userUpdateDTO);
 
         User user = this.userRepository.findById(id).get();
-        updateUserFromUserUpdateDto(user, userUpdateDTO);
+        updateUserFromUserUpdateDto(user,userUpdateDTO);
         this.userRepository.save(user);
 
-        boolean isUpdateToAdmin = userUpdateDTO.getIsAdmin()!= null && userUpdateDTO.getIsAdmin();
-        boolean isUpdateToClient = userUpdateDTO.getIsAdmin()!= null && !userUpdateDTO.getIsAdmin();
+        boolean isUpdateToAdmin = userUpdateDTO.getIsAdmin() != null && userUpdateDTO.getIsAdmin();
+        boolean isUpdateToClient = userUpdateDTO.getIsAdmin() != null && !userUpdateDTO.getIsAdmin();
         if (isUpdateToAdmin && this.clientRepository.existsByUserId(id)){
             Client clientToDelete = this.clientRepository.findByUserId(id).get();
             this.clientRepository.delete(clientToDelete);
@@ -203,9 +203,9 @@ public class UserService {
                 userUpdateDTO.getDni()
         );
         Boolean existUserWithEmail = (Boolean) responseExistsUser.get("statusEmail")
-                && Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
+                && !Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
         Boolean existUserWithDni =  (Boolean) responseExistsUser.get("statusDni")
-                && Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
+                && !Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
 
         if (existUserWithEmail || existUserWithDni) {
             throw new BadRequestException((String) responseExistsUser.get("message"));

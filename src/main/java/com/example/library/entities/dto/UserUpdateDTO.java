@@ -21,4 +21,14 @@ public class UserUpdateDTO {
 
     private Boolean isAdmin;
 
+    public UserUpdateDTO(String dni, String email, String password, String repeatPassword, String name, String lastName, Boolean isAdmin) {
+        this.dni = dni;
+        this.email = email;
+        this.password = password;
+        this.repeatPassword = repeatPassword;
+        this.name = name;
+        this.lastName = lastName;
+        this.isAdmin = isAdmin;
+    }
+
 }
