@@ -2,10 +2,7 @@ package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.UserCreateDTO;
-import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.entities.dto.UserSaveDTO;
+import com.example.library.entities.dto.*;
 import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
@@ -102,6 +99,9 @@ public class UserService {
 
         this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
         return this.save(userSaveDTO);
+    }
+    public UserDTO update(String id, UserUpdateDTO userUpdateDTO){
+
     }
 
     public void delete(Long id){
