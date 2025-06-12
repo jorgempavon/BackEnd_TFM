@@ -1,6 +1,7 @@
 package com.example.library.entities.dto;
 
 import com.example.library.entities.dto.validator.AtLeastOneField;
+import com.example.library.entities.model.User;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,11 +14,11 @@ public class UserUpdateDTO {
     private String dni;
     private String email;
     private String password;
-
     private String repeatPassword;
     private String name;
 
     private String lastName;
 
     private Boolean isAdmin;
+
 }

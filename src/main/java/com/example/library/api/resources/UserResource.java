@@ -1,5 +1,6 @@
 package com.example.library.api.resources;
 
+import com.example.library.entities.dto.UserUpdateDTO;
 import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -37,5 +38,11 @@ public class UserResource {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         this.userService.delete(id);
         return ResponseEntity.ok().build();
+    }
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO){
+        UserDTO userDTO = this.userService.update(id,userUpdateDTO);
+        return ResponseEntity.ok(userDTO);
     }
 }
