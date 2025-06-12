@@ -50,7 +50,15 @@ public class UserService {
             isAdmin = true;
         }
 
-        return user.getUserDTO(isAdmin);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setId(user.getId());
+        newUserDTO.setDni(user.getDni());
+        newUserDTO.setEmail(user.getEmail());
+        newUserDTO.setName(user.getName());
+        newUserDTO.setLastName(user.getLastName());
+        newUserDTO.setIsAdmin(isAdmin);
+
+        return newUserDTO;
     }
 
     public UserDTO create(UserCreateDTO userCreateDTO){
@@ -211,7 +219,11 @@ public class UserService {
     private UserDTO save(UserSaveDTO userSaveDTO){
         boolean isAdmin = userSaveDTO.getIsAdmin();
         User user = new User();
-        user.updateFromUserSaveDTO(userSaveDTO);
+        user.setDni(userSaveDTO.getDni());
+        user.setEmail(userSaveDTO.getEmail());
+        user.setName(userSaveDTO.getName());
+        user.setLastName(userSaveDTO.getLastName());
+        user.setPassword(userSaveDTO.getPasswordEncoded());
         this.userRepository.save(user);
 
         if (isAdmin){

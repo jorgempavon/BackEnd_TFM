@@ -73,7 +73,14 @@ public class UserServiceTest {
     @Test
     void findById_successful(){
         User user = new User("example", "test@example.com", "12345678A", "Last example");
-        UserDTO userDTO = user.getUserDTO(false);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setDni(user.getDni());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setName(user.getName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setIsAdmin(false);
+
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
         when(userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
@@ -126,6 +133,7 @@ public class UserServiceTest {
     void create_registerDto_whenExistsUserEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userRegisterDTO);
@@ -135,6 +143,7 @@ public class UserServiceTest {
     void create_registerDto_whenExistsUserDni_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
+        when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userRegisterDTO);
@@ -145,6 +154,7 @@ public class UserServiceTest {
     void create_createDto_whenExistsEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userCreateDTO);
@@ -154,6 +164,7 @@ public class UserServiceTest {
     void create_createDto_whenExistsDni_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
+        when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userCreateDTO);
