@@ -5,6 +5,8 @@ import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
+import com.example.library.entities.model.Admin;
+import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
 import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.ClientRepository;
@@ -67,7 +69,7 @@ public class UserServiceTest {
             EXAMPLE_LAST_NAME,
             true
     );
-
+    private final User user = new User(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_LAST_NAME);
     @Test
     void findById_successful(){
         User user = new User("example", "test@example.com", "12345678A", "Last example");
@@ -178,8 +180,7 @@ public class UserServiceTest {
     void create_regiterDto_whenIsNotValidEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD)
-        ;
+        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
         doThrow(new BadRequestException("El correo proporcionado no es válido"))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
@@ -187,5 +188,38 @@ public class UserServiceTest {
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userRegisterDTO);
         });
+    }
+
+    @Test
+    void delete_successful_whenUserNotExists(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
+        when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
+        when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
+
+        this.userService.delete(EXAMPLE_ID);
+    }
+
+    @Test
+    void delete_successful_whenUserIsClient(){
+        Client client =  new Client();
+        client.setUser(user);
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
+        when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
+        when(this.clientRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(client));
+
+        this.userService.delete(EXAMPLE_ID);
+    }
+
+    @Test
+    void delete_successful_whenUserIsAdmin(){
+        Admin admin =  new Admin();
+        admin.setUser(user);
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
+        when(this.adminRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(admin));
+        when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
+
+        this.userService.delete(EXAMPLE_ID);
     }
 }

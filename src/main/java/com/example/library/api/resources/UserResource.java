@@ -33,7 +33,7 @@ public class UserResource {
         return ResponseEntity.created(location).body(responseUserDTO);
     }
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         this.userService.delete(id);
         return ResponseEntity.ok().build();
