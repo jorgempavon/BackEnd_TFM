@@ -2,7 +2,7 @@ name: Java CI - Run Tests Only
 
 on:
   push:
-    branches: [ develop, Sprint_1, Issue#9, issue#10 ]
+    branches: [ develop, Sprint_1, Issue#9, issue#11 ]
 
 jobs:
   test:
