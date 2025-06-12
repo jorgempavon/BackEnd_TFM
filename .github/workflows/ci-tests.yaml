@@ -2,7 +2,7 @@ name: Java CI - Run Tests Only
 
 on:
   push:
-    branches: [ develop, Sprint_1, Issue#9 ]
+    branches: [ develop, Sprint_1, Issue#9, issue#10 ]
 
 jobs:
   test:
@@ -25,5 +25,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven
 
-      - name: Build and run tests
-        run: mvn clean verify
+      - name: Verificar application-test.properties
+        run: cat src/main/resources/application-test.properties
+
+      - name: Build and run tests con perfil test y debug
+        run: mvn clean verify -Dspring.profiles.active=test -X
