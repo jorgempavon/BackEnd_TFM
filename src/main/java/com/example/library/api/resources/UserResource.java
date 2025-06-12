@@ -51,7 +51,7 @@ public class UserResource {
         if (isAdmin){
             userUpdateDTO.setPassword(null);
             userUpdateDTO.setRepeatPassword(null);
-        }else {
+        } else {
             userUpdateDTO.setIsAdmin(null);
         }
 
