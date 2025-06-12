@@ -32,4 +32,10 @@ public class UserResource {
         URI location = URI.create("/users/" + responseUserDTO.getId());
         return ResponseEntity.created(location).body(responseUserDTO);
     }
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        this.userService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -42,27 +42,6 @@ public class UserService {
         this.passwordGenerator = passwordGenerator;
         this.mailSender = mailSender;
     }
-    public Map<String, Object> checkUserExistence(String email, String dni) {
-        Map<String, Object> validationResult = new HashMap<>();
-
-        String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
-
-        validationResult.put("status", false);
-
-        if (this.userRepository.existsByEmail(email)) {
-            validationResult.put("status", true);
-            validationResult.put("message", "El email " + baseMessage);
-        }
-
-        if ((Boolean) validationResult.get("status") && this.userRepository.existsByDni(dni)) {
-            validationResult.put("message", "El email y dni " + baseMessage);
-        } else if (this.userRepository.existsByDni(dni)) {
-            validationResult.put("status", true);
-            validationResult.put("message", "El dni " + baseMessage);
-        }
-
-        return validationResult;
-    }
     public UserDTO findById(Long id){
         if(!this.userRepository.existsById(id)){
             throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
@@ -123,6 +102,42 @@ public class UserService {
 
         this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
         return this.save(userSaveDTO);
+    }
+
+    public void delete(Long id){
+        if (this.clientRepository.existsByUserId(id)){
+            Client client = this.clientRepository.findByUserId(id).get();
+            this.clientRepository.delete(client);
+        } else if (this.adminRepository.existsByUserId(id)) {
+            Admin admin = this.adminRepository.findByUserId(id).get();
+            this.adminRepository.delete(admin);
+        }
+
+        if (this.userRepository.existsById(id)){
+            User user = this.userRepository.findById(id).get();
+            this.userRepository.delete(user);
+        }
+    }
+    public Map<String, Object> checkUserExistence(String email, String dni) {
+        Map<String, Object> validationResult = new HashMap<>();
+
+        String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
+
+        validationResult.put("status", false);
+
+        if (this.userRepository.existsByEmail(email)) {
+            validationResult.put("status", true);
+            validationResult.put("message", "El email " + baseMessage);
+        }
+
+        if ((Boolean) validationResult.get("status") && this.userRepository.existsByDni(dni)) {
+            validationResult.put("message", "El email y dni " + baseMessage);
+        } else if (this.userRepository.existsByDni(dni)) {
+            validationResult.put("status", true);
+            validationResult.put("message", "El dni " + baseMessage);
+        }
+
+        return validationResult;
     }
     @Transactional
     private UserDTO save(UserSaveDTO userSaveDTO){

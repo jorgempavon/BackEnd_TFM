@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,5 +76,12 @@ public class UserResourceTest {
         assertThrows(BadRequestException.class, () -> {
             userResource.create(userCreateDto);
         });
+    }
+
+    @Test
+    void  deleteUser_successful(){
+        doNothing().when(userService).delete(EXAMPLE_ID);
+        ResponseEntity<?> result = userResource.delete(EXAMPLE_ID);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 }
