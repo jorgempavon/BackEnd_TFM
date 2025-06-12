@@ -25,8 +25,5 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven
 
-      - name: Verificar application-test.properties
-        run: cat src/main/resources/application-test.properties
-
       - name: Build and run tests con perfil test y debug
         run: mvn clean verify -Dspring.profiles.active=test -X
