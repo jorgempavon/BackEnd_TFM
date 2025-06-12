@@ -3,6 +3,8 @@ package com.example.library.resources;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.resources.UserResource;
+import com.example.library.entities.dto.UserUpdateDTO;
+import com.example.library.entities.model.User;
 import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -10,9 +12,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,9 +42,11 @@ public class UserResourceTest {
     private final String EXAMPLE_DNI = "12345678A";
     private final String EXAMPLE_LAST_NAME = "last name example";
     private final Boolean EXAMPLE_IS_ADMIN = true;
+    private final String EXAMPLE_PASSWORD = "pass123";
     private final UserCreateDTO userCreateDto = new UserCreateDTO(EXAMPLE_DNI, EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
     private final UserDTO userDTO = new UserDTO(EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
-
+    private final UserUpdateDTO userClientUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASSWORD
+            ,EXAMPLE_PASSWORD,EXAMPLE_NAME,EXAMPLE_LAST_NAME,false);
 
     @Test
     void findById_successful(){
@@ -84,4 +97,35 @@ public class UserResourceTest {
         ResponseEntity<?> result = userResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
+
+    @Test
+    void update_asAdmin_returnsUpdatedUserDTO() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(EXAMPLE_ID);
+        userDTO.setDni(EXAMPLE_DNI);
+        userDTO.setEmail(EXAMPLE_EMAIL);
+        userDTO.setName(EXAMPLE_NAME);
+        userDTO.setLastName(EXAMPLE_LAST_NAME);
+        userDTO.setIsAdmin(false);
+
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken("admin", null, authorities);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(userService.update(EXAMPLE_ID, userClientUpdateDTO)).thenReturn(userDTO);
+
+        ResponseEntity<?> response = userResource.update(EXAMPLE_ID, userClientUpdateDTO);
+        UserDTO responseBody = (UserDTO) response.getBody();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals(responseBody.getId(), EXAMPLE_ID);
+        assertEquals(responseBody.getDni(), EXAMPLE_DNI);
+        assertEquals(responseBody.getEmail(), EXAMPLE_EMAIL);
+        assertEquals(responseBody.getName(), EXAMPLE_NAME);
+        assertEquals(responseBody.getLastName(), EXAMPLE_LAST_NAME);
+        assertEquals(responseBody.getIsAdmin(), false);
+    }
+
 }

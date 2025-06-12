@@ -39,29 +39,4 @@ public class User {
         this.email=email;
         this.lastName=lastName;
     }
-    public UserDTO getUserDTO(Boolean isAdmin){
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setId(this.id);
-        newUserDTO.setDni(this.dni);
-        newUserDTO.setEmail(this.email);
-        newUserDTO.setName(this.name);
-        newUserDTO.setLastName(this.lastName);
-        newUserDTO.setIsAdmin(isAdmin);
-        return newUserDTO;
-    }
-
-    public void updateFromUserDTO(UserDTO userDTO){
-        this.dni = userDTO.getDni();
-        this.email = userDTO.getEmail();
-        this.name = userDTO.getName();
-        this.lastName = userDTO.getLastName();
-    }
-
-    public void updateFromUserSaveDTO(UserSaveDTO userSaveDTO){
-        this.dni = userSaveDTO.getDni();
-        this.email = userSaveDTO.getEmail();
-        this.name = userSaveDTO.getName();
-        this.lastName = userSaveDTO.getLastName();
-        this.password = userSaveDTO.getPasswordEncoded();
-    }
 }

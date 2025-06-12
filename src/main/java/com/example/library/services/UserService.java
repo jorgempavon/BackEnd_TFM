@@ -1,11 +1,9 @@
 package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
+import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.UserCreateDTO;
-import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.entities.dto.UserSaveDTO;
+import com.example.library.entities.dto.*;
 import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
@@ -52,7 +50,15 @@ public class UserService {
             isAdmin = true;
         }
 
-        return user.getUserDTO(isAdmin);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setId(user.getId());
+        newUserDTO.setDni(user.getDni());
+        newUserDTO.setEmail(user.getEmail());
+        newUserDTO.setName(user.getName());
+        newUserDTO.setLastName(user.getLastName());
+        newUserDTO.setIsAdmin(isAdmin);
+
+        return newUserDTO;
     }
 
     public UserDTO create(UserCreateDTO userCreateDTO){
@@ -103,7 +109,33 @@ public class UserService {
         this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
         return this.save(userSaveDTO);
     }
+    @Transactional
+    public UserDTO update(Long id, UserUpdateDTO userUpdateDTO){
+        validateDataToUpdate(id,userUpdateDTO);
 
+        User user = this.userRepository.findById(id).get();
+        updateUserFromUserUpdateDto(user,userUpdateDTO);
+        this.userRepository.save(user);
+
+        boolean isUpdateToAdmin = userUpdateDTO.getIsAdmin() != null && userUpdateDTO.getIsAdmin();
+        boolean isUpdateToClient = userUpdateDTO.getIsAdmin() != null && !userUpdateDTO.getIsAdmin();
+        if (isUpdateToAdmin && this.clientRepository.existsByUserId(id)){
+            Client clientToDelete = this.clientRepository.findByUserId(id).get();
+            this.clientRepository.delete(clientToDelete);
+            Admin admin = new Admin();
+            admin.setUser(user);
+            this.adminRepository.save(admin);
+        } else if (isUpdateToClient && this.adminRepository.existsByUserId(id)) {
+            Admin adminToDelete = this.adminRepository.findByUserId(id).get();
+            this.adminRepository.delete(adminToDelete);
+            Client client = new Client();
+            client.setUser(user);
+            this.clientRepository.save(client);
+        }
+
+        boolean userIsAdmin = this.adminRepository.existsByUserId(id);
+        return new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),userIsAdmin);
+    }
     public void delete(Long id){
         if (this.clientRepository.existsByUserId(id)){
             Client client = this.clientRepository.findByUserId(id).get();
@@ -124,26 +156,74 @@ public class UserService {
         String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
 
         validationResult.put("status", false);
-
-        if (this.userRepository.existsByEmail(email)) {
+        validationResult.put("statusEmail", false);
+        validationResult.put("statusDni", false);
+        if (email != null && this.userRepository.existsByEmail(email)) {
             validationResult.put("status", true);
             validationResult.put("message", "El email " + baseMessage);
+            validationResult.put("statusEmail", true);
+            validationResult.put("idUserByEmail",this.userRepository.findByEmail(email).get().getId());
         }
 
-        if ((Boolean) validationResult.get("status") && this.userRepository.existsByDni(dni)) {
+        if ((Boolean) validationResult.get("status") && dni!=null && this.userRepository.existsByDni(dni)) {
             validationResult.put("message", "El email y dni " + baseMessage);
-        } else if (this.userRepository.existsByDni(dni)) {
+        } else if (dni!=null && this.userRepository.existsByDni(dni)) {
             validationResult.put("status", true);
             validationResult.put("message", "El dni " + baseMessage);
+            validationResult.put("statusDni", true);
+            validationResult.put("idUserByDni",this.userRepository.findByDni(dni).get().getId());
         }
 
         return validationResult;
+    }
+    private void updateUserFromUserUpdateDto(User user, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.getDni() != null && !userUpdateDTO.getDni().equals(user.getDni())) {
+            user.setDni(userUpdateDTO.getDni());
+        }
+        if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(user.getEmail())) {
+            user.setEmail(userUpdateDTO.getEmail());
+        }
+        if (userUpdateDTO.getName() != null && !userUpdateDTO.getName().equals(user.getName())) {
+            user.setName(userUpdateDTO.getName());
+        }
+        if (userUpdateDTO.getLastName() != null && !userUpdateDTO.getLastName().equals(user.getLastName())) {
+            user.setLastName(userUpdateDTO.getLastName());
+        }
+        if (userUpdateDTO.getPassword() != null) {
+            String encodedPassword = this.passwordEncoder.encode(userUpdateDTO.getPassword());
+            user.setPassword(encodedPassword);
+        }
+    }
+    private void validateDataToUpdate(Long id,UserUpdateDTO userUpdateDTO){
+        if (!this.userRepository.existsById(id)){
+            throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
+        }
+        Map<String, Object> responseExistsUser = this.checkUserExistence(
+                userUpdateDTO.getEmail(),
+                userUpdateDTO.getDni()
+        );
+        Boolean existUserWithEmail = (Boolean) responseExistsUser.get("statusEmail")
+                && !Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
+        Boolean existUserWithDni =  (Boolean) responseExistsUser.get("statusDni")
+                && !Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
+
+        if (existUserWithEmail || existUserWithDni) {
+            throw new BadRequestException((String) responseExistsUser.get("message"));
+        }
+        boolean isPasswordProvided = (userUpdateDTO.getPassword() != null || userUpdateDTO.getRepeatPassword() != null);
+        if ( isPasswordProvided &&  !Objects.equals(userUpdateDTO.getPassword(), userUpdateDTO.getRepeatPassword())){
+            throw new ConflictException("Las contraseñas proporcionadas no coinciden");
+        }
     }
     @Transactional
     private UserDTO save(UserSaveDTO userSaveDTO){
         boolean isAdmin = userSaveDTO.getIsAdmin();
         User user = new User();
-        user.updateFromUserSaveDTO(userSaveDTO);
+        user.setDni(userSaveDTO.getDni());
+        user.setEmail(userSaveDTO.getEmail());
+        user.setName(userSaveDTO.getName());
+        user.setLastName(userSaveDTO.getLastName());
+        user.setPassword(userSaveDTO.getPasswordEncoded());
         this.userRepository.save(user);
 
         if (isAdmin){
@@ -157,7 +237,14 @@ public class UserService {
             this.clientRepository.save(client);
         }
 
-        return user.getUserDTO(isAdmin);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setId(user.getId());
+        newUserDTO.setDni(user.getDni());
+        newUserDTO.setEmail(user.getEmail());
+        newUserDTO.setName(user.getName());
+        newUserDTO.setLastName(user.getLastName());
+        newUserDTO.setIsAdmin(isAdmin);
+        return newUserDTO;
     }
     private void sendNewAccountEmail(String email, String passwordText) {
         try{
