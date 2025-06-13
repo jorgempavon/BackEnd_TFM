@@ -11,6 +11,7 @@ import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -109,6 +110,42 @@ public class UserService {
         this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
         return this.save(userSaveDTO);
     }
+    public List<UserDTO> findByNameAndDniAndEmail(String name, String dni, String email) {
+        Specification<User> spec = Specification.where(null);
+
+        if (name != null && !name.isBlank()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%")
+            );
+        }
+
+        if (dni != null && !dni.isBlank()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("dni")), "%" + dni.toLowerCase() + "%")
+            );
+        }
+
+        if (email != null && !email.isBlank()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%")
+            );
+        }
+
+        List<User> users = this.userRepository.findAll(spec);
+        List<UserDTO> responseList= new ArrayList<>();
+
+        for (User user : users) {
+            UserDTO newUserDto = new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),false);
+            newUserDto.setId(user.getId());
+            if (this.adminRepository.existsByUserId(user.getId())){
+                newUserDto.setIsAdmin(true);
+            }
+            responseList.add(newUserDto);
+        }
+
+        return responseList;
+    }
+
     @Transactional
     public UserDTO update(Long id, UserUpdateDTO userUpdateDTO){
         validateDataToUpdate(id,userUpdateDTO);

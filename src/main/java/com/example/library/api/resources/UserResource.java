@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 
 @RestController
@@ -57,5 +58,14 @@ public class UserResource {
 
         UserDTO userDTO = this.userService.update(id,userUpdateDTO);
         return ResponseEntity.ok(userDTO);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> findByNameAndDniAndEmail(@RequestParam(required = false) String name,
+                                                             @RequestParam(required = false) String dni,
+                                                             @RequestParam(required = false) String email){
+        List<UserDTO> listUsers =  this.userService.findByNameAndDniAndEmail(name,dni,email);
+        return ResponseEntity.ok(listUsers);
     }
 }
