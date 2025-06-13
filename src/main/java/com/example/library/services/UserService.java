@@ -79,7 +79,7 @@ public class UserService {
                 passwordEncoded,
                 userCreateDTO.getIsAdmin()
         );
-        String userFullName = userSaveDTO.getName() + userSaveDTO.getLastName();
+        String userFullName = userSaveDTO.getName() +" "+ userSaveDTO.getLastName();
         this.emailService.newAccountEmail(userSaveDTO.getEmail(),userFullName,generatedPassword);
         return this.save(userSaveDTO);
     }
@@ -103,7 +103,7 @@ public class UserService {
                 passwordEncoded,
                 false
         );
-        String userFullName = userRegisterDTO.getName() + userRegisterDTO.getLastName();
+        String userFullName = userRegisterDTO.getName()+" "+ userRegisterDTO.getLastName();
         this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
         return this.save(userSaveDTO);
     }
@@ -182,7 +182,7 @@ public class UserService {
 
         if (this.userRepository.existsById(id)){
             User user = this.userRepository.findById(id).get();
-            String userFullName = user.getName() + user.getLastName();
+            String userFullName = user.getName() +" "+ user.getLastName();
             this.emailService.deleteAccountEmail(user.getEmail(),userFullName);
             this.userRepository.delete(user);
         }
