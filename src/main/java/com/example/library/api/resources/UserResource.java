@@ -1,6 +1,8 @@
 package com.example.library.api.resources;
 
-import com.example.library.entities.dto.UserUpdateDTO;
+import com.example.library.config.CustomUserDetails;
+import com.example.library.entities.dto.UserAdminUpdateDTO;
+import com.example.library.entities.dto.UserSelfUpdateDTO;
 import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -8,8 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -42,21 +43,17 @@ public class UserResource {
         this.userService.delete(id);
         return ResponseEntity.ok().build();
     }
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserAdminUpdateDTO userAdminUpdateDTO){
+        UserDTO userDTO = this.userService.update(id,userAdminUpdateDTO);
+        return ResponseEntity.ok(userDTO);
+    }
 
-        if (isAdmin){
-            userUpdateDTO.setPassword(null);
-            userUpdateDTO.setRepeatPassword(null);
-        } else {
-            userUpdateDTO.setIsAdmin(null);
-        }
-
-        UserDTO userDTO = this.userService.update(id,userUpdateDTO);
+    @PutMapping("/myself")
+    public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody UserSelfUpdateDTO userSelfUpdateDTO){
+        Long id = userDetails.getId();
+        UserDTO userDTO = this.userService.update(id, userSelfUpdateDTO);
         return ResponseEntity.ok(userDTO);
     }
 

@@ -6,7 +6,6 @@ import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.entities.dto.UserUpdateDTO;
 import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
@@ -19,8 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
