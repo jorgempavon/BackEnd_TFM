@@ -51,6 +51,14 @@ public class UserService {
         return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
     }
 
+    public boolean isUserAdminByEmail(String email){
+        if(!this.userRepository.existsByEmail(email)){
+            throw new NotFoundException("No existe ningún usuario con el email: "+email);
+        }
+        Long userId = this.userRepository.findByEmail(email).get().getId();
+        return this.adminRepository.existsByUserId(userId);
+    }
+
     public UserDTO create(UserCreateDTO userCreateDTO){
         Map<String, Object> responseExistsUser = this.checkUserExistence(
                 userCreateDTO.getEmail(),

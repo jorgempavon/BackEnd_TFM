@@ -29,11 +29,11 @@ public class AuthenticationResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<SessionDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         SessionDTO responseLogin = this.authenticationService.login(loginDTO);
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + responseLogin.getJwt())
-                .build();
+                .body(responseLogin);
     }
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logOut")
