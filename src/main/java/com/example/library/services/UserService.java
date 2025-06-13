@@ -48,16 +48,7 @@ public class UserService {
         if(this.adminRepository.existsByUserId(id)){
             isAdmin = true;
         }
-
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setId(user.getId());
-        newUserDTO.setDni(user.getDni());
-        newUserDTO.setEmail(user.getEmail());
-        newUserDTO.setName(user.getName());
-        newUserDTO.setLastName(user.getLastName());
-        newUserDTO.setIsAdmin(isAdmin);
-
-        return newUserDTO;
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
     }
 
     public UserDTO create(UserCreateDTO userCreateDTO){
@@ -132,8 +123,7 @@ public class UserService {
         List<UserDTO> responseList= new ArrayList<>();
 
         for (User user : users) {
-            UserDTO newUserDto = new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),false);
-            newUserDto.setId(user.getId());
+            UserDTO newUserDto = new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),false);
             if (this.adminRepository.existsByUserId(user.getId())){
                 newUserDto.setIsAdmin(true);
             }
@@ -148,13 +138,7 @@ public class UserService {
         validateDataToUpdate(id,userAdminUpdateDTO);
 
         User user = this.userRepository.findById(id).get();
-        Map<String, String> updates = Map.of(
-                "dni", userAdminUpdateDTO.getDni(),
-                "email", userAdminUpdateDTO.getEmail(),
-                "name", userAdminUpdateDTO.getName(),
-                "lastName", userAdminUpdateDTO.getLastName()
-        );
-        updateUserData(user,updates);
+        updateUserData(user,userAdminUpdateDTO);
         this.userRepository.save(user);
 
         boolean isUpdateToAdmin = userAdminUpdateDTO.getIsAdmin() != null && userAdminUpdateDTO.getIsAdmin();
@@ -174,21 +158,14 @@ public class UserService {
         }
 
         boolean userIsAdmin = this.adminRepository.existsByUserId(id);
-        return new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),userIsAdmin);
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),userIsAdmin);
     }
-
     @Transactional
     public UserDTO update(Long id, UserSelfUpdateDTO userSelfUpdateDTO){
         validateDataToUpdate(id, userSelfUpdateDTO);
-        User user = this.userRepository.findById(id).get();
 
-        Map<String, String> updates = Map.of(
-                "dni", userSelfUpdateDTO.getDni(),
-                "email", userSelfUpdateDTO.getEmail(),
-                "name", userSelfUpdateDTO.getName(),
-                "lastName", userSelfUpdateDTO.getLastName()
-        );
-        updateUserData(user,updates);
+        User user = this.userRepository.findById(id).get();
+        updateUserData(user,userSelfUpdateDTO);
 
         if (userSelfUpdateDTO.getPassword() != null) {
             String encodedPassword = this.passwordEncoder.encode(userSelfUpdateDTO.getPassword());
@@ -197,7 +174,7 @@ public class UserService {
         this.userRepository.save(user);
 
         boolean isAdminUser = this.adminRepository.existsByUserId(id);
-        return new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdminUser);
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdminUser);
     }
     @Transactional
     public void delete(Long id){
@@ -242,17 +219,14 @@ public class UserService {
 
         return validationResult;
     }
-    private void updateUserData(User user, Map<String, String> updates) {
-        String newDni = updates.get("dni");
-        String newEmail = updates.get("email");
-        String newName = updates.get("name");
-        String newLastName = updates.get("lastName");
+    private void updateUserData(User user, UserSelfUpdateDTO userSelfUpdateDTO) {
+        String newDni = userSelfUpdateDTO.getDni();
+        String newEmail = userSelfUpdateDTO.getEmail();
+        String newName = userSelfUpdateDTO.getName();
+        String newLastName = userSelfUpdateDTO.getLastName();
 
         if (newDni != null && !newDni.equals(user.getDni())) {
             user.setDni(newDni);
-        }
-        if (newEmail != null && !newEmail.equals(user.getEmail())) {
-            user.setEmail(newEmail);
         }
         if (newName != null && !newName.equals(user.getName())) {
             user.setName(newName);
@@ -260,8 +234,45 @@ public class UserService {
         if (newLastName != null && !newLastName.equals(user.getLastName())) {
             user.setLastName(newLastName);
         }
+        if (newEmail != null && !newEmail.equals(user.getEmail())) {
+            this.emailService.oldAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName());
+            this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName(),"");
+            user.setEmail(newEmail);
+        }
     }
 
+    private void updateUserData(User user, UserAdminUpdateDTO userAdminUpdateDTO) {
+        String newDni = userAdminUpdateDTO.getDni();
+        String newEmail = userAdminUpdateDTO.getEmail();
+        String newName = userAdminUpdateDTO.getName();
+        String newLastName = userAdminUpdateDTO.getLastName();
+
+        if (newDni != null && !newDni.equals(user.getDni())) {
+            user.setDni(newDni);
+        }
+        if (newName != null && !newName.equals(user.getName())) {
+            user.setName(newName);
+        }
+        if (newLastName != null && !newLastName.equals(user.getLastName())) {
+            user.setLastName(newLastName);
+        }
+        if (newEmail != null && !newEmail.equals(user.getEmail())) {
+            this.emailService.oldAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName());
+            String infoNewPassword = "";
+            if(userAdminUpdateDTO.getResetPassword()){
+                infoNewPassword = this.passwordGenerator.generateStrongPassword();
+                String newEncodedPassword = this.passwordEncoder.encode(infoNewPassword);
+                user.setPassword(newEncodedPassword);
+            }
+            this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName(),infoNewPassword);
+            user.setEmail(newEmail);
+        } else if (userAdminUpdateDTO.getResetPassword()) {
+            String newPassword = this.passwordGenerator.generateStrongPassword();
+            String newEncodedPassword = this.passwordEncoder.encode(newPassword);
+            this.emailService.regeneratedPasswordEmail(user.getEmail(),user.getName() + " "+ user.getLastName(),newPassword);
+            user.setPassword(newEncodedPassword);
+        }
+    }
     private void validateDataToUpdate(Long id,UserAdminUpdateDTO userAdminUpdateDTO){
         if (!this.userRepository.existsById(id)){
             throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
@@ -284,27 +295,32 @@ public class UserService {
         if (!this.userRepository.existsById(id)){
             throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
         }
+        User currentUser = this.userRepository.findById(id).get();
 
         Map<String, Object> responseExistsUser = this.checkUserExistence(
                 userSelfUpdateDTO.getEmail(),
                 userSelfUpdateDTO.getDni()
         );
-        Boolean existUserWithEmail = (Boolean) responseExistsUser.get("statusEmail")
+        Boolean existUserWithNewEmail = (Boolean) responseExistsUser.get("statusEmail")
                 && !Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
-        Boolean existUserWithDni =  (Boolean) responseExistsUser.get("statusDni")
+        Boolean existUserWithNewDni =  (Boolean) responseExistsUser.get("statusDni")
                 && !Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
 
-        if (existUserWithEmail || existUserWithDni) {
+        if (existUserWithNewEmail || existUserWithNewDni) {
             throw new BadRequestException((String) responseExistsUser.get("message"));
         }
-        String oldPasswordProvided = userSelfUpdateDTO.getOldPassword();
-        String currentUserPassword = this.userRepository.findById(id).get().getPassword();
-        boolean isValidOldPassword = oldPasswordProvided!=null && this.passwordEncoder.matches(oldPasswordProvided,currentUserPassword);
-        boolean isPasswordProvided = (userSelfUpdateDTO.getPassword() != null || userSelfUpdateDTO.getRepeatPassword() != null);
 
-        if ( isValidOldPassword && isPasswordProvided &&
-                !Objects.equals(userSelfUpdateDTO.getPassword(), userSelfUpdateDTO.getRepeatPassword())){
-            throw new ConflictException("Las contraseñas proporcionadas no coinciden");
+        String currentUserPassword = currentUser.getPassword();
+        String oldPassword = userSelfUpdateDTO.getOldPassword();
+        String newPassword = userSelfUpdateDTO.getPassword();
+        String newRepeatPassword = userSelfUpdateDTO.getRepeatPassword();
+
+        boolean oldPasswordProvided = oldPassword != null;
+        boolean isNewPasswordProvided = (newPassword != null || newRepeatPassword != null);
+
+        if ( (oldPasswordProvided && !this.passwordEncoder.matches(oldPassword,currentUserPassword))
+                || (isNewPasswordProvided && !Objects.equals(newPassword, newRepeatPassword))){
+            throw new ConflictException("Las contraseñas proporcionadas no son validas");
         }
     }
     @Transactional
@@ -329,13 +345,6 @@ public class UserService {
             this.clientRepository.save(client);
         }
 
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setId(user.getId());
-        newUserDTO.setDni(user.getDni());
-        newUserDTO.setEmail(user.getEmail());
-        newUserDTO.setName(user.getName());
-        newUserDTO.setLastName(user.getLastName());
-        newUserDTO.setIsAdmin(isAdmin);
-        return newUserDTO;
+        return  new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
     }
 }

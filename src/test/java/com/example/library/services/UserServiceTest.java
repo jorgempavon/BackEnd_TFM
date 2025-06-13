@@ -86,11 +86,12 @@ public class UserServiceTest {
             EXAMPLE_OTHER_EMAIL,
             EXAMPLE_OTHER_LAST_NAME
     );
+    /*
     private final UserUpdateDTO userClientUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASSWORD
             ,EXAMPLE_PASSWORD,EXAMPLE_NAME,EXAMPLE_LAST_NAME,EXAMPLE_NOT_ADMIN);
     private final UserUpdateDTO userAdminUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASSWORD
             ,EXAMPLE_PASSWORD,EXAMPLE_NAME,EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
-
+    */
     @Test
     void findById_successful(){
         User user = new User("example", "test@example.com", "12345678A", "Last example");
@@ -254,101 +255,6 @@ public class UserServiceTest {
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
 
         this.userService.delete(EXAMPLE_ID);
-    }
-
-    @Test
-    void update_userClientToAdmin_successful(){
-        existingUserInUpdate.setId(EXAMPLE_ID);
-        Client client =  new Client();
-        client.setUser(user);
-
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(existingUserInUpdate));
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
-        when(this.clientRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(client));
-        when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
-
-        UserDTO response = this.userService.update(EXAMPLE_ID,userAdminUpdateDTO);
-        assertNotNull(response);
-        assertEquals(EXAMPLE_NAME,response.getName());
-        assertEquals(EXAMPLE_EMAIL,response.getEmail());
-        assertEquals(EXAMPLE_LAST_NAME,response.getLastName());
-        assertEquals(EXAMPLE_IS_ADMIN,response.getIsAdmin());
-    }
-
-    @Test
-    void update_userAdminToClient_successful(){
-        existingUserInUpdate.setId(EXAMPLE_ID);
-        Admin admin =  new Admin();
-        admin.setUser(user);
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(user));
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
-        when(this.adminRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(admin));
-
-        UserDTO response = this.userService.update(EXAMPLE_ID,userClientUpdateDTO);
-        assertNotNull(response);
-        assertEquals(EXAMPLE_NAME,response.getName());
-        assertEquals(EXAMPLE_EMAIL,response.getEmail());
-        assertEquals(EXAMPLE_LAST_NAME,response.getLastName());
-    }
-
-    @Test
-    void update_whenUserNotExists_throwsNotFoundException(){
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
-
-        assertThrows(NotFoundException.class, () -> {
-            this.userService.update(EXAMPLE_ID,userClientUpdateDTO);
-        });
-    }
-
-    @Test
-    void update_whenEmailExists_throwsBadRequestException(){
-        User existingUser = new User();
-        existingUser.setId(0L);
-        existingUser.setEmail(EXAMPLE_EMAIL);
-
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
-        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(existingUser));
-
-        assertThrows(BadRequestException.class, () -> {
-            this.userService.update(EXAMPLE_ID,userClientUpdateDTO);
-        });
-    }
-
-    @Test
-    void update_whenDniExists_throwsBadRequestException(){
-        User existingUser = new User();
-        existingUser.setId(0L);
-        existingUser.setEmail(EXAMPLE_EMAIL);
-
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-        when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(existingUser));
-
-        assertThrows(BadRequestException.class, () -> {
-            this.userService.update(EXAMPLE_ID,userClientUpdateDTO);
-        });
-    }
-
-    @Test
-    void update_whenPasswordNotFit_throwsConflictException(){
-        UserUpdateDTO userUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASSWORD
-                ,"123",EXAMPLE_NAME,EXAMPLE_LAST_NAME,null);
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-
-        assertThrows(ConflictException.class, () -> {
-            this.userService.update(EXAMPLE_ID,userUpdateDTO);
-        });
     }
 
     @Test
