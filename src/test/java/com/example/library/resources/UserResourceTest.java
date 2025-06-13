@@ -23,6 +23,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +48,7 @@ public class UserResourceTest {
     private final UserDTO userDTO = new UserDTO(EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
     private final UserUpdateDTO userClientUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASSWORD
             ,EXAMPLE_PASSWORD,EXAMPLE_NAME,EXAMPLE_LAST_NAME,false);
+    private final List<UserDTO> listUsersDto = List.of(userDTO);
 
     @Test
     void findById_successful(){
@@ -128,4 +130,30 @@ public class UserResourceTest {
         assertEquals(responseBody.getIsAdmin(), false);
     }
 
+    @Test
+    void findByNameAndDniAndEmail_successful_parametersAreEmpty(){
+        when(this.userService.findByNameAndDniAndEmail("","","")).thenReturn(listUsersDto);
+
+        ResponseEntity<?> result = userResource.findByNameAndDniAndEmail("","","");
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(result.getBody(),listUsersDto);
+    }
+
+    @Test
+    void findByNameAndDniAndEmail_successful_parametersAreNull(){
+        when(this.userService.findByNameAndDniAndEmail(null,null,null)).thenReturn(listUsersDto);
+
+        ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(null,null,null);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(result.getBody(),listUsersDto);
+    }
+
+    @Test
+    void findByNameAndDniAndEmail_successful(){
+        when(this.userService.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL)).thenReturn(listUsersDto);
+
+        ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(result.getBody(),listUsersDto);
+    }
 }

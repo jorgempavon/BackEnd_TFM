@@ -18,11 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
     @Mock
-    private JavaMailSender mailSender;
+    private EmailService emailService;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -199,9 +202,9 @@ public class UserServiceTest {
         when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
         when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
 
-        doThrow(new BadRequestException("El correo proporcionado no es válido"))
-                .when(mailSender)
-                .send(any(SimpleMailMessage.class));
+        doThrow(new BadRequestException("El correo proporcionado no existe"))
+                .when(emailService)
+                .newAccountEmail(any(String.class), any(String.class), any(String.class));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userCreateDTO);
@@ -209,13 +212,14 @@ public class UserServiceTest {
     }
 
     @Test
-    void create_regiterDto_whenIsNotValidEmail_throwsBadRequestException(){
+    void create_registerDto_whenIsNotValidEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
         when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
-        doThrow(new BadRequestException("El correo proporcionado no es válido"))
-                .when(mailSender)
-                .send(any(SimpleMailMessage.class));
+
+        doThrow(new BadRequestException("El correo proporcionado no existe"))
+                .when(emailService)
+                .newAccountEmail(any(String.class), any(String.class), any(String.class));
 
         assertThrows(BadRequestException.class, () -> {
             this.userService.create(userRegisterDTO);
@@ -349,22 +353,46 @@ public class UserServiceTest {
             this.userService.update(EXAMPLE_ID,userUpdateDTO);
         });
     }
-/*
+
     @Test
-    void update_whenDniExists_throwsBadRequestException(){
-        User existingUser = new User();
-        existingUser.setId(0L);
-        existingUser.setDni(EXAMPLE_DNI);
+    void findByNameAndDniAndEmail_successful_parametersAreEmpty(){
+        List<User> mockUsers = List.of(user);
 
-        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
-        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
-        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
-        when(this.userRepository.findByDni(EXAMPLE_EMAIL)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
 
-        assertThrows(BadRequestException.class, () -> {
-            this.userService.update(EXAMPLE_ID,userClientUpdateDTO);
-        });
+        List<UserDTO> result = userService.findByNameAndDniAndEmail("", "", "");
+
+        assertEquals(1, result.size());
+        assertEquals(EXAMPLE_NAME, result.get(0).getName());
+        assertEquals(EXAMPLE_DNI, result.get(0).getDni());
+        assertEquals(EXAMPLE_EMAIL, result.get(0).getEmail());
     }
 
- */
+    @Test
+    void findByNameAndDniAndEmail_successful_parametersAreNull(){
+        List<User> mockUsers = List.of(user);
+
+        when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
+
+        List<UserDTO> result = userService.findByNameAndDniAndEmail(null, null, null);
+
+        assertEquals(1, result.size());
+        assertEquals(EXAMPLE_NAME, result.get(0).getName());
+        assertEquals(EXAMPLE_DNI, result.get(0).getDni());
+        assertEquals(EXAMPLE_EMAIL, result.get(0).getEmail());
+    }
+
+    @Test
+    void findByNameAndDniAndEmail_successful(){
+        List<User> mockUsers = List.of(user);
+
+        when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
+
+        List<UserDTO> result = userService.findByNameAndDniAndEmail(EXAMPLE_NAME, EXAMPLE_DNI,EXAMPLE_EMAIL);
+
+        assertEquals(1, result.size());
+        assertEquals(EXAMPLE_NAME, result.get(0).getName());
+        assertEquals(EXAMPLE_DNI, result.get(0).getDni());
+        assertEquals(EXAMPLE_EMAIL, result.get(0).getEmail());
+    }
 }

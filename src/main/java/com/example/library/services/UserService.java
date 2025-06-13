@@ -12,8 +12,6 @@ import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +19,7 @@ import java.util.*;
 
 @Service
 public class UserService {
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
     private final PasswordGenerator passwordGenerator;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -33,13 +31,13 @@ public class UserService {
                        AdminRepository adminRepository,
                        PasswordEncoder passwordEncoder,
                        PasswordGenerator passwordGenerator,
-                       JavaMailSender mailSender) {
+                       EmailService emailService) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.passwordGenerator = passwordGenerator;
-        this.mailSender = mailSender;
+        this.emailService = emailService;
     }
     public UserDTO findById(Long id){
         if(!this.userRepository.existsById(id)){
@@ -81,9 +79,8 @@ public class UserService {
                 passwordEncoded,
                 userCreateDTO.getIsAdmin()
         );
-        String passwordText = ",para acceder utilice la siguiente contraseña: "+ generatedPassword
-                + "\nPorfavor, le recomendamos cambiar la contraseña lo antes posible";
-        this.sendNewAccountEmail(userCreateDTO.getEmail(),passwordText);
+        String userFullName = userSaveDTO.getName() + userSaveDTO.getLastName();
+        this.emailService.newAccountEmail(userSaveDTO.getEmail(),userFullName,generatedPassword);
         return this.save(userSaveDTO);
     }
 
@@ -106,8 +103,8 @@ public class UserService {
                 passwordEncoded,
                 false
         );
-
-        this.sendNewAccountEmail(userRegisterDTO.getEmail(),"");
+        String userFullName = userRegisterDTO.getName() + userRegisterDTO.getLastName();
+        this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
         return this.save(userSaveDTO);
     }
     public List<UserDTO> findByNameAndDniAndEmail(String name, String dni, String email) {
@@ -173,6 +170,7 @@ public class UserService {
         boolean userIsAdmin = this.adminRepository.existsByUserId(id);
         return new UserDTO(user.getName(),user.getEmail(),user.getDni(),user.getLastName(),userIsAdmin);
     }
+    @Transactional
     public void delete(Long id){
         if (this.clientRepository.existsByUserId(id)){
             Client client = this.clientRepository.findByUserId(id).get();
@@ -184,6 +182,8 @@ public class UserService {
 
         if (this.userRepository.existsById(id)){
             User user = this.userRepository.findById(id).get();
+            String userFullName = user.getName() + user.getLastName();
+            this.emailService.deleteAccountEmail(user.getEmail(),userFullName);
             this.userRepository.delete(user);
         }
     }
@@ -282,23 +282,5 @@ public class UserService {
         newUserDTO.setLastName(user.getLastName());
         newUserDTO.setIsAdmin(isAdmin);
         return newUserDTO;
-    }
-    private void sendNewAccountEmail(String email, String passwordText) {
-        try{
-            String subject = "Nueva Cuenta en Bibliokie";
-            String body = "Ha sido dado de alta en Bibliokie" +
-                    passwordText;
-            String endBody="\nEste correro es meramente informativo.\n\nMuchas gracias,\nUn saludo.";
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("bibliokiejackie@gmail.com");
-            message.setTo(email);
-            message.setSubject(subject);
-            message.setText(body + endBody);
-            mailSender.send(message);
-        }
-        catch (Exception e){
-            throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");
-        }
     }
 }
