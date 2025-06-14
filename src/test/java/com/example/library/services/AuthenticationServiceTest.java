@@ -35,21 +35,21 @@ public class AuthenticationServiceTest {
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_LAST_NAME = "last name example";
     private final String EXAMPLE_EMAIL = "test@example.com";
-    private final String EXAMPLE_PASSWORD = "pass123";
+    private final String EXAMPLE_PASS = "pass123";
     private final String EXAMPLE_DNI = "12345678A";
     private final String EXAMPLE_TOKEN = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
     private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,
-            EXAMPLE_PASSWORD,
-            EXAMPLE_PASSWORD,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
             EXAMPLE_NAME,
             EXAMPLE_LAST_NAME
     );
     private final LoginDTO loginDTO = new LoginDTO(
-            EXAMPLE_EMAIL,EXAMPLE_PASSWORD
+            EXAMPLE_EMAIL,EXAMPLE_PASS
     );
-    private final String EXAMPLE_ENCODED_PASSWORD = "encodedPassword";
+    private final String EXAMPLE_ENCODED_PASS = "encodedPassword";
 
     @Test
     void register_successful() {
@@ -79,9 +79,9 @@ public class AuthenticationServiceTest {
         newUserRegisterDto.setName(EXAMPLE_LAST_NAME);
         newUserRegisterDto.setEmail(EXAMPLE_EMAIL);
         newUserRegisterDto.setDni(EXAMPLE_DNI);
-        newUserRegisterDto.setPassword(EXAMPLE_PASSWORD);
-        String EXAMPLE_BAD_PASSWORD = "pass";
-        newUserRegisterDto.setRepeatPassword(EXAMPLE_BAD_PASSWORD);
+        newUserRegisterDto.setPassword(EXAMPLE_PASS);
+        String EXAMPLE_BAD_PASS = "pass";
+        newUserRegisterDto.setRepeatPassword(EXAMPLE_BAD_PASS);
 
         assertThrows(ConflictException.class, () -> {
             authService.register(newUserRegisterDto);
@@ -102,8 +102,8 @@ public class AuthenticationServiceTest {
     void login_successful(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
-        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASSWORD);
-        when(passwordEncoder.matches(EXAMPLE_PASSWORD, EXAMPLE_ENCODED_PASSWORD)).thenReturn(true);
+        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
+        when(passwordEncoder.matches(EXAMPLE_PASS, EXAMPLE_ENCODED_PASS)).thenReturn(true);
         String MOCKED_JWT = "mockedJwtToken";
         when(jwtService.generateToken(mockUserDetails)).thenReturn(MOCKED_JWT);
 
@@ -127,8 +127,8 @@ public class AuthenticationServiceTest {
     void login_whenNotMatchPassword_throwsUnauthorizedException(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsController.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
-        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASSWORD);
-        when(passwordEncoder.matches(EXAMPLE_PASSWORD, EXAMPLE_ENCODED_PASSWORD)).thenReturn(false);
+        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
+        when(passwordEncoder.matches(EXAMPLE_PASS, EXAMPLE_ENCODED_PASS)).thenReturn(false);
 
         assertThrows(UnauthorizedException.class, () -> {
             authService.login(loginDTO);

@@ -24,11 +24,11 @@ public class EmailServiceTest {
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_OLD_EMAIL = "oldTest@example.com";
-    private final String EXAMPLE_PASSWORD = "pass123";
+    private final String EXAMPLE_PASS = "pass123";
     @Test
     void newAccountEmail_successful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.newAccountEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASSWORD);
+        this.emailService.newAccountEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
     @Test
     void deleteAccountEmail_successful(){
@@ -45,13 +45,13 @@ public class EmailServiceTest {
     @Test
     void modifiedAccountEmail_successful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASSWORD);
+        this.emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
 
     @Test
     void regeneratedPasswordEmail_successful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASSWORD);
+        this.emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
     @Test
     void newAccountEmail_whenNotExistsEmail_throwBadRequestException(){
@@ -60,7 +60,7 @@ public class EmailServiceTest {
                 .send(any(SimpleMailMessage.class));
 
         assertThrows(BadRequestException.class, () ->
-                emailService.newAccountEmail(EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_PASSWORD)
+                emailService.newAccountEmail(EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_PASS)
         );
     }
     @Test
@@ -87,7 +87,7 @@ public class EmailServiceTest {
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASSWORD)
+                emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASS)
         );
     }
     @Test
@@ -96,7 +96,7 @@ public class EmailServiceTest {
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASSWORD)
+                emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASS)
         );
     }
 }

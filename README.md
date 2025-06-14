@@ -1,0 +1,1 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jorgempavon_BackEnd_TFM&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jorgempavon_BackEnd_TFM)

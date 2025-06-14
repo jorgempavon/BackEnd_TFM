@@ -46,9 +46,9 @@ public class UserServiceTest {
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_LAST_NAME = "last name example";
     private final String EXAMPLE_EMAIL = "test@example.com";
-    private final String EXAMPLE_PASSWORD = "pass123";
-    private final String EXAMPLE_OTHER_PASSWORD = "OtherPass123";
-    private final String EXAMPLE_ENCODED_PASSWORD = "encodedPass";
+    private final String EXAMPLE_PASS = "pass123";
+    private final String EXAMPLE_OTHER_PASS = "OtherPass123";
+    private final String EXAMPLE_ENCODED_PASS = "encodedPass";
     private final String EXAMPLE_DNI = "12345678A";
     private final boolean EXAMPLE_NOT_ADMIN = false;
     private final boolean EXAMPLE_IS_ADMIN = true;
@@ -60,8 +60,8 @@ public class UserServiceTest {
     private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,
-            EXAMPLE_PASSWORD,
-            EXAMPLE_PASSWORD,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
             EXAMPLE_NAME,
             EXAMPLE_LAST_NAME
     );
@@ -113,7 +113,7 @@ public class UserServiceTest {
     void create_registerDto_successful(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
 
         UserDTO response = this.userService.create(userRegisterDTO);
         assertNotNull(response);
@@ -127,8 +127,8 @@ public class UserServiceTest {
     void create_createDto_successful(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
 
         UserDTO response = this.userService.create(userCreateDTO);
         assertNotNull(response);
@@ -184,8 +184,8 @@ public class UserServiceTest {
     void create_createDto_whenIsNotValidEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
 
         doThrow(new BadRequestException("El correo proporcionado no existe"))
                 .when(emailService)
@@ -200,7 +200,7 @@ public class UserServiceTest {
     void create_registerDto_whenIsNotValidEmail_throwsBadRequestException(){
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
 
         doThrow(new BadRequestException("El correo proporcionado no existe"))
                 .when(emailService)
@@ -343,8 +343,8 @@ public class UserServiceTest {
 
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
         when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
 
@@ -372,8 +372,8 @@ public class UserServiceTest {
         when(this.adminRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(admin));
 
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASSWORD);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordGenerator.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
 
         doNothing()
@@ -403,7 +403,7 @@ public class UserServiceTest {
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME,false);
 
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
@@ -422,7 +422,7 @@ public class UserServiceTest {
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,true,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME,false);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
@@ -437,19 +437,19 @@ public class UserServiceTest {
     }
     @Test
     void updateSelfUpdateDTO_ChangeUserRolToClient_successful(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,EXAMPLE_PASSWORD,
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(currentUser));
 
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
-        when(this.passwordEncoder.matches(EXAMPLE_OTHER_PASSWORD,EXAMPLE_ENCODED_PASSWORD)).thenReturn(true);
-        when(this.passwordEncoder.encode(EXAMPLE_PASSWORD)).thenReturn(EXAMPLE_ENCODED_PASSWORD);
+        when(this.passwordEncoder.matches(EXAMPLE_OTHER_PASS,EXAMPLE_ENCODED_PASS)).thenReturn(true);
+        when(this.passwordEncoder.encode(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
 
         doNothing()
@@ -468,8 +468,8 @@ public class UserServiceTest {
     }
     @Test
     void updateSelfUpdateDTO_whenNotExistsUser_throwsNotFoundException(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,EXAMPLE_PASSWORD,
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
@@ -480,11 +480,11 @@ public class UserServiceTest {
     }
     @Test
     void updateSelfUpdateDTO_whenExistsOtherUserWithEmail_throwsBadRequestException(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,EXAMPLE_PASSWORD,
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
@@ -501,11 +501,11 @@ public class UserServiceTest {
 
     @Test
     void updateSelfUpdateDTO_whenExistsOtherUserWithDni_throwsBadRequestException(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,EXAMPLE_PASSWORD,
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
@@ -522,11 +522,11 @@ public class UserServiceTest {
 
     @Test
     void updateSelfUpdateDTO_whenOldPasswordIsWrong_throwsConflictException(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,EXAMPLE_PASSWORD,
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
@@ -543,11 +543,11 @@ public class UserServiceTest {
 
     @Test
     void updateSelfUpdateDTO_whenNewPasswordsNotMatches_throwsConflictException(){
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASSWORD,
-                EXAMPLE_PASSWORD,"badPass",
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_OTHER_PASS,
+                EXAMPLE_PASS,"badPass",
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         User currentUser = new User(EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
-        currentUser.setPassword(EXAMPLE_ENCODED_PASSWORD);
+        currentUser.setPassword(EXAMPLE_ENCODED_PASS);
         currentUser.setId(0L);
 
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
