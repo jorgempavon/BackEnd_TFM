@@ -30,19 +30,19 @@ public class AuthenticationResourceTest {
     private AuthenticationResource authResource;
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_EMAIL = "test@example.com";
-    private final String EXAMPLE_PASSWORD = "pass123";
+    private final String EXAMPLE_PASS = "pass123";
     private final String EXAMPLE_DNI = "12345678A";
     private final String EXAMPLE_LAST_NAME = "last name example";
     private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,
-            EXAMPLE_PASSWORD,
-            EXAMPLE_PASSWORD,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
             EXAMPLE_NAME,
             EXAMPLE_LAST_NAME
     );
     private final LoginDTO loginDTO = new LoginDTO(
-            EXAMPLE_EMAIL,EXAMPLE_PASSWORD
+            EXAMPLE_EMAIL,EXAMPLE_PASS
     );
 
     @Test
