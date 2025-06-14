@@ -3,6 +3,9 @@ package com.example.library.resources;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.resources.UserResource;
+import com.example.library.config.CustomUserDetails;
+import com.example.library.entities.dto.UserAdminUpdateDTO;
+import com.example.library.entities.dto.UserSelfUpdateDTO;
 import com.example.library.services.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -33,6 +36,8 @@ public class UserResourceTest {
     private UserService userService;
     @InjectMocks
     private UserResource userResource;
+    @Mock
+    private CustomUserDetails mockUserDetails;
     private final Long EXAMPLE_ID = 2L;
     private final String EXAMPLE_NAME = "example";
     private final String EXAMPLE_EMAIL = "test@example.com";
@@ -118,5 +123,29 @@ public class UserResourceTest {
         ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(result.getBody(),listUsersDto);
+    }
+
+    @Test
+    void updateAdminDto_successful(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,true,
+                EXAMPLE_NAME,EXAMPLE_LAST_NAME,true);
+        when(this.userService.update(EXAMPLE_ID,userAdminUpdateDTO)).thenReturn(userDTO);
+
+        ResponseEntity<?> result = userResource.update(EXAMPLE_ID,userAdminUpdateDTO);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(result.getBody(),userDTO);
+    }
+
+    @Test
+    void updateSelfDto_successful(){
+        String pass = "pass4342";
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,"otherPass",
+                pass,pass, EXAMPLE_NAME,EXAMPLE_LAST_NAME);
+        when(this.userService.update(EXAMPLE_ID,userSelfUpdateDTO)).thenReturn(userDTO);
+        when(this.mockUserDetails.getId()).thenReturn(EXAMPLE_ID);
+
+        ResponseEntity<?> result = userResource.update(mockUserDetails,userSelfUpdateDTO);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(result.getBody(),userDTO);
     }
 }
