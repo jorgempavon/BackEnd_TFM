@@ -33,4 +33,8 @@ jobs:
 
       - name: Analyze with SonarCloud (only on master)
         if: github.ref == 'refs/heads/master'
-        run: mvn sonar:sonar -Dspring.profiles.active=test -Dsonar.login=${{ secrets.SONAR_TOKEN }} -X
+        run: mvn sonar:sonar \
+          -Dspring.profiles.active=test \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+          -X
