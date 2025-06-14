@@ -31,6 +31,9 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>jorgempavon</sonar.organization>
 		<sonar.projectKey>jorgempavon_BackEnd_TFM</sonar.projectKey>
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.build.directory}/jacoco-report/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>
 		<dependency>

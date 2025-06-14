@@ -43,4 +43,6 @@ jobs:
           args: >
             -Dsonar.projectKey=jorgempavon_BackEnd_TFM
             -Dsonar.organization=jorgempavon
-
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco-report/jacoco.xml
