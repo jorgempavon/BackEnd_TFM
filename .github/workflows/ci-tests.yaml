@@ -1,11 +1,13 @@
-name: Java CI - Run Tests Only
+name: Java CI with SonarCloud
 
 on:
   push:
-    branches: [ develop, Sprint_1 ]
+    branches: [ develop, Sprint_1 , issue#13]
+  pull_request:
+    branches: [ main, develop, Sprint_1 ]
 
 jobs:
-  test:
+  build-and-analyze:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +29,10 @@ jobs:
 
       - name: Build and run tests con perfil test y debug
         run: mvn clean verify -Dspring.profiles.active=test -X
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
