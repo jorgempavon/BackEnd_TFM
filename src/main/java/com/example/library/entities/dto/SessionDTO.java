@@ -9,4 +9,6 @@ import lombok.Setter;
 public class SessionDTO {
     private String jwt;
     private String email;
+
+    private Boolean isAdmin;
 }

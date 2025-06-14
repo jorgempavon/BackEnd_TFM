@@ -18,8 +18,8 @@ public class UserDTO {
     private Boolean isAdmin;
 
     public UserDTO (){}
-
-    public UserDTO (String name, String email,String dni,String lastName,Boolean isAdmin){
+    public UserDTO (Long id,String name, String email,String dni,String lastName,Boolean isAdmin){
+        this.id = id;
         this.name = name;
         this.email = email;
         this.dni = dni;

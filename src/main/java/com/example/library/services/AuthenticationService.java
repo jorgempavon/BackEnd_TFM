@@ -41,9 +41,11 @@ public class AuthenticationService {
             throw new UnauthorizedException("El email o contraseña proporcionados son incorrectos");
         }
         String jwt = jwtService.generateToken(userDetails);
+        String userEmail = userDetails.getUsername();
 
         SessionDTO responseLogin = new SessionDTO();
-        responseLogin.setEmail(userDetails.getUsername());
+        responseLogin.setIsAdmin(this.userService.isUserAdminByEmail(userEmail));
+        responseLogin.setEmail(userEmail);
         responseLogin.setJwt(jwt);
 
         return responseLogin;

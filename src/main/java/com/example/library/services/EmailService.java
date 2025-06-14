@@ -63,4 +63,82 @@ public class EmailService {
             throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");
         }
     }
+
+    public void oldAccountEmail(String oldEmail, String newEmail, String userName) {
+        try {
+            String subject = "Notificación de cambio de correo en " + BIBLIOKIE;
+            String body = "Estimado/a " + userName + ":\n\n" +
+                    "Le informamos que su dirección de correo asociada a nuestra aplicación ha sido actualizada correctamente.\n" +
+                    "Correo anterior: " + oldEmail + "\n" +
+                    "Nuevo correo: " + newEmail + "\n\n" +
+                    "Si usted ha realizado este cambio, no necesita realizar ninguna acción adicional.\n" +
+                    "En caso de no haber solicitado esta modificación, por favor contáctenos de inmediato para asegurar la integridad de su cuenta.\n\n" +
+                    "Atentamente,\n" +
+                    BIBLIOKIE + "\n" +
+                    BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(oldEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");
+        }
+    }
+
+    public void modifiedAccountEmail(String oldEmail, String newEmail, String userName, String generatedPassword) {
+        try {
+            String subject = "Actualización de correo en " + BIBLIOKIE;
+            String body =
+                    "Estimado/a " + userName + ":\n\n" +
+                            "Le informamos que se ha actualizado la dirección de correo asociada a su cuenta en " + BIBLIOKIE + ".\n" +
+                            "Anteriormente, su dirección de correo era: " + oldEmail + "\n" +
+                            "Ahora, su nueva dirección de correo es: " + newEmail + "\n\n" +
+                            (generatedPassword != null && !generatedPassword.isBlank()
+                                    ? "Se ha generado una contraseña temporal: " + generatedPassword + "\n" +
+                                    "Le recomendamos cambiarla al iniciar sesión.\n\n"
+                                    : "") +
+                            "Si usted no solicitó este cambio o tiene alguna duda, por favor contáctenos de inmediato.\n\n" +
+                            "Atentamente,\n" +
+                            BIBLIOKIE + "\n" +
+                            BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(newEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("El correo proporcionado no existe. Porfavor, introduzca un nuevo.");
+        }
+    }
+
+    public void regeneratedPasswordEmail(String email, String userName, String generatedPassword) {
+        try {
+            String subject = "Contraseña restablecida en " + BIBLIOKIE;
+
+            String body =
+                    "Estimado/a " + userName + ":\n\n" +
+                            "Le informamos que su contraseña ha sido restablecida correctamente en " + BIBLIOKIE + ".\n" +
+                            "Nueva contraseña generada: " + generatedPassword + "\n\n" +
+                            "Le recomendamos iniciar sesión lo antes posible y cambiar esta contraseña por una de su preferencia desde su perfil de usuario.\n\n" +
+                            "Si usted no solicitó este restablecimiento, por favor contáctenos de inmediato.\n\n" +
+                            "Atentamente,\n" +
+                            BIBLIOKIE + "\n" +
+                            BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo enviar el correo de restablecimiento de contraseña.");
+        }
+    }
+
 }
