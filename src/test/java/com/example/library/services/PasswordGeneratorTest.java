@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PasswordGeneratorTest {
 
-    private final PasswordGenerator passwordGenerator = new PasswordGenerator();
+    private static final PasswordGenerator passwordGenerator = new PasswordGenerator();
 
     @Test
     void shouldGeneratePasswordWithCorrectLength() {

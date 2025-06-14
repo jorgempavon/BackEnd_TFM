@@ -28,29 +28,29 @@ public class AuthenticationResourceTest {
     private AuthenticationService authService;
     @InjectMocks
     private AuthenticationResource authResource;
-    private final String EXAMPLE_NAME = "example";
-    private final String EXAMPLE_EMAIL = "test@example.com";
-    private final String EXAMPLE_PASS = "pass123";
-    private final String EXAMPLE_DNI = "12345678A";
-    private final String EXAMPLE_LAST_NAME = "last name example";
-    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
-            EXAMPLE_DNI,
-            EXAMPLE_EMAIL,
-            EXAMPLE_PASS,
-            EXAMPLE_PASS,
-            EXAMPLE_NAME,
-            EXAMPLE_LAST_NAME
+    private static final String exampleName = "example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String examplePass = "pass123";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleLastName = "last name example";
+    private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+            exampleDni,
+            exampleEmail,
+            examplePass,
+            examplePass,
+            exampleName,
+            exampleLastName
     );
-    private final LoginDTO loginDTO = new LoginDTO(
-            EXAMPLE_EMAIL,EXAMPLE_PASS
+    private static final LoginDTO loginDTO = new LoginDTO(
+            exampleEmail,examplePass
     );
 
     @Test
     void register_successful() {
         UserDTO userDTO = new UserDTO();
-        userDTO.setName(EXAMPLE_NAME);
-        userDTO.setEmail(EXAMPLE_EMAIL);
-        userDTO.setDni(EXAMPLE_DNI);
+        userDTO.setName(exampleName);
+        userDTO.setEmail(exampleEmail);
+        userDTO.setDni(exampleDni);
 
         when(this.authService.register(userRegisterDTO)).thenReturn(userDTO);
 
@@ -104,10 +104,10 @@ public class AuthenticationResourceTest {
 
     @Test
     void login_successful() {
-        String MOCKED_JWT = "mockedJwtToken";
+        String mockJwt = "mockedJwtToken";
         SessionDTO sessionDTO = new SessionDTO();
-        sessionDTO.setEmail(EXAMPLE_EMAIL);
-        sessionDTO.setJwt(MOCKED_JWT);
+        sessionDTO.setEmail(exampleEmail);
+        sessionDTO.setJwt(mockJwt);
         when(this.authService.login(loginDTO)).thenReturn(sessionDTO);
 
         ResponseEntity<?> result = authResource.login(loginDTO);
@@ -134,10 +134,10 @@ public class AuthenticationResourceTest {
     }
     @Test
     void logOut_Successful(){
-        String EXAMPLE_TOKEN = "Bearer sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
+        String exampleToken = "Bearer sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
         doNothing().when(authService).logOut(anyString());
 
-        ResponseEntity<?> result = authResource.logOut(EXAMPLE_TOKEN);
+        ResponseEntity<?> result = authResource.logOut(exampleToken);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
