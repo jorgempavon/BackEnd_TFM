@@ -145,20 +145,31 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.10</version> <!-- La versión puede cambiar, esta es bastante reciente -->
+				<version>0.8.10</version>
 				<executions>
+					<!-- Prepara el agente JaCoCo para que recoja datos de cobertura -->
 					<execution>
 						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<phase>initialize</phase>
 					</execution>
+
+					<!-- Genera el reporte XML en verify para SonarCloud -->
 					<execution>
 						<id>report</id>
-						<phase>test</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<reports>
+								<xml enabled="true"/>
+								<csv enabled="false"/>
+								<html enabled="false"/>
+							</reports>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
