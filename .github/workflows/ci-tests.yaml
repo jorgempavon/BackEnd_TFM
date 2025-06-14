@@ -5,7 +5,10 @@ on:
     branches:
       - '**'
   pull_request:
-    branches: [ main, develop, Sprint_1 ]
+    branches:
+      - main
+      - develop
+      - Sprint_1
 
 jobs:
   build-and-analyze:
@@ -18,8 +21,8 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
       - name: Cache Maven packages
         uses: actions/cache@v4
@@ -29,12 +32,4 @@ jobs:
           restore-keys: ${{ runner.os }}-maven
 
       - name: Build and run tests
-        run: mvn clean verify -Dspring.profiles.active=test -X
-
-      - name: Analyze with SonarCloud (only on master)
-        if: github.ref == 'refs/heads/master'
-        run: mvn sonar:sonar \
-          -Dspring.profiles.active=test \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-          -X
+        run: mvn clean verify
