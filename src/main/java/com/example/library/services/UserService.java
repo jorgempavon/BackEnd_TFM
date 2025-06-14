@@ -272,12 +272,14 @@ public class UserService {
                 String newEncodedPassword = this.passwordEncoder.encode(infoNewPassword);
                 user.setPassword(newEncodedPassword);
             }
-            this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName(),infoNewPassword);
+            this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+
+                    user.getLastName(),infoNewPassword);
             user.setEmail(newEmail);
         } else if (userAdminUpdateDTO.getResetPassword()) {
             String newPassword = this.passwordGenerator.generateStrongPassword();
             String newEncodedPassword = this.passwordEncoder.encode(newPassword);
-            this.emailService.regeneratedPasswordEmail(user.getEmail(),user.getName() + " "+ user.getLastName(),newPassword);
+            this.emailService.regeneratedPasswordEmail(user.getEmail(),user.getName() + " "+
+                    user.getLastName(),newPassword);
             user.setPassword(newEncodedPassword);
         }
     }
