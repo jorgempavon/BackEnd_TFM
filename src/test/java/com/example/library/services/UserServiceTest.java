@@ -50,8 +50,6 @@ public class UserServiceTest {
     private final String EXAMPLE_OTHER_PASS = "OtherPass123";
     private final String EXAMPLE_ENCODED_PASS = "encodedPass";
     private final String EXAMPLE_DNI = "12345678A";
-    private final boolean EXAMPLE_NOT_ADMIN = false;
-    private final boolean EXAMPLE_IS_ADMIN = true;
     private final String EXAMPLE_OTHER_EMAIL = "other@example.com";
     private final String EXAMPLE_OTHER_NAME = "Other Name";
     private final String EXAMPLE_OTHER_LAST_NAME = "Other Last Name";
@@ -81,7 +79,6 @@ public class UserServiceTest {
 
     @Test
     void findById_successful(){
-        User user = new User("example", "test@example.com", "12345678A", "Last example");
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setDni(user.getDni());

@@ -25,6 +25,8 @@ public class EmailServiceTest {
     private final String EXAMPLE_EMAIL = "test@example.com";
     private final String EXAMPLE_OLD_EMAIL = "oldTest@example.com";
     private final String EXAMPLE_PASS = "pass123";
+    private final String BAD_RESPONSE_EMAIL = "El correo proporcionado no existe";
+    
     @Test
     void newAccountEmail_successful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
@@ -55,7 +57,7 @@ public class EmailServiceTest {
     }
     @Test
     void newAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
 
@@ -65,7 +67,7 @@ public class EmailServiceTest {
     }
     @Test
     void deleteAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
@@ -74,7 +76,7 @@ public class EmailServiceTest {
     }
     @Test
     void oldAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
@@ -83,7 +85,7 @@ public class EmailServiceTest {
     }
     @Test
     void modifiedAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
@@ -92,7 +94,7 @@ public class EmailServiceTest {
     }
     @Test
     void regeneratedPasswordEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->

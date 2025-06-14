@@ -25,7 +25,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
     private final AdminRepository adminRepository;
+    private final String STATUS = "status";
+    private final String MESSAGE = "message";
+    private final String statusEmail ="statusEmail";
+    
+    private final String statusDni = "statusDni";
 
+    private final String idUserByEmail = "idUserByEmail";
+
+    private final String idUserByDni = "idUserByDni";
+    
     public UserService(UserRepository userRepository,
                        ClientRepository clientRepository,
                        AdminRepository adminRepository,
@@ -65,8 +74,8 @@ public class UserService {
                 userCreateDTO.getDni()
         );
 
-        if ((Boolean) responseExistsUser.get("status")) {
-            throw new BadRequestException((String) responseExistsUser.get("message"));
+        if ((Boolean) responseExistsUser.get(STATUS)) {
+            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
         }
         String generatedPassword = this.passwordGenerator.generateStrongPassword();
         String passwordEncoded = passwordEncoder.encode(generatedPassword);
@@ -89,8 +98,8 @@ public class UserService {
                 userRegisterDTO.getDni()
         );
 
-        if ((Boolean) responseExistsUser.get("status")) {
-            throw new BadRequestException((String) responseExistsUser.get("message"));
+        if ((Boolean) responseExistsUser.get(STATUS)) {
+            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
         }
 
         String passwordEncoded = passwordEncoder.encode(userRegisterDTO.getPassword());
@@ -206,23 +215,23 @@ public class UserService {
 
         String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
 
-        validationResult.put("status", false);
-        validationResult.put("statusEmail", false);
-        validationResult.put("statusDni", false);
+        validationResult.put(STATUS, false);
+        validationResult.put(statusEmail, false);
+        validationResult.put(statusDni, false);
         if (email != null && this.userRepository.existsByEmail(email)) {
-            validationResult.put("status", true);
-            validationResult.put("message", "El email " + baseMessage);
-            validationResult.put("statusEmail", true);
-            validationResult.put("idUserByEmail",this.userRepository.findByEmail(email).get().getId());
+            validationResult.put(STATUS, true);
+            validationResult.put(MESSAGE, "El email " + baseMessage);
+            validationResult.put(statusEmail, true);
+            validationResult.put(idUserByEmail,this.userRepository.findByEmail(email).get().getId());
         }
 
-        if ((Boolean) validationResult.get("status") && dni!=null && this.userRepository.existsByDni(dni)) {
-            validationResult.put("message", "El email y dni " + baseMessage);
+        if ((Boolean) validationResult.get(STATUS) && dni!=null && this.userRepository.existsByDni(dni)) {
+            validationResult.put(MESSAGE, "El email y dni " + baseMessage);
         } else if (dni!=null && this.userRepository.existsByDni(dni)) {
-            validationResult.put("status", true);
-            validationResult.put("message", "El dni " + baseMessage);
-            validationResult.put("statusDni", true);
-            validationResult.put("idUserByDni",this.userRepository.findByDni(dni).get().getId());
+            validationResult.put(STATUS, true);
+            validationResult.put(MESSAGE, "El dni " + baseMessage);
+            validationResult.put(statusDni, true);
+            validationResult.put(idUserByDni,this.userRepository.findByDni(dni).get().getId());
         }
 
         return validationResult;
@@ -291,13 +300,13 @@ public class UserService {
                 userAdminUpdateDTO.getEmail(),
                 userAdminUpdateDTO.getDni()
         );
-        Boolean existUserWithEmail = (Boolean) responseExistsUser.get("statusEmail")
-                && !Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
-        Boolean existUserWithDni =  (Boolean) responseExistsUser.get("statusDni")
-                && !Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
+        Boolean existUserWithEmail = (Boolean) responseExistsUser.get(statusEmail)
+                && !Objects.equals((Long) responseExistsUser.get(idUserByEmail), id);
+        Boolean existUserWithDni =  (Boolean) responseExistsUser.get(statusDni)
+                && !Objects.equals((Long) responseExistsUser.get(idUserByDni), id);
 
         if (existUserWithEmail || existUserWithDni) {
-            throw new BadRequestException((String) responseExistsUser.get("message"));
+            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
         }
     }
 
@@ -311,13 +320,13 @@ public class UserService {
                 userSelfUpdateDTO.getEmail(),
                 userSelfUpdateDTO.getDni()
         );
-        Boolean existUserWithNewEmail = (Boolean) responseExistsUser.get("statusEmail")
-                && !Objects.equals((Long) responseExistsUser.get("idUserByEmail"), id);
-        Boolean existUserWithNewDni =  (Boolean) responseExistsUser.get("statusDni")
-                && !Objects.equals((Long) responseExistsUser.get("idUserByDni"), id);
+        Boolean existUserWithNewEmail = (Boolean) responseExistsUser.get(statusEmail)
+                && !Objects.equals((Long) responseExistsUser.get(idUserByEmail), id);
+        Boolean existUserWithNewDni =  (Boolean) responseExistsUser.get(statusDni)
+                && !Objects.equals((Long) responseExistsUser.get(idUserByDni), id);
 
         if (existUserWithNewEmail || existUserWithNewDni) {
-            throw new BadRequestException((String) responseExistsUser.get("message"));
+            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
         }
 
         String currentUserPassword = currentUser.getPassword();

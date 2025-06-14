@@ -41,8 +41,6 @@ public class UserResourceTest {
     private final Boolean EXAMPLE_IS_ADMIN = true;
     private final UserCreateDTO userCreateDto = new UserCreateDTO(EXAMPLE_DNI, EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
     private final UserDTO userDTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
-    //private final UserUpdateDTO userClientUpdateDTO = new UserUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASS
-    //        ,EXAMPLE_PASS,EXAMPLE_NAME,EXAMPLE_LAST_NAME,false);
     private final List<UserDTO> listUsersDto = List.of(userDTO);
 
     @Test
