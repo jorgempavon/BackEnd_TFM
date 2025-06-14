@@ -2,7 +2,8 @@ package com.example.library.entities.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.lang.reflect.Field;
+
+import java.beans.Introspector;
 
 public class AtLeastOneFieldValidator implements ConstraintValidator<AtLeastOneField, Object> {
 
@@ -18,16 +19,19 @@ public class AtLeastOneFieldValidator implements ConstraintValidator<AtLeastOneF
         if (value == null) return false;
 
         try {
-            for (String fieldName : fieldNames) {
-                Field field = value.getClass().getDeclaredField(fieldName);
-                field.setAccessible(true);
-                Object fieldValue = field.get(value);
+            var propertyDescriptors = Introspector.getBeanInfo(value.getClass()).getPropertyDescriptors();
 
-                if (fieldValue != null) {
-                    if (fieldValue instanceof String && !((String) fieldValue).isBlank()) {
-                        return true;
-                    } else if (!(fieldValue instanceof String)) {
-                        return true;
+            for (String fieldName : fieldNames) {
+                for (var pd : propertyDescriptors) {
+                    if (pd.getName().equals(fieldName)) {
+                        Object fieldValue = pd.getReadMethod().invoke(value);
+                        if (fieldValue != null) {
+                            if (fieldValue instanceof String str && !str.isBlank()) {
+                                return true;
+                            } else if (!(fieldValue instanceof String)) {
+                                return true;
+                            }
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
     private final String BIBLIOKIE =  "Bibliokie";
+    private final String DEAR = "Estimado/a ";
     private final String BIBLIOKIE_EMAIL =  "bibliokiejackie@gmail.com";
     private final JavaMailSender mailSender;
 
@@ -18,7 +19,7 @@ public class EmailService {
     public void newAccountEmail(String email,String userName, String password) {
         try{
             String subject = "Notificación de nueva cuenta en "+BIBLIOKIE;
-            String body = "Estimado/a " + userName + ":\n\n" +
+            String body = DEAR + userName + ":\n\n" +
                     "Le damos la bienvenida a " + BIBLIOKIE + ". Su cuenta ha sido creada exitosamente y ya puede acceder a nuestros servicios.\n\n" +
                     (password != null && !password.isBlank()
                             ? "Su contraseña temporal es: " + password + "\n\n"
@@ -43,7 +44,7 @@ public class EmailService {
     public void deleteAccountEmail(String email, String userName) {
         try{
             String subject = "Notificación de eliminación de cuenta en Bibliokie";
-            String body = "Estimado/a "+userName+":\n\n" +
+            String body = DEAR+userName+":\n\n" +
                     "Le informamos que su cuenta ha sido eliminada de nuestra aplicación de forma definitiva.\n" +
                     "Esta acción implica que ya no podrá acceder a los servicios asociados ni recuperar los datos vinculados a dicha cuenta.\n\n" +
                     "Si esta acción fue realizada por usted, no es necesario hacer nada más.\n" +
@@ -67,7 +68,7 @@ public class EmailService {
     public void oldAccountEmail(String oldEmail, String newEmail, String userName) {
         try {
             String subject = "Notificación de cambio de correo en " + BIBLIOKIE;
-            String body = "Estimado/a " + userName + ":\n\n" +
+            String body = DEAR + userName + ":\n\n" +
                     "Le informamos que su dirección de correo asociada a nuestra aplicación ha sido actualizada correctamente.\n" +
                     "Correo anterior: " + oldEmail + "\n" +
                     "Nuevo correo: " + newEmail + "\n\n" +
@@ -92,7 +93,7 @@ public class EmailService {
         try {
             String subject = "Actualización de correo en " + BIBLIOKIE;
             String body =
-                    "Estimado/a " + userName + ":\n\n" +
+                    DEAR + userName + ":\n\n" +
                             "Le informamos que se ha actualizado la dirección de correo asociada a su cuenta en " + BIBLIOKIE + ".\n" +
                             "Anteriormente, su dirección de correo era: " + oldEmail + "\n" +
                             "Ahora, su nueva dirección de correo es: " + newEmail + "\n\n" +
@@ -121,7 +122,7 @@ public class EmailService {
             String subject = "Contraseña restablecida en " + BIBLIOKIE;
 
             String body =
-                    "Estimado/a " + userName + ":\n\n" +
+                    DEAR + userName + ":\n\n" +
                             "Le informamos que su contraseña ha sido restablecida correctamente en " + BIBLIOKIE + ".\n" +
                             "Nueva contraseña generada: " + generatedPassword + "\n\n" +
                             "Le recomendamos iniciar sesión lo antes posible y cambiar esta contraseña por una de su preferencia desde su perfil de usuario.\n\n" +

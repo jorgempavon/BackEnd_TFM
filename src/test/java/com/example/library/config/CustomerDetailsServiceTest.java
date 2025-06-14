@@ -32,7 +32,7 @@ public class CustomerDetailsServiceTest {
     @Test
     void loadUserByUsername_successful(){
         String EXAMPLE_NAME = "Example name";
-        User user = new User("Example name","01234567L",EXAMPLE_EMAIL,"Example last name");
+        User user = new User(EXAMPLE_NAME,"01234567L",EXAMPLE_EMAIL,"Example last name");
         when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
                 .thenReturn(Optional.of(user));
         CustomUserDetails response = this.customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
