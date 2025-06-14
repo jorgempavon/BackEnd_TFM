@@ -21,11 +21,11 @@ public class EmailServiceTest {
     private JavaMailSender mailSender;
     @InjectMocks
     private EmailService emailService;
-    private final String exampleName = "example";
-    private final String exampleEmail = "test@example.com";
-    private final String exampleOldEmail = "oldTest@example.com";
-    private final String examplePass = "pass123";
-    private final String badResponseEmail = "El correo proporcionado no existe";
+    private static final String exampleName = "example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String exampleOldEmail = "oldTest@example.com";
+    private static final String examplePass = "pass123";
+    private static final String badResponseEmail = "El correo proporcionado no existe";
     
     @Test
     void newAccountEmail_successful(){

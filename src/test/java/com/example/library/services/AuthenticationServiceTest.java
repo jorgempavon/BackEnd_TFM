@@ -32,13 +32,13 @@ public class AuthenticationServiceTest {
     private UserService userService;
     @InjectMocks
     private AuthenticationService authService;
-    private final String exampleName = "example";
-    private final String exampleLastName = "last name example";
-    private final String exampleEmail = "test@example.com";
-    private final String examplePass = "pass123";
-    private final String exampleDni = "12345678A";
-    private final String exampleTkn = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
-    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+    private static final String exampleName = "example";
+    private static final String exampleLastName = "last name example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String examplePass = "pass123";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleTkn = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
+    private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             exampleDni,
             exampleEmail,
             examplePass,
@@ -46,10 +46,10 @@ public class AuthenticationServiceTest {
             exampleName,
             exampleLastName
     );
-    private final LoginDTO loginDTO = new LoginDTO(
+    private static final LoginDTO loginDTO = new LoginDTO(
             exampleEmail,examplePass
     );
-    private final String exampleEncodedPass = "encodedPassword";
+    private static final String exampleEncodedPass = "encodedPassword";
 
     @Test
     void register_successful() {

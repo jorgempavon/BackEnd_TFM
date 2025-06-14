@@ -42,20 +42,20 @@ public class UserServiceTest {
     private ClientRepository clientRepository;
     @InjectMocks
     private UserService userService;
-    private final Long exampleId = 2L;
-    private final String exampleName = "example";
-    private final String exampleLastName = "last name example";
-    private final String exampleEmail = "test@example.com";
-    private final String examplePass = "pass123";
-    private final String exampleOtherPass = "OtherPass123";
-    private final String exampleEncodedPass = "encodedPass";
-    private final String exampleDni = "12345678A";
-    private final String exampleOtherEmail = "other@example.com";
-    private final String exampleOtherName = "Other Name";
-    private final String exampleOtherLastName = "Other Last Name";
-    private final String exampleOtherDni = "23345452F";
+    private static final Long exampleId = 2L;
+    private static final String exampleName = "example";
+    private static final String exampleLastName = "last name example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String examplePass = "pass123";
+    private static final String exampleOtherPass = "OtherPass123";
+    private static final String exampleEncodedPass = "encodedPass";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleOtherEmail = "other@example.com";
+    private static final String exampleOtherName = "Other Name";
+    private static final String exampleOtherLastName = "Other Last Name";
+    private static final String exampleOtherDni = "23345452F";
 
-    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+    private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             exampleDni,
             exampleEmail,
             examplePass,
@@ -63,14 +63,14 @@ public class UserServiceTest {
             exampleName,
             exampleLastName
     );
-    private final UserCreateDTO userCreateDTO = new UserCreateDTO(
+    private static final UserCreateDTO userCreateDTO = new UserCreateDTO(
             exampleDni,
             exampleEmail,
             exampleName,
             exampleLastName,
             true
     );
-    private final User user = new User(
+    private static final User user = new User(
             exampleName,
             exampleDni,
             exampleEmail,

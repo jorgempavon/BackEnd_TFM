@@ -38,15 +38,15 @@ public class UserResourceTest {
     private UserResource userResource;
     @Mock
     private CustomUserDetails mockUserDetails;
-    private final Long exampleId = 2L;
-    private final String exampleName = "example";
-    private final String exampleEmail = "test@example.com";
-    private final String exampleDni = "12345678A";
-    private final String exampleLastName = "last name example";
-    private final Boolean exampleIsAdmin = true;
-    private final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName,exampleIsAdmin);
-    private final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,exampleIsAdmin);
-    private final List<UserDTO> listUsersDto = List.of(userDTO);
+    private static final Long exampleId = 2L;
+    private static final String exampleName = "example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleLastName = "last name example";
+    private static final Boolean exampleIsAdmin = true;
+    private static final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName,exampleIsAdmin);
+    private static final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,exampleIsAdmin);
+    private static final List<UserDTO> listUsersDto = List.of(userDTO);
 
     @Test
     void findById_successful(){

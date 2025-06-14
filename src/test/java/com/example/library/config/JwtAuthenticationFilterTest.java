@@ -24,10 +24,10 @@ class JwtAuthenticationFilterTest {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
-    private final String authorization = "Authorization";
-    private final String bearer ="Bearer ";
-    private final String token = "valid.jwt.token";
-    private final String email = "test@example.com";
+    private static final String authorization = "Authorization";
+    private static final String bearer ="Bearer ";
+    private static final String token = "valid.jwt.token";
+    private static final String email = "test@example.com";
 
     @BeforeEach
     void setUp() {

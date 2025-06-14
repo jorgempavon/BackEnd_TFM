@@ -28,12 +28,12 @@ public class AuthenticationResourceTest {
     private AuthenticationService authService;
     @InjectMocks
     private AuthenticationResource authResource;
-    private final String exampleName = "example";
-    private final String exampleEmail = "test@example.com";
-    private final String examplePass = "pass123";
-    private final String exampleDni = "12345678A";
-    private final String exampleLastName = "last name example";
-    private final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
+    private static final String exampleName = "example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String examplePass = "pass123";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleLastName = "last name example";
+    private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             exampleDni,
             exampleEmail,
             examplePass,
@@ -41,7 +41,7 @@ public class AuthenticationResourceTest {
             exampleName,
             exampleLastName
     );
-    private final LoginDTO loginDTO = new LoginDTO(
+    private static final LoginDTO loginDTO = new LoginDTO(
             exampleEmail,examplePass
     );
 
