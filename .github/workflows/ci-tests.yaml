@@ -31,6 +31,6 @@ jobs:
       - name: Build and run tests
         run: mvn clean verify -Dspring.profiles.active=test -X
 
-      - name: Analyze with SonarCloud (only on develop)
+      - name: Analyze with SonarCloud (only on master)
         if: github.ref == 'refs/heads/master'
         run: mvn sonar:sonar -Dspring.profiles.active=test -Dsonar.login=${{ secrets.SONAR_TOKEN }} -X
