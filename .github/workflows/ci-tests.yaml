@@ -2,7 +2,8 @@ name: Java CI with SonarCloud
 
 on:
   push:
-    branches: [ develop, Sprint_1 , issue#13]
+    branches:
+      - '**'
   pull_request:
     branches: [ main, develop, Sprint_1 ]
 
