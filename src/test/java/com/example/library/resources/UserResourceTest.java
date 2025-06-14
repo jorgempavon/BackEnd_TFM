@@ -38,30 +38,30 @@ public class UserResourceTest {
     private UserResource userResource;
     @Mock
     private CustomUserDetails mockUserDetails;
-    private final Long EXAMPLE_ID = 2L;
-    private final String EXAMPLE_NAME = "example";
-    private final String EXAMPLE_EMAIL = "test@example.com";
-    private final String EXAMPLE_DNI = "12345678A";
-    private final String EXAMPLE_LAST_NAME = "last name example";
-    private final Boolean EXAMPLE_IS_ADMIN = true;
-    private final UserCreateDTO userCreateDto = new UserCreateDTO(EXAMPLE_DNI, EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
-    private final UserDTO userDTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,EXAMPLE_IS_ADMIN);
-    private final List<UserDTO> listUsersDto = List.of(userDTO);
+    private static final Long exampleId = 2L;
+    private static final String exampleName = "example";
+    private static final String exampleEmail = "test@example.com";
+    private static final String exampleDni = "12345678A";
+    private static final String exampleLastName = "last name example";
+    private static final Boolean exampleIsAdmin = true;
+    private static final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName,exampleIsAdmin);
+    private static final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,exampleIsAdmin);
+    private static final List<UserDTO> listUsersDto = List.of(userDTO);
 
     @Test
     void findById_successful(){
-        when(this.userService.findById(EXAMPLE_ID)).thenReturn(userDTO);
-        ResponseEntity<?> result = userResource.findById(EXAMPLE_ID);
+        when(this.userService.findById(exampleId)).thenReturn(userDTO);
+        ResponseEntity<?> result = userResource.findById(exampleId);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
 
     @Test
     void findById_whenIdNotExists_throwsNotFoundException(){
-        when(this.userService.findById(EXAMPLE_ID))
-                .thenThrow(new NotFoundException("No existe el usuario con el id: "+EXAMPLE_ID.toString()));
+        when(this.userService.findById(exampleId))
+                .thenThrow(new NotFoundException("No existe el usuario con el id: "+exampleId.toString()));
         assertThrows(NotFoundException.class, () -> {
-            userResource.findById(EXAMPLE_ID);
+            userResource.findById(exampleId);
         });
     }
 
@@ -93,8 +93,8 @@ public class UserResourceTest {
 
     @Test
     void  deleteUser_successful(){
-        doNothing().when(userService).delete(EXAMPLE_ID);
-        ResponseEntity<?> result = userResource.delete(EXAMPLE_ID);
+        doNothing().when(userService).delete(exampleId);
+        ResponseEntity<?> result = userResource.delete(exampleId);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -118,20 +118,20 @@ public class UserResourceTest {
 
     @Test
     void findByNameAndDniAndEmail_successful(){
-        when(this.userService.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL)).thenReturn(listUsersDto);
+        when(this.userService.findByNameAndDniAndEmail(exampleName,exampleDni,exampleEmail)).thenReturn(listUsersDto);
 
-        ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL);
+        ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(exampleName,exampleDni,exampleEmail);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(result.getBody(),listUsersDto);
     }
 
     @Test
     void updateAdminDto_successful(){
-        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,true,
-                EXAMPLE_NAME,EXAMPLE_LAST_NAME,true);
-        when(this.userService.update(EXAMPLE_ID,userAdminUpdateDTO)).thenReturn(userDTO);
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(exampleDni,exampleEmail,true,
+                exampleName,exampleLastName,true);
+        when(this.userService.update(exampleId,userAdminUpdateDTO)).thenReturn(userDTO);
 
-        ResponseEntity<?> result = userResource.update(EXAMPLE_ID,userAdminUpdateDTO);
+        ResponseEntity<?> result = userResource.update(exampleId,userAdminUpdateDTO);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(result.getBody(),userDTO);
     }
@@ -139,10 +139,10 @@ public class UserResourceTest {
     @Test
     void updateSelfDto_successful(){
         String pass = "pass4342";
-        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,"otherPass",
-                pass,pass, EXAMPLE_NAME,EXAMPLE_LAST_NAME);
-        when(this.userService.update(EXAMPLE_ID,userSelfUpdateDTO)).thenReturn(userDTO);
-        when(this.mockUserDetails.getId()).thenReturn(EXAMPLE_ID);
+        UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(exampleDni,exampleEmail,"otherPass",
+                pass,pass, exampleName,exampleLastName);
+        when(this.userService.update(exampleId,userSelfUpdateDTO)).thenReturn(userDTO);
+        when(this.mockUserDetails.getId()).thenReturn(exampleId);
 
         ResponseEntity<?> result = userResource.update(mockUserDetails,userSelfUpdateDTO);
         assertEquals(HttpStatus.OK, result.getStatusCode());
