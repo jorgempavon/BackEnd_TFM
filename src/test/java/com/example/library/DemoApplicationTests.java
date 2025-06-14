@@ -13,6 +13,7 @@ class DemoApplicationTests {
 	private JavaMailSender javaMailSender;
 	@Test
 	void contextLoads() {
+		// This test verifies that the Spring application context loads successfully.
 	}
 
 }
