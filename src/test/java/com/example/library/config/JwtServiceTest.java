@@ -1,4 +1,4 @@
-package config;
+package com.example.library.config;
 
 import com.example.library.config.JwtService;
 
@@ -23,8 +23,8 @@ public class JwtServiceTest {
 
         Field field = JwtService.class.getDeclaredField("SECRET_KEY");
         field.setAccessible(true);
-        String SECRET_KEY_TEST = "test-secret-12345678901234567890123456789012";
-        field.set(jwtService, SECRET_KEY_TEST);
+        String KEY_TEST = "test-secret-12345678901234567890123456789012";
+        field.set(jwtService, KEY_TEST);
 
         userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn("testuser");

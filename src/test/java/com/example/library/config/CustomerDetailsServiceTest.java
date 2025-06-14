@@ -1,4 +1,4 @@
-package config;
+package com.example.library.config;
 
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetails;
