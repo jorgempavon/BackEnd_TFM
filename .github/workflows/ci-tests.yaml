@@ -5,7 +5,7 @@ on:
     branches:
       - '**'
   pull_request:
-    branches: [ main, develop, Sprint_1 ]
+    branches: [ develop, Sprint_1 ]
 
 jobs:
   build-and-test:
@@ -33,7 +33,7 @@ jobs:
   sonarcloud-scan:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'    # <-- Solo se ejecuta en la rama main
+    if: github.ref == 'refs/heads/develop'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
