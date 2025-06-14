@@ -24,8 +24,8 @@ class JwtAuthenticationFilterTest {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
-    private final String AUTHORIZATION = "Authorization";
-    private final String BEARER ="Bearer ";
+    private final String authorization = "Authorization";
+    private final String bearer ="Bearer ";
     private final String token = "valid.jwt.token";
     private final String email = "test@example.com";
 
@@ -44,7 +44,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldSkipFilterWhenNoAuthorizationHeader() throws Exception {
-        when(request.getHeader(AUTHORIZATION)).thenReturn(null);
+        when(request.getHeader(authorization)).thenReturn(null);
 
         jwtFilter.doFilterInternal(request, response, filterChain);
 
@@ -54,7 +54,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldSkipFilterWhenHeaderDoesNotStartWithBearer() throws Exception {
-        when(request.getHeader(AUTHORIZATION)).thenReturn("Invalid token");
+        when(request.getHeader(authorization)).thenReturn("Invalid token");
 
         jwtFilter.doFilterInternal(request, response, filterChain);
 
@@ -68,7 +68,7 @@ class JwtAuthenticationFilterTest {
         when(userDetails.getUsername()).thenReturn(email);
         when(userDetails.getAuthorities()).thenReturn(Collections.emptyList());
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(BEARER + token);
+        when(request.getHeader(authorization)).thenReturn(bearer + token);
         when(jwtService.extractUsername(token)).thenReturn(email);
         when(userDetailsService.loadUserByUsername(email)).thenReturn(userDetails);
         when(jwtService.isTokenValid(token, userDetails)).thenReturn(true);
@@ -86,7 +86,7 @@ class JwtAuthenticationFilterTest {
         UserDetails userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn(email);
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(BEARER + token);
+        when(request.getHeader(authorization)).thenReturn(bearer + token);
         when(jwtService.extractUsername(token)).thenReturn(email);
         when(userDetailsService.loadUserByUsername(email)).thenReturn(userDetails);
         when(jwtService.isTokenValid(token, userDetails)).thenReturn(false);
@@ -103,7 +103,7 @@ class JwtAuthenticationFilterTest {
                 new UsernamePasswordAuthenticationToken("existingUser", null, Collections.emptyList())
         );
 
-        when(request.getHeader(AUTHORIZATION)).thenReturn(BEARER + token);
+        when(request.getHeader(authorization)).thenReturn(bearer + token);
         when(jwtService.extractUsername(token)).thenReturn(email);
 
         jwtFilter.doFilterInternal(request, response, filterChain);

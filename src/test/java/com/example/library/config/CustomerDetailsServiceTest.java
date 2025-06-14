@@ -28,26 +28,26 @@ public class CustomerDetailsServiceTest {
     @InjectMocks
     private CustomUserDetailsService customUserDetailsService;
 
-    private final String EXAMPLE_EMAIL= "test@example.com";
+    private final String exampleEmail= "test@example.com";
     @Test
     void loadUserByUsername_successful(){
         String EXAMPLE_NAME = "Example name";
-        User user = new User(EXAMPLE_NAME,"01234567L",EXAMPLE_EMAIL,"Example last name");
-        when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
+        User user = new User(EXAMPLE_NAME,"01234567L",exampleEmail,"Example last name");
+        when(this.userRepository.findByEmail(exampleEmail))
                 .thenReturn(Optional.of(user));
-        CustomUserDetails response = this.customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
+        CustomUserDetails response = this.customUserDetailsService.loadUserByUsername(exampleEmail);
         assertNotNull(response);
-        assertSame(response.getUsername(), EXAMPLE_EMAIL);
+        assertSame(response.getUsername(), exampleEmail);
 
     }
 
     @Test
     void loadUserByUsername_whenNotExists_throwsUnauthorizedException(){
-        when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
+        when(this.userRepository.findByEmail(exampleEmail))
                 .thenThrow(UnauthorizedException.class);
 
         assertThrows(UnauthorizedException.class, () -> {
-            customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
+            customUserDetailsService.loadUserByUsername(exampleEmail);
         });
 
     }
