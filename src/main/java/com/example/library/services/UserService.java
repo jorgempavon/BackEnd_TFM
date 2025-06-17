@@ -59,15 +59,19 @@ public class UserService {
         }
         return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
     }
-
-    public boolean isUserAdminByEmail(String email){
-        if(!this.userRepository.existsByEmail(email)){
-            throw new NotFoundException("No existe ningún usuario con el email: "+email);
+    public Map<String, Object> getUserAdminStatusAndIdByEmail(String email) {
+        if (!this.userRepository.existsByEmail(email)) {
+            throw new NotFoundException("No existe ningún usuario con el email: " + email);
         }
-        Long userId = this.userRepository.findByEmail(email).get().getId();
-        return this.adminRepository.existsByUserId(userId);
-    }
+        User userOpt = this.userRepository.findByEmail(email).get();
+        Long userId = userOpt.getId();
+        boolean isAdmin = this.adminRepository.existsByUserId(userId);
 
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", userId);
+        result.put("isAdmin", isAdmin);
+        return result;
+    }
     public UserDTO create(UserCreateDTO userCreateDTO){
         Map<String, Object> responseExistsUser = this.checkUserExistence(
                 userCreateDTO.getEmail(),
@@ -334,8 +338,9 @@ public class UserService {
         String newPassword = userSelfUpdateDTO.getPassword();
         String newRepeatPassword = userSelfUpdateDTO.getRepeatPassword();
 
-        boolean oldPasswordProvided = oldPassword != null;
-        boolean isNewPasswordProvided = (newPassword != null || newRepeatPassword != null);
+        boolean oldPasswordProvided = oldPassword != null && !oldPassword.isBlank();
+        boolean isNewPasswordProvided = ((newPassword != null && !newPassword.isBlank())
+                || (newRepeatPassword != null && !newRepeatPassword.isBlank()));
 
         if ( (oldPasswordProvided && !this.passwordEncoder.matches(oldPassword,currentUserPassword))
                 || (isNewPasswordProvided && !Objects.equals(newPassword, newRepeatPassword))){

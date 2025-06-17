@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,9 +103,15 @@ public class AuthenticationServiceTest {
 
     @Test
     void login_successful(){
+        Map<String, Object> resultDataUser = new HashMap<>();
+        resultDataUser.put("isAdmin",true);
+        resultDataUser.put("id", 1L);
+
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
+        when(this.userService.getUserAdminStatusAndIdByEmail(exampleEmail)).thenReturn(resultDataUser);
         when(userDetailsController.loadUserByUsername(exampleEmail)).thenReturn(mockUserDetails);
         when(mockUserDetails.getPassword()).thenReturn(exampleEncodedPass);
+        when(mockUserDetails.getUsername()).thenReturn(exampleEmail);
         when(passwordEncoder.matches(examplePass, exampleEncodedPass)).thenReturn(true);
         String mockJwt = "mockedJwtToken";
         when(jwtService.generateToken(mockUserDetails)).thenReturn(mockJwt);
