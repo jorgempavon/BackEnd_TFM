@@ -338,8 +338,9 @@ public class UserService {
         String newPassword = userSelfUpdateDTO.getPassword();
         String newRepeatPassword = userSelfUpdateDTO.getRepeatPassword();
 
-        boolean oldPasswordProvided = oldPassword != null;
-        boolean isNewPasswordProvided = (newPassword != null || newRepeatPassword != null);
+        boolean oldPasswordProvided = oldPassword != null && !oldPassword.isBlank();
+        boolean isNewPasswordProvided = ((newPassword != null && !newPassword.isBlank())
+                || (newRepeatPassword != null && !newRepeatPassword.isBlank()));
 
         if ( (oldPasswordProvided && !this.passwordEncoder.matches(oldPassword,currentUserPassword))
                 || (isNewPasswordProvided && !Objects.equals(newPassword, newRepeatPassword))){
