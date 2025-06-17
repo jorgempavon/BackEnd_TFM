@@ -188,7 +188,7 @@ public class UserService {
         User user = this.userRepository.findById(id).get();
         updateUserData(user,userSelfUpdateDTO);
 
-        if (userSelfUpdateDTO.getPassword() != null) {
+        if (userSelfUpdateDTO.getPassword() != null && !userSelfUpdateDTO.getPassword().isBlank()) {
             String encodedPassword = this.passwordEncoder.encode(userSelfUpdateDTO.getPassword());
             user.setPassword(encodedPassword);
         }
