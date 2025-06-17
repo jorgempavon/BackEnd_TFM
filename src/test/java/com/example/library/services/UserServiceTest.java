@@ -284,7 +284,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void isUserAdminByEmail_successful_isAdmin(){
+    void isUserAdminAndIdByEmail_successful_isAdmin(){
         User newUser = new User(
                 exampleName,
                 exampleDni,
@@ -292,12 +292,11 @@ public class UserServiceTest {
                 exampleLastName
         );
         newUser.setId(exampleId);
-
         when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
         when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(newUser));
         when(this.adminRepository.existsByUserId(exampleId)).thenReturn(true);
 
-        assertTrue(this.userService.isUserAdminByEmail(exampleEmail));
+        assertTrue((boolean) this.userService.getUserAdminStatusAndIdByEmail(exampleEmail).get("isAdmin"));
     }
 
     @Test
@@ -314,7 +313,7 @@ public class UserServiceTest {
         when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(newUser));
         when(this.adminRepository.existsByUserId(exampleId)).thenReturn(false);
 
-        assertFalse(this.userService.isUserAdminByEmail(exampleEmail));
+        assertFalse((boolean) this.userService.getUserAdminStatusAndIdByEmail(exampleEmail).get("isAdmin"));
     }
 
     @Test
@@ -322,7 +321,7 @@ public class UserServiceTest {
         when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> {
-            this.userService.isUserAdminByEmail(exampleEmail);
+            this.userService.getUserAdminStatusAndIdByEmail(exampleEmail);
         });
     }
 
