@@ -65,15 +65,5 @@ public class BookResourceTest {
         assertEquals(responseCreateBook.getAuthor(), exampleAuthor);
     }
 
-    @Test
-    void createBook_whenExistsIsbn_throwsBadRequestException(){
-        BookCreateDTO newBookCreateDTO = new BookCreateDTO(
-                exampleIsbn,
-                exampleTitle,
-                exampleReleaseDate,
-                exampleStock,
-                exampleGenre,
-                exampleAuthor
-        );
-    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
+import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.BookCreateDTO;
 import com.example.library.entities.dto.BookDTO;
 import com.example.library.entities.repository.BookRepository;
@@ -51,5 +52,22 @@ public class BookServiceTest {
         assertEquals(resultBookDTO.getStock(), exampleStock);
         assertEquals(resultBookDTO.getGenre(), exampleGenre);
         assertEquals(resultBookDTO.getAuthor(), exampleAuthor);
+    }
+
+    @Test
+    void createBook_whenExistsBook_throwsBadRequestException(){
+        BookCreateDTO newBookCreateDTO = new BookCreateDTO(
+                exampleIsbn,
+                exampleTitle,
+                exampleReleaseDate,
+                exampleStock,
+                exampleGenre,
+                exampleAuthor
+        );
+        when(this.bookRepository.existsByIsbn(exampleIsbn)).thenReturn(true);
+
+        assertThrows(BadRequestException.class, () -> {
+            bookService.create(newBookCreateDTO);
+        });
     }
 }
