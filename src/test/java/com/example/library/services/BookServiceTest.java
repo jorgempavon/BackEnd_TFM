@@ -4,6 +4,7 @@ import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.BookCreateDTO;
 import com.example.library.entities.dto.BookDTO;
+import com.example.library.entities.dto.BookUpdateDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -30,13 +31,21 @@ public class BookServiceTest {
     @InjectMocks
     private BookService bookService;
     private static final Long exampleId = 4L;
+    private static final Long exampleOtherId = 2L;
     private static final String exampleQr= "d9b2d63d-a233-4123-847a-7ac09a557b05\n";
     private static final String exampleIsbn = "9781234567890";
-    private static final String exampleTitle= "9781234567890";
+    private static final String exampleTitle= "El Misterio del Bosque";
     private static final Integer exampleStock = 20;
     private static final Date exampleReleaseDate = new Date();
-    private static final String exampleGenre = "9781234567890";
-    private static final String exampleAuthor = "9781234567890";
+    private static final String exampleGenre = "Ficción";
+    private static final String exampleAuthor = "Laura Márquez";
+
+    private static final String exampleOtherIsbn = "9781234567893";
+    private static final String exampleOtherTitle= "El Tiempo Expandido";
+    private static final Integer exampleOtherStock = 10;
+    private static final Date exampleOtherReleaseDate = new Date();
+    private static final String exampleOtherGenre = "Fantasía";
+    private static final String exampleOtherAuthor = "María Torres";
 
     private static final Book book = new Book(
             exampleIsbn,
@@ -46,6 +55,23 @@ public class BookServiceTest {
             exampleStock,
             exampleGenre,
             exampleAuthor
+    );
+
+    private static final Book otherBook = new Book(
+            exampleOtherId,
+            exampleIsbn,
+            exampleTitle,
+            exampleQr,
+            exampleReleaseDate,
+            exampleStock,
+            exampleGenre,
+            exampleAuthor
+    );
+
+
+    private static final BookUpdateDTO bookUpdateDTO = new BookUpdateDTO(
+            exampleOtherIsbn,exampleOtherTitle,exampleOtherReleaseDate,
+            exampleOtherStock,exampleOtherGenre,exampleOtherAuthor
     );
 
     @Test
@@ -134,4 +160,29 @@ public class BookServiceTest {
         assertEquals(exampleIsbn, result.get(0).getIsbn());
         assertEquals(exampleGenre, result.get(0).getGenre());
     }
+
+    @Test
+    void updateBook_successful(){
+        when(bookRepository.existsByIsbn(exampleOtherIsbn)).thenReturn(false);
+        when(bookRepository.findById(exampleId)).thenReturn(Optional.of(otherBook));
+
+        BookDTO responseUpdate = this.bookService.update(exampleId,bookUpdateDTO);
+
+        assertEquals(responseUpdate.getIsbn(), exampleOtherIsbn);
+        assertEquals(responseUpdate.getTitle(), exampleOtherTitle);
+        assertEquals(responseUpdate.getReleaseDate(), exampleOtherReleaseDate);
+        assertEquals(responseUpdate.getStock(), exampleOtherStock);
+        assertEquals(responseUpdate.getGenre(), exampleOtherGenre);
+        assertEquals(responseUpdate.getAuthor(), exampleOtherAuthor);
+    }
+
+    @Test
+    void updateBook_whenExistsOtherBookWithIsbn_throwsBadRequestException(){
+        when(bookRepository.existsByIsbn(exampleOtherIsbn)).thenReturn(true);
+        when(bookRepository.findByIsbn(exampleOtherIsbn)).thenReturn(Optional.of(otherBook));
+        assertThrows(BadRequestException.class, () -> {
+            bookService.update(exampleId,bookUpdateDTO);
+        });
+    }
+
 }
