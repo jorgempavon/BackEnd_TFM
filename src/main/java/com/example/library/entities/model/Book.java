@@ -29,6 +29,10 @@ public class Book {
     @Column(name = "author", nullable = false)
     private String author;
 
+    public Book(){
+
+    }
+
     public Book(String isbn,String title,String qr, Date releaseDate, Integer stock, String genre, String author){
         this.isbn = isbn;
         this.title = title;

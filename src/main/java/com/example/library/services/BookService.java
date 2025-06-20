@@ -101,7 +101,7 @@ public class BookService {
         }
 
         List<Book> books = this.bookRepository.findAll(spec);
-        List<BookDTO> responseList= new ArrayList<>();
+        List<BookDTO> responseList = new ArrayList<>();
 
         for (Book book : books) {
             BookDTO newBookDto = new BookDTO(
