@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/bibliokie/books")
@@ -42,5 +43,15 @@ public class BookResource {
     public  ResponseEntity<?> delete(@PathVariable Long id){
         this.bookService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public  ResponseEntity<?> findByTitleAndAuthorAndIsbnAndGenre(@RequestParam(required = false) String title,
+                                                       @RequestParam(required = false) String author,
+                                                       @RequestParam(required = false) String isbn,
+                                                       @RequestParam(required = false) String genre){
+
+        List<BookDTO> responseListBookDTO = this.bookService.findByTitleAndAuthorAndIsbnAndGenre(title,author,isbn,genre);
+        return ResponseEntity.ok(responseListBookDTO);
     }
 }
