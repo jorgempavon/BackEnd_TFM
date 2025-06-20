@@ -3,6 +3,7 @@ package com.example.library.api.resources;
 
 import com.example.library.entities.dto.BookCreateDTO;
 import com.example.library.entities.dto.BookDTO;
+import com.example.library.entities.dto.BookUpdateDTO;
 import com.example.library.services.BookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -53,5 +54,12 @@ public class BookResource {
 
         List<BookDTO> responseListBookDTO = this.bookService.findByTitleAndAuthorAndIsbnAndGenre(title,author,isbn,genre);
         return ResponseEntity.ok(responseListBookDTO);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody BookUpdateDTO bookUpdateDTO) {
+        BookDTO responseBookDTO = this.bookService.update(id,bookUpdateDTO);
+        return ResponseEntity.ok(responseBookDTO);
     }
 }
