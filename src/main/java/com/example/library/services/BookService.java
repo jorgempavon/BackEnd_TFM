@@ -125,7 +125,7 @@ public class BookService {
     public BookDTO update(Long id,BookUpdateDTO bookUpdateDTO){
         boolean existsIsbn = this.bookRepository.existsByIsbn(bookUpdateDTO.getIsbn());
         if(existsIsbn){
-            Book existingBookWithIsbn = this.bookRepository.findById(bookUpdateDTO.getIsbn()).get();
+            Book existingBookWithIsbn = this.bookRepository.findByIsbn(bookUpdateDTO.getIsbn()).get();
             if (!existingBookWithIsbn.getId().equals(id)){
                 throw new BadRequestException("Ya existe un libro con el isbn: "+bookUpdateDTO.getIsbn());
             }

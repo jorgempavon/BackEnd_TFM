@@ -3,6 +3,7 @@ package com.example.library.resources;
 import com.example.library.api.resources.BookResource;
 import com.example.library.entities.dto.BookCreateDTO;
 import com.example.library.entities.dto.BookDTO;
+import com.example.library.entities.dto.BookUpdateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.services.BookService;
 import org.junit.jupiter.api.Test;
@@ -32,12 +33,19 @@ public class BookResourceTest {
     private static final Long exampleId = 4L;
 
     private static final String exampleIsbn = "9781234567890";
-    private static final String exampleTitle= "9781234567890";
+    private static final String exampleTitle= "El Misterio del Bosque";
     private static final String exampleQr= "d9b2d63d-a233-4123-847a-7ac09a557b05\n";
     private static final Integer exampleStock = 20;
     private static final Date exampleReleaseDate = new Date();
-    private static final String exampleGenre = "9781234567890";
-    private static final String exampleAuthor = "9781234567890";
+    private static final String exampleGenre = "Ficción";
+    private static final String exampleAuthor = "Laura Márquez";
+
+    private static final String exampleOtherIsbn = "9781234567893";
+    private static final String exampleOtherTitle= "El Tiempo Expandido";
+    private static final Integer exampleOtherStock = 10;
+    private static final Date exampleOtherReleaseDate = new Date();
+    private static final String exampleOtherGenre = "Fantasía";
+    private static final String exampleOtherAuthor = "María Torres";
 
     private static final BookDTO newBookDTO = new BookDTO(
             exampleId,
@@ -48,6 +56,21 @@ public class BookResourceTest {
             exampleStock,
             exampleGenre,
             exampleAuthor
+    );
+
+    private static final BookDTO otherBookDTO = new BookDTO(
+            exampleId,
+            exampleOtherIsbn,
+            exampleOtherTitle,
+            exampleQr,
+            exampleOtherReleaseDate,
+            exampleOtherStock,
+            exampleOtherGenre,
+            exampleOtherAuthor
+    );
+    private static final BookUpdateDTO bookUpdateDTO = new BookUpdateDTO(
+            exampleOtherIsbn,exampleOtherTitle,exampleOtherReleaseDate,
+            exampleOtherStock,exampleOtherGenre,exampleOtherAuthor
     );
 
     @Test
@@ -98,4 +121,18 @@ public class BookResourceTest {
         assertEquals(result.getBody(),listBooksDto);
     }
 
+    @Test
+    void update_successful(){
+        when(this.bookService.update(exampleId,bookUpdateDTO)).thenReturn(otherBookDTO);
+        ResponseEntity<?> result = bookResource.update(exampleId,bookUpdateDTO);
+        BookDTO resultBody = (BookDTO) result.getBody();
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(resultBody.getId(),otherBookDTO.getId());
+        assertEquals(resultBody.getIsbn(),otherBookDTO.getIsbn());
+        assertEquals(resultBody.getTitle(),otherBookDTO.getTitle());
+        assertEquals(resultBody.getStock(),otherBookDTO.getStock());
+        assertEquals(resultBody.getAuthor(),otherBookDTO.getAuthor());
+        assertEquals(resultBody.getGenre(),otherBookDTO.getGenre());
+    }
 }
