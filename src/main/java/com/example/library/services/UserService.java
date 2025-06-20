@@ -246,16 +246,16 @@ public class UserService {
         String newName = userSelfUpdateDTO.getName();
         String newLastName = userSelfUpdateDTO.getLastName();
 
-        if (newDni != null && !newDni.equals(user.getDni())) {
+        if (newDni != null && !newDni.isEmpty()  && !newDni.equals(user.getDni())) {
             user.setDni(newDni);
         }
-        if (newName != null && !newName.equals(user.getName())) {
+        if (newName != null && !newName.isEmpty() && !newName.equals(user.getName())) {
             user.setName(newName);
         }
         if (newLastName != null && !newLastName.equals(user.getLastName())) {
             user.setLastName(newLastName);
         }
-        if (newEmail != null && !newEmail.equals(user.getEmail())) {
+        if (newEmail != null && !newEmail.isEmpty() && !newEmail.equals(user.getEmail())) {
             this.emailService.oldAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName());
             this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName(),"");
             user.setEmail(newEmail);
@@ -268,16 +268,16 @@ public class UserService {
         String newName = userAdminUpdateDTO.getName();
         String newLastName = userAdminUpdateDTO.getLastName();
 
-        if (newDni != null && !newDni.equals(user.getDni())) {
+        if (newDni != null  && !newDni.isEmpty() && !newDni.equals(user.getDni())) {
             user.setDni(newDni);
         }
-        if (newName != null && !newName.equals(user.getName())) {
+        if (newName != null &&  !newName.isEmpty() && !newName.equals(user.getName())) {
             user.setName(newName);
         }
         if (newLastName != null && !newLastName.equals(user.getLastName())) {
             user.setLastName(newLastName);
         }
-        if (newEmail != null && !newEmail.equals(user.getEmail())) {
+        if (newEmail != null && !newEmail.isEmpty() && !newEmail.equals(user.getEmail())) {
             this.emailService.oldAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName());
             String infoNewPassword = "";
             if(userAdminUpdateDTO.getResetPassword()){

@@ -42,4 +42,15 @@ public class Book {
         this.genre = genre;
         this.author = author;
     }
+
+    public Book(Long id,String isbn,String title,String qr, Date releaseDate, Integer stock, String genre, String author){
+        this.id = id;
+        this.isbn = isbn;
+        this.title = title;
+        this.qr = qr;
+        this.releaseDate = releaseDate;
+        this.stock = stock;
+        this.genre = genre;
+        this.author = author;
+    }
 }
