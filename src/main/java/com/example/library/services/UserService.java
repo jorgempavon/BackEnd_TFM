@@ -3,61 +3,39 @@ package com.example.library.services;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.NotFoundException;
+import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.*;
 import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
-import com.example.library.entities.repository.AdminRepository;
-import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class UserService {
+
+    private PasswordService passwordService;
     private final EmailService emailService;
-    private final PasswordGenerator passwordGenerator;
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository;
-    private final AdminRepository adminRepository;
-    private final String STATUS = "status";
-    private final String MESSAGE = "message";
-    private final String statusEmail ="statusEmail";
-    
-    private final String statusDni = "statusDni";
 
-    private final String idUserByEmail = "idUserByEmail";
-
-    private final String idUserByDni = "idUserByDni";
-    
     public UserService(UserRepository userRepository,
-                       ClientRepository clientRepository,
-                       AdminRepository adminRepository,
-                       PasswordEncoder passwordEncoder,
-                       PasswordGenerator passwordGenerator,
+                       PasswordService passwordService,
                        EmailService emailService) {
         this.userRepository = userRepository;
-        this.clientRepository = clientRepository;
-        this.adminRepository = adminRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.passwordGenerator = passwordGenerator;
         this.emailService = emailService;
+        this.passwordService = passwordService;
     }
+
     public UserDTO findById(Long id){
         if(!this.userRepository.existsById(id)){
             throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
         }
         User user = this.userRepository.findById(id).get();
-        boolean isAdmin = false;
-        if(this.adminRepository.existsByUserId(id)){
-            isAdmin = true;
-        }
-        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
     }
     public Map<String, Object> getUserAdminStatusAndIdByEmail(String email) {
         if (!this.userRepository.existsByEmail(email)) {
@@ -71,53 +49,6 @@ public class UserService {
         result.put("id", userId);
         result.put("isAdmin", isAdmin);
         return result;
-    }
-    public UserDTO create(UserCreateDTO userCreateDTO){
-        Map<String, Object> responseExistsUser = this.checkUserExistence(
-                userCreateDTO.getEmail(),
-                userCreateDTO.getDni()
-        );
-
-        if ((Boolean) responseExistsUser.get(STATUS)) {
-            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
-        }
-        String generatedPassword = this.passwordGenerator.generateStrongPassword();
-        String passwordEncoded = passwordEncoder.encode(generatedPassword);
-        UserSaveDTO userSaveDTO = new UserSaveDTO(
-                userCreateDTO.getDni(),
-                userCreateDTO.getEmail(),
-                userCreateDTO.getName(),
-                userCreateDTO.getLastName(),
-                passwordEncoded,
-                userCreateDTO.getIsAdmin()
-        );
-        String userFullName = userSaveDTO.getName() +" "+ userSaveDTO.getLastName();
-        this.emailService.newAccountEmail(userSaveDTO.getEmail(),userFullName,generatedPassword);
-        return this.save(userSaveDTO);
-    }
-
-    public UserDTO create(UserRegisterDTO userRegisterDTO){
-        Map<String, Object> responseExistsUser = this.checkUserExistence(
-                userRegisterDTO.getEmail(),
-                userRegisterDTO.getDni()
-        );
-
-        if ((Boolean) responseExistsUser.get(STATUS)) {
-            throw new BadRequestException((String) responseExistsUser.get(MESSAGE));
-        }
-
-        String passwordEncoded = passwordEncoder.encode(userRegisterDTO.getPassword());
-        UserSaveDTO userSaveDTO = new UserSaveDTO(
-                userRegisterDTO.getDni(),
-                userRegisterDTO.getEmail(),
-                userRegisterDTO.getName(),
-                userRegisterDTO.getLastName(),
-                passwordEncoded,
-                false
-        );
-        String userFullName = userRegisterDTO.getName()+" "+ userRegisterDTO.getLastName();
-        this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
-        return this.save(userSaveDTO);
     }
     public List<UserDTO> findByNameAndDniAndEmail(String name, String dni, String email) {
         Specification<User> spec = Specification.where(null);
@@ -144,10 +75,7 @@ public class UserService {
         List<UserDTO> responseList= new ArrayList<>();
 
         for (User user : users) {
-            UserDTO newUserDto = new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),false);
-            if (this.adminRepository.existsByUserId(user.getId())){
-                newUserDto.setIsAdmin(true);
-            }
+            UserDTO newUserDto = new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
             responseList.add(newUserDto);
         }
 
@@ -162,23 +90,6 @@ public class UserService {
         updateUserData(user,userAdminUpdateDTO);
         this.userRepository.save(user);
 
-        boolean isUpdateToAdmin = userAdminUpdateDTO.getIsAdmin() != null && userAdminUpdateDTO.getIsAdmin();
-        boolean isUpdateToClient = userAdminUpdateDTO.getIsAdmin() != null && !userAdminUpdateDTO.getIsAdmin();
-        if (isUpdateToAdmin && this.clientRepository.existsByUserId(id)){
-            Client clientToDelete = this.clientRepository.findByUserId(id).get();
-            this.clientRepository.delete(clientToDelete);
-            Admin admin = new Admin();
-            admin.setUser(user);
-            this.adminRepository.save(admin);
-        } else if (isUpdateToClient && this.adminRepository.existsByUserId(id)) {
-            Admin adminToDelete = this.adminRepository.findByUserId(id).get();
-            this.adminRepository.delete(adminToDelete);
-            Client client = new Client();
-            client.setUser(user);
-            this.clientRepository.save(client);
-        }
-
-        boolean userIsAdmin = this.adminRepository.existsByUserId(id);
         return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),userIsAdmin);
     }
     @Transactional
@@ -189,57 +100,13 @@ public class UserService {
         updateUserData(user,userSelfUpdateDTO);
 
         if (userSelfUpdateDTO.getPassword() != null && !userSelfUpdateDTO.getPassword().isBlank()) {
-            String encodedPassword = this.passwordEncoder.encode(userSelfUpdateDTO.getPassword());
+            String encodedPassword = this.passwordService.encodePasswords(userSelfUpdateDTO.getPassword());
             user.setPassword(encodedPassword);
         }
         this.userRepository.save(user);
-
-        boolean isAdminUser = this.adminRepository.existsByUserId(id);
-        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdminUser);
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
     }
-    @Transactional
-    public void delete(Long id){
-        if (this.clientRepository.existsByUserId(id)){
-            Client client = this.clientRepository.findByUserId(id).get();
-            this.clientRepository.delete(client);
-        } else if (this.adminRepository.existsByUserId(id)) {
-            Admin admin = this.adminRepository.findByUserId(id).get();
-            this.adminRepository.delete(admin);
-        }
 
-        if (this.userRepository.existsById(id)){
-            User user = this.userRepository.findById(id).get();
-            String userFullName = user.getName() +" "+ user.getLastName();
-            this.emailService.deleteAccountEmail(user.getEmail(),userFullName);
-            this.userRepository.delete(user);
-        }
-    }
-    public Map<String, Object> checkUserExistence(String email, String dni) {
-        Map<String, Object> validationResult = new HashMap<>();
-
-        String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
-
-        validationResult.put(STATUS, false);
-        validationResult.put(statusEmail, false);
-        validationResult.put(statusDni, false);
-        if (email != null && this.userRepository.existsByEmail(email)) {
-            validationResult.put(STATUS, true);
-            validationResult.put(MESSAGE, "El email " + baseMessage);
-            validationResult.put(statusEmail, true);
-            validationResult.put(idUserByEmail,this.userRepository.findByEmail(email).get().getId());
-        }
-
-        if ((Boolean) validationResult.get(STATUS) && dni!=null && this.userRepository.existsByDni(dni)) {
-            validationResult.put(MESSAGE, "El email y dni " + baseMessage);
-        } else if (dni!=null && this.userRepository.existsByDni(dni)) {
-            validationResult.put(STATUS, true);
-            validationResult.put(MESSAGE, "El dni " + baseMessage);
-            validationResult.put(statusDni, true);
-            validationResult.put(idUserByDni,this.userRepository.findByDni(dni).get().getId());
-        }
-
-        return validationResult;
-    }
     private void updateUserData(User user, UserSelfUpdateDTO userSelfUpdateDTO) {
         String newDni = userSelfUpdateDTO.getDni();
         String newEmail = userSelfUpdateDTO.getEmail();
@@ -281,16 +148,16 @@ public class UserService {
             this.emailService.oldAccountEmail(user.getEmail(),newEmail,user.getName() + " "+ user.getLastName());
             String infoNewPassword = "";
             if(userAdminUpdateDTO.getResetPassword()){
-                infoNewPassword = this.passwordGenerator.generateStrongPassword();
-                String newEncodedPassword = this.passwordEncoder.encode(infoNewPassword);
+                infoNewPassword = this.passwordService.generateStrongPassword();
+                String newEncodedPassword = this.passwordService.encodePasswords(infoNewPassword);
                 user.setPassword(newEncodedPassword);
             }
             this.emailService.modifiedAccountEmail(user.getEmail(),newEmail,user.getName() + " "+
                     user.getLastName(),infoNewPassword);
             user.setEmail(newEmail);
         } else if (userAdminUpdateDTO.getResetPassword()) {
-            String newPassword = this.passwordGenerator.generateStrongPassword();
-            String newEncodedPassword = this.passwordEncoder.encode(newPassword);
+            String newPassword = this.passwordService.generateStrongPassword();
+            String newEncodedPassword = this.passwordService.encodePasswords(newPassword);
             this.emailService.regeneratedPasswordEmail(user.getEmail(),user.getName() + " "+
                     user.getLastName(),newPassword);
             user.setPassword(newEncodedPassword);
@@ -342,33 +209,9 @@ public class UserService {
         boolean isNewPasswordProvided = ((newPassword != null && !newPassword.isBlank())
                 || (newRepeatPassword != null && !newRepeatPassword.isBlank()));
 
-        if ( (oldPasswordProvided && !this.passwordEncoder.matches(oldPassword,currentUserPassword))
+        if ( (oldPasswordProvided && !this.passwordService.matchesPasswords(oldPassword,currentUserPassword))
                 || (isNewPasswordProvided && !Objects.equals(newPassword, newRepeatPassword))){
             throw new ConflictException("Las contraseñas proporcionadas no son validas");
         }
-    }
-    @Transactional
-    private UserDTO save(UserSaveDTO userSaveDTO){
-        boolean isAdmin = userSaveDTO.getIsAdmin();
-        User user = new User();
-        user.setDni(userSaveDTO.getDni());
-        user.setEmail(userSaveDTO.getEmail());
-        user.setName(userSaveDTO.getName());
-        user.setLastName(userSaveDTO.getLastName());
-        user.setPassword(userSaveDTO.getPasswordEncoded());
-        this.userRepository.save(user);
-
-        if (isAdmin){
-            Admin admin = new Admin();
-            admin.setUser(user);
-            this.adminRepository.save(admin);
-        }
-        else {
-            Client client = new Client();
-            client.setUser(user);
-            this.clientRepository.save(client);
-        }
-
-        return  new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),isAdmin);
     }
 }

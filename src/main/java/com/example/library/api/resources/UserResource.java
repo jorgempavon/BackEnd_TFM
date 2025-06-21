@@ -30,25 +30,6 @@ public class UserResource {
         UserDTO responseUserDTO = this.userService.findById(id);
         return ResponseEntity.ok(responseUserDTO);
     }
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        UserDTO responseUserDTO = this.userService.create(userCreateDTO);
-        URI location = URI.create("/users/" + responseUserDTO.getId());
-        return ResponseEntity.created(location).body(responseUserDTO);
-    }
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        this.userService.delete(id);
-        return ResponseEntity.ok().build();
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserAdminUpdateDTO userAdminUpdateDTO){
-        UserDTO userDTO = this.userService.update(id,userAdminUpdateDTO);
-        return ResponseEntity.ok(userDTO);
-    }
 
     @PutMapping("/myself")
     public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody UserSelfUpdateDTO userSelfUpdateDTO){

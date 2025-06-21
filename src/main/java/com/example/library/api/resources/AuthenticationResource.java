@@ -21,12 +21,7 @@ public class AuthenticationResource {
     public AuthenticationResource(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody  UserRegisterDTO newUser){
-        UserDTO created = authenticationService.register(newUser);
-        URI location = URI.create("/users/" + created.getId());
-        return ResponseEntity.created(location).body(created);
-    }
+
 
     @PostMapping("/login")
     public ResponseEntity<SessionDTO> login(@Valid @RequestBody LoginDTO loginDTO) {

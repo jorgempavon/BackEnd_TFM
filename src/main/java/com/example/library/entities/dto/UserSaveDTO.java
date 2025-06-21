@@ -18,21 +18,18 @@ public class UserSaveDTO {
     @NotBlank(message = "La password es obligatoria")
     private String passwordEncoded;
     @NotNull(message = "El rol es obligatorio")
-    private boolean isAdmin;
+    private String rol;
 
     public UserSaveDTO(){}
 
     public UserSaveDTO(String dni,String email,String name,String lastName,
-                       String passwordEncoded,boolean isAdmin){
+                       String passwordEncoded,String rol){
         this.dni = dni;
         this.email = email;
         this.name = name;
         this.lastName = lastName;
         this.passwordEncoded = passwordEncoded;
-        this.isAdmin = isAdmin;
+        this.rol = rol;
     }
 
-    public boolean getIsAdmin(){
-        return this.isAdmin;
-    }
 }
