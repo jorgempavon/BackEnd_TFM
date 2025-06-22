@@ -6,23 +6,16 @@ import com.example.library.api.resources.UserResource;
 import com.example.library.config.CustomUserDetails;
 import com.example.library.entities.dto.UserAdminUpdateDTO;
 import com.example.library.entities.dto.UserSelfUpdateDTO;
-import com.example.library.services.UserService;
+import com.example.library.services.User.UserService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 

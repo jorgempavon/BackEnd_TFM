@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.Admin;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserCreateDTO;
@@ -8,6 +8,8 @@ import com.example.library.entities.model.Admin;
 import com.example.library.entities.model.User;
 import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.UserRepository;
+import com.example.library.services.EmailService;
+import com.example.library.services.User.UserValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.Map;
@@ -19,10 +21,9 @@ public class AdminService {
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
 
-
     public AdminService( UserValidatorService userValidatorService,
                           UserRepository userRepository, AdminRepository adminRepository,
-                          PasswordService passwordService, EmailService emailService,){
+                          PasswordService passwordService, EmailService emailService){
         this.adminRepository = adminRepository;
         this.userRepository = userRepository;
         this.passwordService = passwordService;
@@ -58,6 +59,7 @@ public class AdminService {
         user.setName(userSaveDTO.getName());
         user.setLastName(userSaveDTO.getLastName());
         user.setPassword(userSaveDTO.getPasswordEncoded());
+        String rol = "rol";
         user.setRol(rol);
 
         this.userRepository.save(user);

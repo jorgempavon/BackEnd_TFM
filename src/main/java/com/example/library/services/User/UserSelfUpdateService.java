@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.User;
 
 
 import com.example.library.api.exceptions.models.BadRequestException;
@@ -9,21 +9,22 @@ import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserSelfUpdateDTO;
 import com.example.library.entities.model.User;
 import com.example.library.entities.repository.UserRepository;
+import com.example.library.services.EmailService;
 import jakarta.transaction.Transactional;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class UserSelfUpdate {
+public class UserSelfUpdateService {
     private final PasswordService passwordService;
     private final EmailService emailService;
     private final UserValidatorService userValidatorService;
     private final UserRepository userRepository;
 
-    public UserSelfUpdate(UserValidatorService userValidatorService,
-                                    PasswordService passwordService,
-                                    EmailService emailService,
-                                    UserRepository userRepository){
+    public UserSelfUpdateService(UserValidatorService userValidatorService,
+                                 PasswordService passwordService,
+                                 EmailService emailService,
+                                 UserRepository userRepository){
         this.emailService = emailService;
         this.userValidatorService = userValidatorService;
         this.userRepository = userRepository;
@@ -73,6 +74,8 @@ public class UserSelfUpdate {
                 userSelfUpdateDTO.getDni()
         );
         String statusEmail = "statusEmail";
+        String idUserByEmail = "idUserByEmail";
+        String idUserByDni = "idUserByDni";
         Boolean existUserWithNewEmail = (Boolean) responseExistsUser.get(statusEmail)
                 && !Objects.equals((Long) responseExistsUser.get(idUserByEmail), id);
         String statusDni = "statusDni";

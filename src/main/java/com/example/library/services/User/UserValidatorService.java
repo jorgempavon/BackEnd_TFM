@@ -1,5 +1,6 @@
-package com.example.library.services;
+package com.example.library.services.User;
 
+import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserSaveDTO;
 import com.example.library.entities.repository.UserRepository;
@@ -11,15 +12,16 @@ import java.util.Map;
 @Service
 public class UserValidatorService {
     private final UserRepository userRepository;
-
+    private final PasswordService passwordService;
     private final String status = "status";
     private final String message = "message";
-    private final String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
     private final String statusEmail = "statusEmail";
     private final String statusDni = "statusDni";
+    private final String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
 
-    public UserValidatorService(UserRepository userRepository){
+    public UserValidatorService(UserRepository userRepository,PasswordService passwordService){
         this.userRepository = userRepository;
+        this.passwordService = passwordService;
     }
 
     public Map<String, Object> checkUserExistence(String email, String dni) {

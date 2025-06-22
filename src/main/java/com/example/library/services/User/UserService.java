@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.User;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetailsService;

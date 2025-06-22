@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.User;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
@@ -7,6 +7,7 @@ import com.example.library.entities.dto.UserAdminUpdateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.model.User;
 import com.example.library.entities.repository.UserRepository;
+import com.example.library.services.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class UserUpdateByAdminService {
     }
     private void updateEmail(User user, UserAdminUpdateDTO dto){
         String fullName = user.getName() + " "+ user.getLastName();
-        this.emailService.oldAccountEmail(user.getEmail(),newEmail,fullName);
+        this.emailService.oldAccountEmail(user.getEmail(),dto.getEmail(),fullName);
         String infoNewPassword = "";
         if(dto.getResetPassword()){
             infoNewPassword = this.passwordService.generateStrongPassword();

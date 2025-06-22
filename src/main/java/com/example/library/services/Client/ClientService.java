@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.Client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
@@ -8,6 +8,8 @@ import com.example.library.entities.model.Client;
 import com.example.library.entities.model.User;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
+import com.example.library.services.EmailService;
+import com.example.library.services.User.UserValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class ClientService {
 
     public ClientService( ClientSaveService clientSaveService,UserValidatorService userValidatorService,
                           UserRepository userRepository, ClientRepository clientRepository,
-                          PasswordService passwordService, EmailService emailService,){
+                          PasswordService passwordService, EmailService emailService){
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.passwordService = passwordService;
@@ -84,7 +86,7 @@ public class ClientService {
             throw new BadRequestException((String) responseExistsUser.get(message));
         }
 
-        UserSaveDTO userSaveDTO = this.clientSaveService.buildUserSaveDto(userRegisterDTO,userRegisterDTO.getPassword());
+        UserSaveDTO userSaveDTO = this.clientSaveService.buildUserSaveDto(userRegisterDTO);
         String userFullName = userRegisterDTO.getName()+" "+ userRegisterDTO.getLastName();
         this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
         return this.clientSaveService.saveClientUser(userSaveDTO);

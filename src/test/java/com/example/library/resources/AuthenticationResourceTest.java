@@ -3,7 +3,6 @@ package com.example.library.resources;
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.api.resources.AuthenticationResource;
 import com.example.library.entities.dto.LoginDTO;
 import com.example.library.entities.dto.SessionDTO;
 import com.example.library.entities.dto.UserDTO;

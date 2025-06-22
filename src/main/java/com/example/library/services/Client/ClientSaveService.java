@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.Client;
 
 import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserDTO;
@@ -41,8 +41,8 @@ public class ClientSaveService {
         return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
     }
 
-    public UserSaveDTO buildUserSaveDto(UserRegisterDTO userDTO, String password){
-        String passwordEncoded = this.passwordService.encodePasswords(password);
+    public UserSaveDTO buildUserSaveDto(UserRegisterDTO userDTO){
+        String passwordEncoded = this.passwordService.encodePasswords(userDTO.getPassword());
         return new UserSaveDTO(
                 userDTO.getDni(),
                 userDTO.getEmail(),
