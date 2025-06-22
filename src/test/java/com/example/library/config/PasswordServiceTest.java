@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.config;
 
 import com.example.library.config.PasswordService;
 import org.junit.jupiter.api.RepeatedTest;
