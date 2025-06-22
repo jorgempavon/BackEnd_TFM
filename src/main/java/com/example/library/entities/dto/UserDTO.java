@@ -15,15 +15,15 @@ public class UserDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
     private String lastName;
-    private Boolean isAdmin;
+    private String rol;
 
     public UserDTO (){}
-    public UserDTO (Long id,String name, String email,String dni,String lastName,Boolean isAdmin){
+    public UserDTO (Long id,String name, String email,String dni,String lastName,String rol){
         this.id = id;
         this.name = name;
         this.email = email;
         this.dni = dni;
         this.lastName = lastName;
-        this.isAdmin = isAdmin;
+        this.rol = rol;
     }
 }

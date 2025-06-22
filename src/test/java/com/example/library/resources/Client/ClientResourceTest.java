@@ -1,14 +1,12 @@
-package com.example.library.resources;
+package com.example.library.resources.Client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
-import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.api.resources.AuthenticationResource;
-import com.example.library.services.AuthenticationService;
-import com.example.library.entities.dto.LoginDTO;
-import com.example.library.entities.dto.SessionDTO;
+import com.example.library.api.resources.ClientResource;
+import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
+import com.example.library.services.Client.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,21 +16,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthenticationResourceTest {
+public class ClientResourceTest {
     @Mock
-    private AuthenticationService authService;
+    private ClientService clientService;
     @InjectMocks
-    private AuthenticationResource authResource;
+    private ClientResource clientResource;
+    private static final Long exampleId = 2L;
     private static final String exampleName = "example";
     private static final String exampleEmail = "test@example.com";
     private static final String examplePass = "pass123";
     private static final String exampleDni = "12345678A";
     private static final String exampleLastName = "last name example";
+    private static final String rol = "client";
     private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             exampleDni,
             exampleEmail,
@@ -41,9 +41,8 @@ public class AuthenticationResourceTest {
             exampleName,
             exampleLastName
     );
-    private static final LoginDTO loginDTO = new LoginDTO(
-            exampleEmail,examplePass
-    );
+    private static final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName);
+    private static final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,rol);
 
     @Test
     void register_successful() {
@@ -52,9 +51,9 @@ public class AuthenticationResourceTest {
         userDTO.setEmail(exampleEmail);
         userDTO.setDni(exampleDni);
 
-        when(this.authService.register(userRegisterDTO)).thenReturn(userDTO);
+        when(this.clientService.register(userRegisterDTO)).thenReturn(userDTO);
 
-        ResponseEntity<?> result = authResource.register(userRegisterDTO);
+        ResponseEntity<?> result = clientResource.register(userRegisterDTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
 
@@ -62,89 +61,69 @@ public class AuthenticationResourceTest {
         assertEquals(userDTO.getEmail(), resultDto.getEmail());
         assertEquals(userDTO.getDni(), resultDto.getDni());
     }
-
     @Test
     void register_whenPasswordsDoNotMatch_throwsConflictException() {
-        when(this.authService.register(userRegisterDTO))
+        when(this.clientService.register(userRegisterDTO))
                 .thenThrow(new ConflictException("Las contraseñas proporcionadas no coinciden"));
 
         assertThrows(ConflictException.class, () -> {
-            authResource.register(userRegisterDTO);
+            clientResource.register(userRegisterDTO);
         });
     }
-
     @Test
     void register_whenDniExists_throwsBadRequestException() {
-        when(this.authService.register(userRegisterDTO))
+        when(this.clientService.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Dni proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authResource.register(userRegisterDTO);
+            clientResource.register(userRegisterDTO);
         });
     }
-
     @Test
     void register_whenEmailExists_throwsBadRequestException() {
-        when(this.authService.register(userRegisterDTO))
+        when(this.clientService.register(userRegisterDTO))
                 .thenThrow(new BadRequestException("El Email proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo"));
 
         assertThrows(BadRequestException.class, () -> {
-            authResource.register(userRegisterDTO);
+            clientResource.register(userRegisterDTO);
         });
     }
-
     @Test
     void register_whenEmptyDto_throwsException() {
         UserRegisterDTO newEmptyUserRegisterDTO = new UserRegisterDTO();
 
         assertThrows(Exception.class, () -> {
-            authResource.register(newEmptyUserRegisterDTO);
+            clientResource.register(newEmptyUserRegisterDTO);
         });
     }
-
     @Test
-    void login_successful() {
-        String mockJwt = "mockedJwtToken";
-        SessionDTO sessionDTO = new SessionDTO();
-        sessionDTO.setEmail(exampleEmail);
-        sessionDTO.setJwt(mockJwt);
-        when(this.authService.login(loginDTO)).thenReturn(sessionDTO);
-
-        ResponseEntity<?> result = authResource.login(loginDTO);
+    void createClient_successful(){
+        when(this.clientService.create(userCreateDto)).thenReturn(userDTO);
+        ResponseEntity<?> result = clientResource.create(userCreateDto);
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertTrue(result.getBody() instanceof UserDTO);
+    }
+    @Test
+    void createClient_whenUserExists_throwsBadRequestException(){
+        when(this.clientService.create(userCreateDto))
+                .thenThrow(new BadRequestException("El dni o email proporcionados pertenecen a otro usuario"));
+        assertThrows(BadRequestException.class, () -> {
+            clientResource.create(userCreateDto);
+        });
+    }
+    @Test
+    void createClient_whenEmailNotExists_throwsBadRequestException(){
+        assertThrows(BadRequestException.class, () -> {
+            when(this.clientService.create(userCreateDto))
+                    .thenThrow(new BadRequestException("El email proporcionado no existe"));
+            clientResource.create(userCreateDto);
+        });
+    }
+    @Test
+    void  deleteClient_successful(){
+        doNothing().when(clientService).delete(exampleId);
+        ResponseEntity<?> result = clientResource.delete(exampleId);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
-    @Test
-    void login_whenEmptyLoginDto_throwsException() {
-        LoginDTO emptyloginDTO = new LoginDTO();
-
-        assertThrows(Exception.class, () -> {
-            authResource.login(emptyloginDTO);
-        });
-    }
-
-    @Test
-    void login_whenInvalidCredentials_throwsUnauthorizedException(){
-        when(this.authService.login(loginDTO))
-                .thenThrow(new UnauthorizedException("El email o contraseña proporcionados son incorrectos"));
-
-        assertThrows(UnauthorizedException.class, () -> {
-            authResource.login(loginDTO);
-        });
-    }
-    @Test
-    void logOut_Successful(){
-        String exampleToken = "Bearer sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
-        doNothing().when(authService).logOut(anyString());
-
-        ResponseEntity<?> result = authResource.logOut(exampleToken);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-    }
-
-    @Test
-    void logOut_whenTokenIsNull_throwsUnauthorizedException(){
-        assertThrows(UnauthorizedException.class, () -> {
-            authResource.logOut(null);
-        });
-    }
 }

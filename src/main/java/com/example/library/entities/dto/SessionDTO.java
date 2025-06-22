@@ -11,5 +11,5 @@ public class SessionDTO {
     private String jwt;
     private String email;
 
-    private Boolean isAdmin;
+    private String rol;
 }
