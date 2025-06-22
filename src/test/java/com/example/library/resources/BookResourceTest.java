@@ -4,7 +4,6 @@ import com.example.library.api.resources.BookResource;
 import com.example.library.entities.dto.BookCreateDTO;
 import com.example.library.entities.dto.BookDTO;
 import com.example.library.entities.dto.BookUpdateDTO;
-import com.example.library.entities.dto.UserDTO;
 import com.example.library.services.BookService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

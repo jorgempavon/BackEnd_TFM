@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@AtLeastOneField(fields = {"dni","email","resetPassword","name","lastName","isAdmin"})
+@AtLeastOneField(fields = {"dni","email","resetPassword","name","lastName"})
 public class UserAdminUpdateDTO {
     @Size(min = 9, max = 9, message = "El dni debe tener 9 caracteres")
     private String dni;
@@ -17,13 +17,11 @@ public class UserAdminUpdateDTO {
 
     private String lastName;
 
-    private Boolean isAdmin;
-    public UserAdminUpdateDTO(String dni, String email, Boolean resetPassword, String name, String lastName, Boolean isAdmin) {
+    public UserAdminUpdateDTO(String dni, String email, Boolean resetPassword, String name, String lastName) {
         this.dni = dni;
         this.email = email;
         this.resetPassword = resetPassword;
         this.name = name;
         this.lastName = lastName;
-        this.isAdmin = isAdmin;
     }
 }

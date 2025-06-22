@@ -18,16 +18,14 @@ public class UserCreateDTO {
     private String name;
     private String lastName;
 
-    private Boolean isAdmin;
 
     public UserCreateDTO(){}
 
     public UserCreateDTO(String dni, String email, String name,
-                         String lastName, Boolean isAdmin){
+                         String lastName){
         this.dni = dni;
         this.email = email;
         this.name = name;
         this.lastName = lastName;
-        this.isAdmin = isAdmin;
     }
 }

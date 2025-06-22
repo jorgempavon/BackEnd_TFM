@@ -1,15 +1,29 @@
-package com.example.library.services;
+package com.example.library.config;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-public class PasswordGenerator {
+public class PasswordService {
 
+    private final PasswordEncoder passwordEncoder;
     private final SecureRandom RANDOM = new SecureRandom();
+
+    public PasswordService(PasswordEncoder passwordEncoder){
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public boolean matchesPasswords(String password, String encodedPassword){
+        return this.passwordEncoder.matches(password,encodedPassword);
+    }
+    public String encodePasswords(String password){
+        return this.passwordEncoder.encode(password);
+    }
 
     public String generateStrongPassword() {
         StringBuilder passwordBuilder = new StringBuilder();
