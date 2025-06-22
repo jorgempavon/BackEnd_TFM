@@ -17,12 +17,11 @@ public class UserAdminUpdateDTO {
 
     private String lastName;
 
-    public UserAdminUpdateDTO(String dni, String email, Boolean resetPassword, String name, String lastName, Boolean isAdmin) {
+    public UserAdminUpdateDTO(String dni, String email, Boolean resetPassword, String name, String lastName) {
         this.dni = dni;
         this.email = email;
         this.resetPassword = resetPassword;
         this.name = name;
         this.lastName = lastName;
-        this.isAdmin = isAdmin;
     }
 }

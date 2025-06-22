@@ -3,14 +3,10 @@ package com.example.library.api.resources;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.entities.dto.LoginDTO;
 import com.example.library.entities.dto.SessionDTO;
-import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/bibliokie/authentication")
