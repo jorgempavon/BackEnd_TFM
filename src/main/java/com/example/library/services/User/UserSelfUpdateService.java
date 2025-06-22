@@ -11,10 +11,12 @@ import com.example.library.entities.model.User;
 import com.example.library.entities.repository.UserRepository;
 import com.example.library.services.EmailService;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Objects;
 
+@Service
 public class UserSelfUpdateService {
     private final PasswordService passwordService;
     private final EmailService emailService;

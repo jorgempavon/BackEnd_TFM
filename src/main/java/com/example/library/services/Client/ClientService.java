@@ -89,6 +89,37 @@ public class ClientService {
         UserSaveDTO userSaveDTO = this.clientSaveService.buildUserSaveDto(userRegisterDTO);
         String userFullName = userRegisterDTO.getName()+" "+ userRegisterDTO.getLastName();
         this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         return this.clientSaveService.saveClientUser(userSaveDTO);
     }
 }

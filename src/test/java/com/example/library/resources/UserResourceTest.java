@@ -93,7 +93,7 @@ public class UserResourceTest {
     @Test
     void updateAdminDto_successful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(exampleDni,exampleEmail,true,
-                exampleName,exampleLastName,true);
+                exampleName,exampleLastName);
         when(this.userUpdateByAdminService.update(exampleId,userAdminUpdateDTO)).thenReturn(userDTO);
 
         ResponseEntity<?> result = userResource.update(exampleId,userAdminUpdateDTO);

@@ -57,7 +57,7 @@ public class UserServiceTest {
             exampleLastName
     );
     private static final String exampleTkn = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
-
+    private static final String rol = "client";
     @Test
     void findById_successful(){
         UserDTO userDTO = new UserDTO();
@@ -66,7 +66,7 @@ public class UserServiceTest {
         userDTO.setEmail(user.getEmail());
         userDTO.setName(user.getName());
         userDTO.setLastName(user.getLastName());
-        userDTO.setIsAdmin(false);
+        userDTO.setRol(rol);
 
         when(this.userRepository.existsById(exampleId)).thenReturn(true);
         when(userRepository.findById(exampleId)).thenReturn(Optional.of(user));
@@ -135,6 +135,8 @@ public class UserServiceTest {
         when(mockUserDetails.getPassword()).thenReturn(exampleEncodedPass);
         when(mockUserDetails.getUsername()).thenReturn(exampleEmail);
         when(passwordService.matchesPasswords(examplePass, exampleEncodedPass)).thenReturn(true);
+        when(userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
+
         String mockJwt = "mockedJwtToken";
         when(jwtService.generateToken(mockUserDetails)).thenReturn(mockJwt);
 

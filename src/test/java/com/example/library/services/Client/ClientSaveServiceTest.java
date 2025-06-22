@@ -1,18 +1,28 @@
 package com.example.library.services.Client;
 
+import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
 import com.example.library.entities.dto.UserSaveDTO;
 import com.example.library.entities.model.User;
+import com.example.library.entities.repository.ClientRepository;
+import com.example.library.entities.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class ClientSaveServiceTest {
+    @Mock
+    private ClientRepository clientRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private PasswordService passwordService;
     @InjectMocks
     private ClientSaveService clientSaveService;
     private static final String exampleName = "example";

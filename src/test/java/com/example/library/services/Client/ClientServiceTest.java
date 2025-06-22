@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +39,7 @@ public class ClientServiceTest {
     @Mock
     private  UserRepository userRepository;
     @Mock
-    private ClientSaveServiceTest clientSaveServiceTest;
+    private ClientSaveService clientSaveService;
     @Mock
     private  ClientRepository clientRepository;
     @InjectMocks
@@ -51,12 +53,23 @@ public class ClientServiceTest {
     private static final String exampleEncodedPass = "encodedPass";
     private static final String exampleDni = "12345678A";
     private static final String rol = "client";
-
+    private final String status = "status";
+    private final String message = "message";
+    private final String statusEmail = "statusEmail";
+    private final String statusDni = "statusDni";
     private static final User user = new User(
             exampleName,
             exampleDni,
             exampleEmail,
             exampleLastName
+    );
+    private static final UserDTO userDTO = new UserDTO(
+            exampleId,
+            exampleName,
+            exampleEmail,
+            exampleDni,
+            exampleLastName,
+            rol
     );
     private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
             exampleDni,
@@ -81,29 +94,19 @@ public class ClientServiceTest {
             exampleEncodedPass,
             rol
     );
-
-    @Test
-    void create_registerDto_successful(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
-        when(this.clientSaveServiceTest.buildUserSaveDto(userRegisterDTO)).thenReturn(userSaveDTO);
-
-        UserDTO response = this.clientService.register(userRegisterDTO);
-        assertNotNull(response);
-        assertEquals(exampleName,response.getName());
-        assertEquals(exampleEmail,response.getEmail());
-        assertEquals(exampleLastName,response.getLastName());
-        assertEquals(false,response.getIsAdmin());
-    }
-
     @Test
     void create_createDto_successful(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
         when(this.passwordService.generateStrongPassword()).thenReturn(examplePass);
-        when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
+
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,false);
+        responseExistsUser.put(statusEmail,false);
+        responseExistsUser.put(statusDni,false);
+        responseExistsUser.put(message,"");
+
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
         when(this.userValidatorService.buildUserSaveDto(userCreateDTO,examplePass,rol)).thenReturn(userSaveDTO);
+        when(this.clientSaveService.saveClientUser(userSaveDTO)).thenReturn(userDTO);
 
         UserDTO response = this.clientService.create(userCreateDTO);
         assertNotNull(response);
@@ -114,41 +117,27 @@ public class ClientServiceTest {
     }
 
     @Test
-    void create_registerDto_whenExistsUserEmail_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
-
-        assertThrows(BadRequestException.class, () -> {
-            this.clientService.register(userRegisterDTO);
-        });
-    }
-    @Test
-    void create_registerDto_whenExistsUserDni_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
-        when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(user));
-
-        assertThrows(BadRequestException.class, () -> {
-            this.clientService.register(userRegisterDTO);
-        });
-    }
-
-    @Test
     void create_createDto_whenExistsEmail_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,true);
+        responseExistsUser.put(statusEmail,true);
+        responseExistsUser.put(statusDni,false);
+        responseExistsUser.put(message,"");
 
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
         assertThrows(BadRequestException.class, () -> {
             this.clientService.create(userCreateDTO);
         });
     }
     @Test
     void create_createDto_whenExistsDni_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
-        when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(user));
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,true);
+        responseExistsUser.put(statusEmail,false);
+        responseExistsUser.put(statusDni,true);
+        responseExistsUser.put(message,"");
+
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
 
         assertThrows(BadRequestException.class, () -> {
             this.clientService.create(userCreateDTO);
@@ -157,10 +146,16 @@ public class ClientServiceTest {
 
     @Test
     void create_createDto_whenIsNotValidEmail_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,false);
+        responseExistsUser.put(statusEmail,false);
+        responseExistsUser.put(statusDni,false);
+
+        responseExistsUser.put(message,"");
         when(this.passwordService.generateStrongPassword()).thenReturn(examplePass);
-        when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
+        when(this.userValidatorService.buildUserSaveDto(userCreateDTO,examplePass,rol)).thenReturn(userSaveDTO);
+
 
         doThrow(new BadRequestException("El correo proporcionado no existe"))
                 .when(emailService)
@@ -168,21 +163,6 @@ public class ClientServiceTest {
 
         assertThrows(BadRequestException.class, () -> {
             this.clientService.create(userCreateDTO);
-        });
-    }
-
-    @Test
-    void create_registerDto_whenIsNotValidEmail_throwsBadRequestException(){
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
-
-        doThrow(new BadRequestException("El correo proporcionado no existe"))
-                .when(emailService)
-                .newAccountEmail(any(String.class), any(String.class), any(String.class));
-
-        assertThrows(BadRequestException.class, () -> {
-            this.clientService.register(userRegisterDTO);
         });
     }
     @Test
@@ -204,26 +184,23 @@ public class ClientServiceTest {
 
         this.clientService.delete(exampleId);
     }
-
     @Test
-    void register_successful() {
-        UserDTO userDTO  = new UserDTO();
-        userDTO.setId(1L);
-        userDTO.setEmail(exampleEmail);
-        userDTO.setName(exampleName);
-        userDTO.setLastName(exampleLastName);
-        userDTO.setDni(exampleDni);
-        userDTO.setIsAdmin(false);
+    void registerDto_successful(){
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,false);
+        responseExistsUser.put(statusEmail,false);
+        responseExistsUser.put(statusDni,false);
+        responseExistsUser.put(message,"");
 
-        when(this.clientService.register(any(UserRegisterDTO.class)))
-                .thenReturn(userDTO);
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
+        when(this.clientSaveService.buildUserSaveDto(userRegisterDTO)).thenReturn(userSaveDTO);
+        when(this.clientSaveService.saveClientUser(userSaveDTO)).thenReturn(userDTO);
 
-        UserDTO result = clientService.register(userRegisterDTO);
-        assertNotNull(result);
-        assertEquals(userRegisterDTO.getDni(), result.getDni());
-        assertEquals(userRegisterDTO.getEmail(), result.getEmail());
-        assertEquals(userRegisterDTO.getName(), result.getName());
-        assertEquals(userRegisterDTO.getLastName(), result.getLastName());
+        UserDTO response = this.clientService.register(userRegisterDTO);
+        assertNotNull(response);
+        assertEquals(exampleName,response.getName());
+        assertEquals(exampleEmail,response.getEmail());
+        assertEquals(exampleLastName,response.getLastName());
     }
 
     @Test
@@ -243,12 +220,44 @@ public class ClientServiceTest {
     }
 
     @Test
-    void register_whenUserExists_throwsBadRequestException() {
-        when(this.userService.create(userRegisterDTO))
-                .thenThrow(BadRequestException.class);
+    void register_whenUserEmailExists_throwsBadRequestException() {
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,true);
+        responseExistsUser.put(statusEmail,true);
+        responseExistsUser.put(statusDni,false);
+        responseExistsUser.put(message,"");
 
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
         assertThrows(BadRequestException.class, () -> {
-            clientService.register(userRegisterDTO);
+            this.clientService.register(userRegisterDTO);
+        });
+    }
+
+    @Test
+    void register_whenUserDniExists_throwsBadRequestException() {
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,true);
+        responseExistsUser.put(statusEmail,false);
+        responseExistsUser.put(statusDni,true);
+        responseExistsUser.put(message,"");
+
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
+        assertThrows(BadRequestException.class, () -> {
+            this.clientService.register(userRegisterDTO);
+        });
+    }
+
+    @Test
+    void register_whenUserDniAndEmailExists_throwsBadRequestException() {
+        Map<String, Object> responseExistsUser = new HashMap<>();
+        responseExistsUser.put(status,true);
+        responseExistsUser.put(statusEmail,true);
+        responseExistsUser.put(statusDni,true);
+        responseExistsUser.put(message,"");
+
+        when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
+        assertThrows(BadRequestException.class, () -> {
+            this.clientService.register(userRegisterDTO);
         });
     }
 

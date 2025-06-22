@@ -10,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,7 +25,6 @@ public class UserValidatorServiceTest {
     @InjectMocks
     private UserValidatorService userValidatorService;
     private final String status = "status";
-    private final String message = "message";
     private final String statusEmail = "statusEmail";
     private final String statusDni = "statusDni";
     private static final String rol = "client";
@@ -90,9 +87,10 @@ public class UserValidatorServiceTest {
     @Test
     void checkUserExistence_ExistsUserWithEmailAndDni(){
         when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
+        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
         when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(user));
         when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
+
 
         Map<String, Object> validationResult = this.userValidatorService.checkUserExistence(exampleEmail,exampleDni);
 
@@ -108,22 +106,22 @@ public class UserValidatorServiceTest {
 
     @Test
     void isValidAndChanged_returnsFalse_nullNewValue(){
-        assertTrue(this.userValidatorService.isValidAndChanged(null,exampleOtherName));
+        assertFalse(this.userValidatorService.isValidAndChanged(null,exampleOtherName));
     }
 
     @Test
     void isValidAndChanged_returnsFalse_BlankNewValue(){
-        assertTrue(this.userValidatorService.isValidAndChanged("",exampleOtherName));
+        assertFalse(this.userValidatorService.isValidAndChanged("",exampleOtherName));
     }
 
     @Test
     void isValidAndChanged_returnsFalse_IsEqualsValues(){
-        assertTrue(this.userValidatorService.isValidAndChanged(exampleOtherName,exampleOtherName));
+        assertFalse(this.userValidatorService.isValidAndChanged(exampleOtherName,exampleOtherName));
     }
     @Test
     void buildUserSaveDto_successful(){
         when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
-        UserSaveDTO reponseSaveDto = this.userValidatorService.buildUserSaveDto(userCreateDTO,exampleEncodedPass,rol);
+        UserSaveDTO reponseSaveDto = this.userValidatorService.buildUserSaveDto(userCreateDTO,examplePass,rol);
 
         assertEquals(reponseSaveDto.getName(), exampleName);
         assertEquals(reponseSaveDto.getLastName(), exampleLastName);

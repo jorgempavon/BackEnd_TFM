@@ -59,7 +59,7 @@ public class AdminService {
         user.setName(userSaveDTO.getName());
         user.setLastName(userSaveDTO.getLastName());
         user.setPassword(userSaveDTO.getPasswordEncoded());
-        String rol = "rol";
+        String rol = "admin";
         user.setRol(rol);
 
         this.userRepository.save(user);

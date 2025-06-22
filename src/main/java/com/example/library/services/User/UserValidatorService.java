@@ -14,10 +14,8 @@ public class UserValidatorService {
     private final UserRepository userRepository;
     private final PasswordService passwordService;
     private final String status = "status";
-    private final String message = "message";
     private final String statusEmail = "statusEmail";
     private final String statusDni = "statusDni";
-    private final String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
 
     public UserValidatorService(UserRepository userRepository,PasswordService passwordService){
         this.userRepository = userRepository;
@@ -31,13 +29,18 @@ public class UserValidatorService {
         validationResult.put(statusEmail, false);
         validationResult.put(statusDni, false);
 
+        String baseMessage = "proporcionado pertenece a otro usuario. Por favor, inténtelo de nuevo";
+        String message = "message";
         if (email != null && this.userRepository.existsByEmail(email)) {
+            validationResult.put(message, "El email " + baseMessage);
             buildEmailValidation(validationResult,email);
         }
 
         if ((Boolean) validationResult.get(status) && dni!=null && this.userRepository.existsByDni(dni)) {
             validationResult.put(message, "El email y dni " + baseMessage);
+            buildDniValidation(validationResult,dni);
         } else if (dni!=null && this.userRepository.existsByDni(dni)) {
+            validationResult.put(message, "El dni " + baseMessage);
             buildDniValidation(validationResult,dni);
         }
 
@@ -46,14 +49,12 @@ public class UserValidatorService {
 
     private void buildEmailValidation(Map<String, Object> validationResult,String email){
         validationResult.put(status, true);
-        validationResult.put(message, "El email " + baseMessage);
         validationResult.put(statusEmail, true);
         String idUserByEmail = "idUserByEmail";
         validationResult.put(idUserByEmail,this.userRepository.findByEmail(email).get().getId());
     }
     private void buildDniValidation(Map<String, Object> validationResult,String dni){
         validationResult.put(status, true);
-        validationResult.put(message, "El dni " + baseMessage);
         validationResult.put(statusDni, true);
         String idUserByDni = "idUserByDni";
         validationResult.put(idUserByDni,this.userRepository.findByDni(dni).get().getId());

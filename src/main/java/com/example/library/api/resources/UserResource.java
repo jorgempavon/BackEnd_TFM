@@ -21,7 +21,8 @@ public class UserResource {
     private final UserSelfUpdateService userSelfUpdateService;
     private final UserUpdateByAdminService userUpdateByAdminService;
 
-    public UserResource( UserUpdateByAdminService userUpdateByAdminService,UserService userService,
+    public UserResource( UserUpdateByAdminService userUpdateByAdminService,
+                         UserService userService,
                          UserSelfUpdateService userSelfUpdateService){
         this.userService = userService;
         this.userSelfUpdateService = userSelfUpdateService;

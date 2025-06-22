@@ -6,15 +6,17 @@ import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.services.Admin.AdminService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
+@ExtendWith(MockitoExtension.class)
 public class AdminResourceTest {
     @Mock
     private AdminService adminService;
@@ -42,14 +44,6 @@ public class AdminResourceTest {
         when(this.adminService.create(userCreateDto))
                 .thenThrow(new BadRequestException("El dni o email proporcionados pertenecen a otro usuario"));
         assertThrows(BadRequestException.class, () -> {
-            adminResource.create(userCreateDto);
-        });
-    }
-    @Test
-    void createAdmin_whenEmailNotExists_throwsBadRequestException(){
-        assertThrows(BadRequestException.class, () -> {
-            when(this.adminService.create(userCreateDto))
-                    .thenThrow(new BadRequestException("El email proporcionado no existe"));
             adminResource.create(userCreateDto);
         });
     }

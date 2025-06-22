@@ -67,11 +67,14 @@ public class UserUpdateByAdminServiceTest {
         responseExistsUser.put(message,"");
 
         when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
+        when(this.userValidatorService.isValidAndChanged(exampleName,exampleOtherName)).thenReturn(true);
+        when(this.userValidatorService.isValidAndChanged(exampleLastName,exampleOtherLastName)).thenReturn(true);
+        when(this.userValidatorService.isValidAndChanged(exampleEmail,exampleOtherEmail)).thenReturn(true);
+        when(this.userValidatorService.isValidAndChanged(exampleDni,exampleOtherDni)).thenReturn(true);
+
         when(this.userRepository.existsById(exampleId)).thenReturn(true);
         when(this.userRepository.findById(exampleId)).thenReturn(Optional.of(currentUser));
 
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
         when(this.passwordService.generateStrongPassword()).thenReturn(examplePass);
         when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
 
@@ -114,9 +117,6 @@ public class UserUpdateByAdminServiceTest {
 
         when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
         when(this.userRepository.existsById(exampleId)).thenReturn(true);
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(currentUser));
 
         assertThrows(BadRequestException.class, () -> {
             this.userUpdateByAdminService.update(exampleId,userAdminUpdateDTO);
@@ -139,9 +139,6 @@ public class UserUpdateByAdminServiceTest {
 
         when(this.userValidatorService.checkUserExistence(exampleEmail,exampleDni)).thenReturn(responseExistsUser);
         when(this.userRepository.existsById(exampleId)).thenReturn(true);
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
-        when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(currentUser));
 
         assertThrows(BadRequestException.class, () -> {
             this.userUpdateByAdminService.update(exampleId,userAdminUpdateDTO);
