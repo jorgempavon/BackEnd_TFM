@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RuleDTO {
-
     private Long id;
     private String name;
     private Integer numPenalties;
@@ -17,7 +16,6 @@ public class RuleDTO {
     public RuleDTO(){
 
     }
-
 
     public RuleDTO(Long id, Integer numPenalties, Integer days,String name,String adminName,String type){
         this.id = id;

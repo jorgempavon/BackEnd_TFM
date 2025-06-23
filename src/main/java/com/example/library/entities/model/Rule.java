@@ -37,12 +37,13 @@ public class Rule {
         this.type = type;
     }
 
-    public Rule(Long id, String name,Integer numPenalties,Admin admin,String type){
+    public Rule(Long id, String name,Integer numPenalties,Integer days,Admin admin,String type){
         this.id = id;
         this.name = name;
         this.numPenalties = numPenalties;
         this.admin = admin;
         this.type = type;
+        this.days = days;
     }
 
 

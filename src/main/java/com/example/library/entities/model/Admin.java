@@ -17,4 +17,12 @@ public class Admin {
     @JoinColumn(name = "userid", referencedColumnName = "id", unique = true)
     private User user;
 
+    public Admin(){
+
+    }
+    public Admin(Long id,User user){
+        this.id = id;
+        this.user = user;
+    }
+
 }

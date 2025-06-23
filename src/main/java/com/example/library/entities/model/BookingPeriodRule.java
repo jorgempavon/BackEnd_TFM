@@ -21,6 +21,11 @@ public class BookingPeriodRule {
     public BookingPeriodRule(){
     }
 
+    public BookingPeriodRule(Long id,Rule rule){
+        this.id = id;
+        this.rule = rule;
+    }
+
     public BookingPeriodRule(Rule rule){
         this.rule = rule;
     }
