@@ -4,7 +4,7 @@ import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.resources.AdminResource;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
-import com.example.library.services.Admin.AdminService;
+import com.example.library.services.admin.AdminService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

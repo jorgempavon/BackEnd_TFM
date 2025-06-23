@@ -1,4 +1,4 @@
-package com.example.library.services.User;
+package com.example.library.services.user;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetailsService;
@@ -91,4 +91,12 @@ public class UserService {
             this.jwtService.invalidateToken(token);
         }
     }
+
+    public String getUserFullName(User user){
+        if(!this.userRepository.existsById(user.getId())){
+            throw new NotFoundException("No existe el usuario proporcionado");
+        }
+        return user.getName()+" "+user.getLastName();
+    }
+
 }

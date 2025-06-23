@@ -1,10 +1,9 @@
-package com.example.library.services.Client;
+package com.example.library.services.client;
 
 import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
 import com.example.library.entities.dto.UserSaveDTO;
-import com.example.library.entities.model.User;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import org.junit.jupiter.api.Test;

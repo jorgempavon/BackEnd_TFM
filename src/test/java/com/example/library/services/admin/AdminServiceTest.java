@@ -1,4 +1,4 @@
-package com.example.library.services.Admin;
+package com.example.library.services.admin;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.config.PasswordService;
@@ -10,7 +10,7 @@ import com.example.library.entities.model.User;
 import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.UserRepository;
 import com.example.library.services.EmailService;
-import com.example.library.services.User.UserValidatorService;
+import com.example.library.services.user.UserValidatorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
     @Mock

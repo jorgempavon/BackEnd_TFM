@@ -1,4 +1,4 @@
-package com.example.library.services.Client;
+package com.example.library.services.client;
 
 import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserDTO;

@@ -19,6 +19,8 @@ public class Rule {
     private Integer numPenalties;
     @Column(name = "days", nullable = false)
     private Integer days;
+    @Column(name = "type",nullable = false)
+    private String type;
     @OneToOne
     @JoinColumn(name = "adminid", referencedColumnName = "id", unique = true)
     private Admin admin;
@@ -27,16 +29,20 @@ public class Rule {
 
     }
 
-    public Rule(Integer numPenalties,Integer days,Admin admin){
+    public Rule(String name,Integer numPenalties,Integer days,Admin admin,String type){
+        this.name = name;
         this.numPenalties = numPenalties;
         this.admin = admin;
         this.days = days;
+        this.type = type;
     }
 
-    public Rule(Long id, Integer numPenalties,Admin admin){
+    public Rule(Long id, String name,Integer numPenalties,Admin admin,String type){
         this.id = id;
+        this.name = name;
         this.numPenalties = numPenalties;
         this.admin = admin;
+        this.type = type;
     }
 
 

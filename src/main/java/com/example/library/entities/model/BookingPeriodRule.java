@@ -18,6 +18,9 @@ public class BookingPeriodRule {
     @JoinColumn(name = "ruleid", referencedColumnName = "id", unique = true)
     private Rule rule;
 
+    public BookingPeriodRule(){
+    }
+
     public BookingPeriodRule(Rule rule){
         this.rule = rule;
     }

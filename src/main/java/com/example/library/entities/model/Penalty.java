@@ -25,6 +25,8 @@ public class Penalty {
     private Boolean forgived;
     @Column(name = "creationdate", nullable = false)
     private Date creationDate;
+    @Column(name = "type",nullable = false)
+    private String type;
     @OneToOne
     @JoinColumn(name = "bookingLoan", referencedColumnName = "id", unique = true)
     private BookingLoan bookingLoan;

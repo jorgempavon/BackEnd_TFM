@@ -1,5 +1,6 @@
-package com.example.library.services.Admin;
+package com.example.library.services.admin;
 import com.example.library.api.exceptions.models.BadRequestException;
+import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
@@ -9,7 +10,8 @@ import com.example.library.entities.model.User;
 import com.example.library.entities.repository.AdminRepository;
 import com.example.library.entities.repository.UserRepository;
 import com.example.library.services.EmailService;
-import com.example.library.services.User.UserValidatorService;
+import com.example.library.services.user.UserService;
+import com.example.library.services.user.UserValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.Map;
@@ -20,8 +22,9 @@ public class AdminService {
     private final PasswordService passwordService;
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final UserService userService;
 
-    public AdminService( UserValidatorService userValidatorService,
+    public AdminService( UserService userService,UserValidatorService userValidatorService,
                           UserRepository userRepository, AdminRepository adminRepository,
                           PasswordService passwordService, EmailService emailService){
         this.adminRepository = adminRepository;
@@ -29,6 +32,7 @@ public class AdminService {
         this.passwordService = passwordService;
         this.emailService = emailService;
         this.userValidatorService = userValidatorService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -82,5 +86,19 @@ public class AdminService {
             this.emailService.deleteAccountEmail(user.getEmail(),userFullName);
             this.userRepository.delete(user);
         }
+    }
+
+    public String getUserFullNameByAdmin(Admin admin){
+        if (!this.adminRepository.existsById(admin.getId())){
+            throw new NotFoundException("No existe el usuario administrador proporcionado");
+        }
+        return this.userService.getUserFullName(admin.getUser());
+    }
+
+    public Admin getAdminByUserId(Long userId){
+        if (!this.adminRepository.existsByUserId(userId)){
+            throw new NotFoundException("No existe el usuario administrador con el id proporcionado");
+        }
+        return this.adminRepository.findByUserId(userId).get();
     }
 }

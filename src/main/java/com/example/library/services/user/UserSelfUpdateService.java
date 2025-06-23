@@ -1,4 +1,4 @@
-package com.example.library.services.User;
+package com.example.library.services.user;
 
 
 import com.example.library.api.exceptions.models.BadRequestException;

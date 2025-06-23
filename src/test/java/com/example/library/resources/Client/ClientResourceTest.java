@@ -6,7 +6,7 @@ import com.example.library.api.resources.ClientResource;
 import com.example.library.entities.dto.UserCreateDTO;
 import com.example.library.entities.dto.UserDTO;
 import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.services.Client.ClientService;
+import com.example.library.services.client.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

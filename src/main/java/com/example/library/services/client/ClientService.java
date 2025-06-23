@@ -1,4 +1,4 @@
-package com.example.library.services.Client;
+package com.example.library.services.client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
@@ -9,7 +9,7 @@ import com.example.library.entities.model.User;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import com.example.library.services.EmailService;
-import com.example.library.services.User.UserValidatorService;
+import com.example.library.services.user.UserValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -89,36 +89,6 @@ public class ClientService {
         UserSaveDTO userSaveDTO = this.clientSaveService.buildUserSaveDto(userRegisterDTO);
         String userFullName = userRegisterDTO.getName()+" "+ userRegisterDTO.getLastName();
         this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         return this.clientSaveService.saveClientUser(userSaveDTO);
     }

@@ -1,4 +1,4 @@
-package com.example.library.services.Client;
+package com.example.library.services.client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
@@ -12,7 +12,7 @@ import com.example.library.entities.model.User;
 import com.example.library.entities.repository.ClientRepository;
 import com.example.library.entities.repository.UserRepository;
 import com.example.library.services.EmailService;
-import com.example.library.services.User.UserValidatorService;
+import com.example.library.services.user.UserValidatorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
