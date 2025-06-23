@@ -1,4 +1,4 @@
-package com.example.library.resources.Client;
+package com.example.library.resources.client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;

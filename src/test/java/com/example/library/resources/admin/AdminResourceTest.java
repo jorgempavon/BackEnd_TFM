@@ -1,4 +1,4 @@
-package com.example.library.resources.Admin;
+package com.example.library.resources.admin;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.resources.AdminResource;

@@ -31,10 +31,11 @@ public class UserResourceTest {
     private UserSelfUpdateService userSelfUpdateService;
     @Mock
     private UserService userService;
-    @InjectMocks
-    private UserResource userResource;
     @Mock
     private CustomUserDetails mockUserDetails;
+    @InjectMocks
+    private UserResource userResource;
+
     private static final Long exampleId = 2L;
     private static final String exampleName = "example";
     private static final String exampleEmail = "test@example.com";
