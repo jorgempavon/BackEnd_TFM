@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface RuleRepository extends JpaRepository<Rule, Long>, JpaSpecificationExecutor<Rule> {
     boolean existsByNameAndNumPenaltiesAndDaysAndType(String name, Integer numPenalties, Integer days,String type);
-    boolean existsByNameAndNumPenaltiesAndDaysAndTypeAndNotId(String name, Integer numPenalties, Integer days,String type,Long id);
+    boolean existsByNameAndNumPenaltiesAndDaysAndTypeAndIdNot(String name, Integer numPenalties, Integer days,String type,Long id);
 
     Optional<Rule> findByNameAndNumPenaltiesAndDays(String name, Integer numPenalties, Integer days);
 }

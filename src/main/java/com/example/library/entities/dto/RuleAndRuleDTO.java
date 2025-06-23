@@ -14,7 +14,7 @@ public class RuleAndRuleDTO {
 
     }
 
-    public RuleAndRuleDTO(RuleDTO ruleDTO, Rule rule){
+    public RuleAndRuleDTO( Rule rule,RuleDTO ruleDTO){
         this.ruleDTO = ruleDTO;
         this.rule = rule;
     }

@@ -35,7 +35,7 @@ public class RuleService {
         Rule rule = this.ruleRepository.findById(id).get();
 
         String adminFullName = this.adminService.getUserFullNameByAdmin(rule.getAdmin());
-        return new RuleDTO(rule.getId(), rule.getNumPenalties(),rule.getDays()
+        return new RuleDTO(rule.getId(), rule.getNumPenalties(),rule.getDays(),rule.getName()
                 ,adminFullName,rule.getType());
     }
 
@@ -51,7 +51,7 @@ public class RuleService {
         for (Rule rule : rules) {
             String adminFullName = this.adminService.getUserFullNameByAdmin(rule.getAdmin());
             RuleDTO newRuleDto = new RuleDTO(rule.getId(), rule.getNumPenalties(),rule.getDays()
-                    ,adminFullName,rule.getType());
+                    ,rule.getName(),adminFullName,rule.getType());
             responseList.add(newRuleDto);
         }
 
@@ -75,6 +75,7 @@ public class RuleService {
 
         String adminFullName = this.adminService.getUserFullNameByAdmin(currentRule.getAdmin());
         return new RuleDTO(
+                currentRule.getId(),
                 currentRule.getNumPenalties(),
                 currentRule.getDays(),
                 currentRule.getName(),
@@ -88,19 +89,19 @@ public class RuleService {
         }
         Rule rule  = this.ruleRepository.findById(id).get();
 
-        String newName = ruleUpdateDTO.getNumPenalties();
+        String newName = ruleUpdateDTO.getName();
         Integer newNumPenalties = ruleUpdateDTO.getNumPenalties();
-        Integer newDays = ruleUpdateDTO.getNumPenalties();
-        if (this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndTypeAndNotId(newName,newNumPenalties,newDays,
+        Integer newDays = ruleUpdateDTO.getDays();
+        if (this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndTypeAndIdNot(newName,newNumPenalties,newDays,
                 rule.getType(),id)){
             throw new BadRequestException("Ya existe una regla con los atributos proporcionados");
         }
 
     }
     private void checkRuleExistenceInCreate(RuleCreateDTO ruleCreateDTO,String type){
-        String newName = ruleCreateDTO.getNumPenalties();
+        String newName = ruleCreateDTO.getName();
         Integer newNumPenalties = ruleCreateDTO.getNumPenalties();
-        Integer newDays = ruleCreateDTO.getNumPenalties();
+        Integer newDays = ruleCreateDTO.getDays();
 
         if (this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndType(newName,newNumPenalties,newDays,type)){
             throw new BadRequestException("Ya existe una regla con los atributos proporcionados");
@@ -117,23 +118,24 @@ public class RuleService {
                 ruleCreateDTO.getNumPenalties(),
                 ruleCreateDTO.getDays(),
                 adminCreator,
-                ruleCreateDTO.getType()
+                type
         );
         this.ruleRepository.save(rule);
 
         String adminFullName = this.adminService.getUserFullNameByAdmin(rule.getAdmin());
         RuleDTO ruleDTO = new RuleDTO(
+                rule.getId(),
                 rule.getNumPenalties(),
                 rule.getDays(),
                 rule.getName(),
                 adminFullName,
                 rule.getType()
         );
-        return new RuleAndRuleDTO(ruleDTO,rule);
+        return new RuleAndRuleDTO(rule,ruleDTO);
     }
 
     public void delete(Long id){
-        if(this.ruleRepository.existsById(id){
+        if(this.ruleRepository.existsById(id)){
             Rule rule = this.ruleRepository.findById(id).get();
             this.ruleRepository.delete(rule);
         }

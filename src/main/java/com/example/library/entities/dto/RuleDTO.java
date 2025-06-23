@@ -18,15 +18,10 @@ public class RuleDTO {
 
     }
 
-    public RuleDTO(Integer numPenalties,Integer days,String adminName,String type){
-        this.numPenalties = numPenalties;
-        this.adminName = adminName;
-        this.days = days;
-        this.type = type;
-    }
 
-    public RuleDTO(Long id, Integer numPenalties, Integer days,String adminName,String type){
+    public RuleDTO(Long id, Integer numPenalties, Integer days,String name,String adminName,String type){
         this.id = id;
+        this.name = name;
         this.numPenalties = numPenalties;
         this.adminName = adminName;
         this.type = type;
