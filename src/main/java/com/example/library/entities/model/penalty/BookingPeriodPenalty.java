@@ -22,4 +22,12 @@ public class BookingPeriodPenalty {
     @OneToOne
     @JoinColumn(name = "bookingperiodruleid", referencedColumnName = "id", unique = true)
     private BookingPeriodRule bookingPeriodRule;
+
+    public BookingPeriodPenalty(){}
+    public BookingPeriodPenalty(Long id,Integer days,Penalty penalty,BookingPeriodRule bookingPeriodRule){
+        this.id = id;
+        this.days = days;
+        this.penalty = penalty;
+        this.bookingPeriodRule = bookingPeriodRule;
+    }
 }

@@ -1,7 +1,10 @@
 package com.example.library.entities.dto.penalty;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class BookingPeriodPenaltyDTO {
     private PenaltyDTO penaltyDTO;
     private Integer days;
