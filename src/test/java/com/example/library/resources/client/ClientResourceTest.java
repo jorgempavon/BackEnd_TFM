@@ -2,10 +2,10 @@ package com.example.library.resources.client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
-import com.example.library.api.resources.ClientResource;
-import com.example.library.entities.dto.UserCreateDTO;
-import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.dto.UserRegisterDTO;
+import com.example.library.api.resources.user.ClientResource;
+import com.example.library.entities.dto.user.UserCreateDTO;
+import com.example.library.entities.dto.user.UserDTO;
+import com.example.library.entities.dto.user.UserRegisterDTO;
 import com.example.library.services.client.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

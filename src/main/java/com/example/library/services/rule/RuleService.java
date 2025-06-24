@@ -2,13 +2,13 @@ package com.example.library.services.rule;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.RuleAndRuleDTO;
-import com.example.library.entities.dto.RuleCreateDTO;
-import com.example.library.entities.dto.RuleDTO;
-import com.example.library.entities.dto.RuleUpdateDTO;
-import com.example.library.entities.model.Admin;
-import com.example.library.entities.model.Rule;
-import com.example.library.entities.repository.RuleRepository;
+import com.example.library.entities.dto.rule.RuleAndRuleDTO;
+import com.example.library.entities.dto.rule.RuleCreateDTO;
+import com.example.library.entities.dto.rule.RuleDTO;
+import com.example.library.entities.dto.rule.RuleUpdateDTO;
+import com.example.library.entities.model.user.Admin;
+import com.example.library.entities.model.rule.Rule;
+import com.example.library.entities.repository.rule.RuleRepository;
 import com.example.library.services.admin.AdminService;
 import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class RuleService {
 
     public RuleDTO findById(Long id){
         if(!this.ruleRepository.existsById(id)){
-            throw new NotFoundException("No existe ningún usuario con el id: "+id.toString());
+            throw new NotFoundException("No existe ninguna regla con el id: "+id.toString());
         }
         Rule rule = this.ruleRepository.findById(id).get();
 
@@ -42,8 +42,8 @@ public class RuleService {
     public List<RuleDTO> findByNameAndNumMimPenalties(String name, Integer numMimPenalties) {
         Specification<Rule> spec = Specification.where(null);
 
-        ValidationUtils.buildQueryStringByField(spec,"name",name);
-        ValidationUtils.buildQueryIntegerByField(spec,"numMimPenalties",numMimPenalties);
+        spec = ValidationUtils.buildQueryStringByField(spec,"name",name);
+        spec = ValidationUtils.buildQueryIntegerByField(spec,"numMimPenalties",numMimPenalties);
 
         List<Rule> rules = this.ruleRepository.findAll(spec);
         List<RuleDTO> responseList= new ArrayList<>();
@@ -139,6 +139,13 @@ public class RuleService {
             Rule rule = this.ruleRepository.findById(id).get();
             this.ruleRepository.delete(rule);
         }
+    }
+
+    public String getRuleNameByRule(Rule rule){
+        if(!this.ruleRepository.existsById(rule.getId())){
+            throw new NotFoundException("No existe ninguna regla con el id proporcionado");
+        }
+        return rule.getName();
     }
 
 }

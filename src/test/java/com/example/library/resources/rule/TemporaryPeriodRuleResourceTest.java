@@ -1,9 +1,9 @@
 package com.example.library.resources.rule;
 
-import com.example.library.api.resources.TemporaryPeriodRuleResource;
+import com.example.library.api.resources.rule.TemporaryPeriodRuleResource;
 import com.example.library.config.CustomUserDetails;
-import com.example.library.entities.dto.RuleCreateDTO;
-import com.example.library.entities.dto.RuleDTO;
+import com.example.library.entities.dto.rule.RuleCreateDTO;
+import com.example.library.entities.dto.rule.RuleDTO;
 import com.example.library.services.rule.TemporaryPeriodRuleService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

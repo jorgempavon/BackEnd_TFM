@@ -1,11 +1,11 @@
 package com.example.library.services.rule;
 
-import com.example.library.entities.dto.RuleAndRuleDTO;
-import com.example.library.entities.dto.RuleCreateDTO;
-import com.example.library.entities.dto.RuleDTO;
-import com.example.library.entities.model.BookingPeriodRule;
-import com.example.library.entities.model.Rule;
-import com.example.library.entities.repository.BookingPeriodRuleRepository;
+import com.example.library.entities.dto.rule.RuleAndRuleDTO;
+import com.example.library.entities.dto.rule.RuleCreateDTO;
+import com.example.library.entities.dto.rule.RuleDTO;
+import com.example.library.entities.model.rule.BookingPeriodRule;
+import com.example.library.entities.model.rule.Rule;
+import com.example.library.entities.repository.rule.BookingPeriodRuleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

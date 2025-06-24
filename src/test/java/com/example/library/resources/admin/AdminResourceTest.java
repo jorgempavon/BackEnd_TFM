@@ -1,9 +1,9 @@
 package com.example.library.resources.admin;
 
 import com.example.library.api.exceptions.models.BadRequestException;
-import com.example.library.api.resources.AdminResource;
-import com.example.library.entities.dto.UserCreateDTO;
-import com.example.library.entities.dto.UserDTO;
+import com.example.library.api.resources.user.AdminResource;
+import com.example.library.entities.dto.user.UserCreateDTO;
+import com.example.library.entities.dto.user.UserDTO;
 import com.example.library.services.admin.AdminService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

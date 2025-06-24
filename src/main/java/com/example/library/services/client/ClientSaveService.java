@@ -1,13 +1,13 @@
 package com.example.library.services.client;
 
 import com.example.library.config.PasswordService;
-import com.example.library.entities.dto.UserDTO;
-import com.example.library.entities.dto.UserRegisterDTO;
-import com.example.library.entities.dto.UserSaveDTO;
-import com.example.library.entities.model.Client;
-import com.example.library.entities.model.User;
-import com.example.library.entities.repository.ClientRepository;
-import com.example.library.entities.repository.UserRepository;
+import com.example.library.entities.dto.user.UserDTO;
+import com.example.library.entities.dto.user.UserRegisterDTO;
+import com.example.library.entities.dto.user.UserSaveDTO;
+import com.example.library.entities.model.user.Client;
+import com.example.library.entities.model.user.User;
+import com.example.library.entities.repository.user.ClientRepository;
+import com.example.library.entities.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,9 +1,9 @@
 package com.example.library.services.user;
 
 import com.example.library.config.PasswordService;
-import com.example.library.entities.dto.UserCreateDTO;
-import com.example.library.entities.dto.UserSaveDTO;
-import com.example.library.entities.repository.UserRepository;
+import com.example.library.entities.dto.user.UserCreateDTO;
+import com.example.library.entities.dto.user.UserSaveDTO;
+import com.example.library.entities.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

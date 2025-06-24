@@ -1,11 +1,12 @@
 package com.example.library.services.rule;
 
-import com.example.library.entities.dto.RuleAndRuleDTO;
-import com.example.library.entities.dto.RuleCreateDTO;
-import com.example.library.entities.dto.RuleDTO;
-import com.example.library.entities.model.Rule;
-import com.example.library.entities.model.TemporaryPeriodRule;
-import com.example.library.entities.repository.TemporaryPeriodRuleRepository;
+import com.example.library.api.exceptions.models.NotFoundException;
+import com.example.library.entities.dto.rule.RuleAndRuleDTO;
+import com.example.library.entities.dto.rule.RuleCreateDTO;
+import com.example.library.entities.dto.rule.RuleDTO;
+import com.example.library.entities.model.rule.Rule;
+import com.example.library.entities.model.rule.TemporaryPeriodRule;
+import com.example.library.entities.repository.rule.TemporaryPeriodRuleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +39,12 @@ public class TemporaryPeriodRuleService {
         this.temporaryPeriodRuleRepository.save(temporaryPeriodRule);
 
         return ruleDTO;
+    }
+
+    public String getRuleNameByTemporaryPeriodRule(TemporaryPeriodRule temporaryPeriodRule){
+        if(!this.temporaryPeriodRuleRepository.existsById(temporaryPeriodRule.getId())){
+            throw new NotFoundException("No existe la regla temporal con el id proporcionado");
+        }
+        return this.ruleService.getRuleNameByRule(temporaryPeriodRule.getRule());
     }
 }

@@ -2,13 +2,18 @@ package com.example.library.services.client;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
+import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.config.PasswordService;
-import com.example.library.entities.dto.*;
-import com.example.library.entities.model.Client;
-import com.example.library.entities.model.User;
-import com.example.library.entities.repository.ClientRepository;
-import com.example.library.entities.repository.UserRepository;
+import com.example.library.entities.dto.user.UserCreateDTO;
+import com.example.library.entities.dto.user.UserDTO;
+import com.example.library.entities.dto.user.UserRegisterDTO;
+import com.example.library.entities.dto.user.UserSaveDTO;
+import com.example.library.entities.model.user.Client;
+import com.example.library.entities.model.user.User;
+import com.example.library.entities.repository.user.ClientRepository;
+import com.example.library.entities.repository.user.UserRepository;
 import com.example.library.services.EmailService;
+import com.example.library.services.user.UserService;
 import com.example.library.services.user.UserValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -24,10 +29,13 @@ public class ClientService {
     private final UserRepository userRepository;
     private final ClientSaveService clientSaveService;
     private final ClientRepository clientRepository;
+    private final UserService userService;
+
     private final String message = "message";
     private final String status = "status";
 
-    public ClientService( ClientSaveService clientSaveService,UserValidatorService userValidatorService,
+    public ClientService( UserService userService,ClientSaveService clientSaveService,
+                          UserValidatorService userValidatorService,
                           UserRepository userRepository, ClientRepository clientRepository,
                           PasswordService passwordService, EmailService emailService){
         this.clientRepository = clientRepository;
@@ -36,6 +44,7 @@ public class ClientService {
         this.emailService = emailService;
         this.clientSaveService = clientSaveService;
         this.userValidatorService = userValidatorService;
+        this.userService = userService;
     }
 
     @Transactional
@@ -91,5 +100,20 @@ public class ClientService {
         this.emailService.newAccountEmail(userRegisterDTO.getEmail(),userFullName,"");
 
         return this.clientSaveService.saveClientUser(userSaveDTO);
+    }
+
+    public String getUserFullNameByClient(Client client){
+        if(!this.clientRepository.existsById(client.getId())){
+            throw new NotFoundException("No existe el cliente proporcionado");
+        }
+        return this.userService.getUserFullName(client.getUser());
+    }
+
+    public Long getClientIdByUserId(Long userId){
+        if(!this.clientRepository.existsByUserId(userId)){
+            throw new NotFoundException("No existe el cliente proporcionado");
+        }
+        Client client = this.clientRepository.findByUserId(userId).get();
+        return client.getId();
     }
 }

@@ -2,9 +2,9 @@ package com.example.library.resources;
 
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.api.resources.UserResource;
+import com.example.library.api.resources.user.UserResource;
 import com.example.library.config.CustomUserDetails;
-import com.example.library.entities.dto.*;
+import com.example.library.entities.dto.user.*;
 import com.example.library.services.user.UserSelfUpdateService;
 import com.example.library.services.user.UserService;
 import com.example.library.services.user.UserUpdateByAdminService;
