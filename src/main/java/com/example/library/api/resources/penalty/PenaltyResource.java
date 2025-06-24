@@ -1,11 +1,13 @@
 package com.example.library.api.resources.penalty;
 
+import com.example.library.config.CustomUserDetails;
 import com.example.library.entities.dto.penalty.PenaltyDTO;
 import com.example.library.entities.dto.penalty.PenaltyJustificationDTO;
 import com.example.library.services.penalty.PenaltyService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class PenaltyResource {
         List<PenaltyDTO> responseListRuleDTO = this.penaltyService.findByUserAndFulfilled(userId,isFulfilled);
         return ResponseEntity.ok(responseListRuleDTO);
     }
-    @PutMapping
+    @PutMapping("/{id}/forgive")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> forgivePenalty(@RequestParam(required = true) Long id,
                                             @RequestParam(required = true) PenaltyJustificationDTO penaltyJustificationDTO){
@@ -36,10 +38,12 @@ public class PenaltyResource {
         return ResponseEntity.ok(penaltyDTO);
     }
 
-    @PutMapping
+    @PutMapping("/{id}/fulfill")
     public ResponseEntity<?> fulfillPenalty(@RequestParam(required = true) Long id,
-                                            @RequestParam(required = true) PenaltyJustificationDTO penaltyJustificationDTO){
-        PenaltyDTO penaltyDTO = this.penaltyService.forgivePenalty(id,penaltyJustificationDTO);
+                                            @RequestParam(required = true) PenaltyJustificationDTO penaltyJustificationDTO,
+                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        Long userId = userDetails.getId();
+        PenaltyDTO penaltyDTO = this.penaltyService.fulfillPenalty(id,penaltyJustificationDTO,userId);
         return ResponseEntity.ok(penaltyDTO);
     }
 }

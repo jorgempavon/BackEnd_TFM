@@ -9,6 +9,7 @@ import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.penalty.TemporaryPeriodPenalty;
 import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.repository.penalty.TemporaryPeriodPenaltyRepository;
+import com.example.library.services.EmailService;
 import com.example.library.services.rule.TemporaryPeriodRuleService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,19 @@ import java.util.Date;
 public class TemporaryPeriodPenaltyService {
     private final TemporaryPeriodPenaltyRepository temporaryPeriodPenaltyRepository;
     private final PenaltyService penaltyService;
+    private final EmailService emailService;
 
     private final TemporaryPeriodRuleService temporaryPeriodRuleService;
 
     public TemporaryPeriodPenaltyService(PenaltyService penaltyService,
                                          TemporaryPeriodPenaltyRepository temporaryPeriodPenaltyRepository,
-                                         TemporaryPeriodRuleService temporaryPeriodRuleService
+                                         TemporaryPeriodRuleService temporaryPeriodRuleService,
+                                         EmailService emailService
     ){
         this.penaltyService = penaltyService;
         this.temporaryPeriodPenaltyRepository = temporaryPeriodPenaltyRepository;
         this.temporaryPeriodRuleService = temporaryPeriodRuleService;
+        this.emailService = emailService;
     }
     @Transactional
     public void deleteByPenaltyId(Long penaltyId){
@@ -39,14 +43,15 @@ public class TemporaryPeriodPenaltyService {
         this.penaltyService.delete(penaltyId);
     }
 
-    public TemporaryPeriodPenaltyDTO findByPenaltyId(Long penaltyId){
+    public TemporaryPeriodPenaltyDTO findByPenaltyId(Long penaltyId,Long userId){
         if(!this.temporaryPeriodPenaltyRepository.existsByPenaltyId(penaltyId)){
             throw new NotFoundException("No existe ninguna penalización con el id: "+penaltyId.toString());
         }
+
         TemporaryPeriodPenalty temporaryPeriodPenalty = this.temporaryPeriodPenaltyRepository.findByPenaltyId(penaltyId).get();
         TemporaryPeriodRule temporaryPeriodRule = temporaryPeriodPenalty.getTemporaryPeriodRule();
 
-        PenaltyDTO penaltyDTO = this.penaltyService.findById(penaltyId);
+        PenaltyDTO penaltyDTO = this.penaltyService.findById(penaltyId,userId);
         String temporaryPeriodRuleName = this.temporaryPeriodRuleService.getRuleNameByTemporaryPeriodRule(temporaryPeriodRule);
 
         return new TemporaryPeriodPenaltyDTO(
@@ -60,7 +65,10 @@ public class TemporaryPeriodPenaltyService {
         );
         Penalty penalty = penaltyAndPenaltyDTO.getPenalty();
         PenaltyDTO penaltyDTO = penaltyAndPenaltyDTO.getPenaltyDTO();
+        String clientEmail = penaltyAndPenaltyDTO.getClientEmail();
 
+        this.emailService.sendTemporaryPeriodPenaltyEmail(clientEmail,penaltyDTO.getClientName(),
+                penaltyDTO.getBookTitle(),temporaryPeriodPenaltyCreateDTO.getEndDate());
         TemporaryPeriodRule temporaryPeriodRule = temporaryPeriodPenaltyCreateDTO.getTemporaryPeriodRule();
         String temporaryPeriodRuleName = this.temporaryPeriodRuleService.getRuleNameByTemporaryPeriodRule(temporaryPeriodRule);
         Date endDate = temporaryPeriodPenaltyCreateDTO.getEndDate();

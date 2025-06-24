@@ -101,4 +101,10 @@ public class UserService {
         return user.getName()+" "+user.getLastName();
     }
 
+    public String getUserEmail(User user){
+        if(!this.userRepository.existsById(user.getId())){
+            throw new NotFoundException("No existe el usuario proporcionado");
+        }
+        return user.getEmail();
+    }
 }

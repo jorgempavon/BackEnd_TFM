@@ -1,5 +1,6 @@
 package com.example.library.services.rule;
 
+import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.dto.rule.RuleAndRuleDTO;
 import com.example.library.entities.dto.rule.RuleCreateDTO;
 import com.example.library.entities.dto.rule.RuleDTO;
@@ -38,5 +39,12 @@ public class BookingPeriodRuleService {
         this.bookingPeriodRuleRepository.save(bookingPeriodRule);
 
         return ruleDTO;
+    }
+
+    public String getRuleNameByBookingPeriodRule(BookingPeriodRule bookingPeriodRule){
+        if(!this.bookingPeriodRuleRepository.existsByRuleId(bookingPeriodRule.getId())){
+            throw new NotFoundException("No existe la regla de intervalo de reserva con el id proporcionado");
+        }
+        return this.ruleService.getRuleNameByRule(bookingPeriodRule.getRule());
     }
 }

@@ -101,4 +101,8 @@ public class AdminService {
         }
         return this.adminRepository.findByUserId(userId).get();
     }
+
+    public boolean isAdminByUserId(Long userId){
+        return this.adminRepository.existsByUserId(userId);
+    }
 }

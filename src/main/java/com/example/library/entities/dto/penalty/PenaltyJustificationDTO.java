@@ -9,7 +9,7 @@ import lombok.Setter;
 public class PenaltyJustificationDTO {
     @NotBlank(message = "La justificación de la penalización no puede ser nula")
     private String justificationPenalty;
-    public PenaltyJustificationDTO(String justificationPenalty{
+    public PenaltyJustificationDTO(String justificationPenalty){
         this.justificationPenalty = justificationPenalty;
     }
 }

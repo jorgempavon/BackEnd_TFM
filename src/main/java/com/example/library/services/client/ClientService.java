@@ -116,4 +116,23 @@ public class ClientService {
         Client client = this.clientRepository.findByUserId(userId).get();
         return client.getId();
     }
+
+    public Boolean isClientEqualsByUserIdAndClient(Client client,Long userId){
+        if (!this.clientRepository.existsByUserId(userId)){
+            return false;
+        }
+        if(!this.clientRepository.existsById(client.getId())){
+            return false;
+        }
+        Client clientLogged = this.clientRepository.findByUserId(userId).get();
+
+        return client.getId().equals(clientLogged.getId());
+    }
+
+    public String getUserEmailByClient(Client client){
+        if(!this.clientRepository.existsById(client.getId())){
+            throw new NotFoundException("No existe el cliente proporcionado");
+        }
+        return this.userService.getUserEmail(client.getUser());
+    }
 }

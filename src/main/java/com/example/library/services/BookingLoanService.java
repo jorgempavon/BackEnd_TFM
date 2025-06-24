@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookingLoanService {
-    private BookingLoanRepository bookingLoanRepository;
-    private BookService bookService;
+    private final BookingLoanRepository bookingLoanRepository;
+    private final BookService bookService;
 
     public BookingLoanService(BookingLoanRepository bookingLoanRepository,
                               BookService bookService){
@@ -18,7 +18,7 @@ public class BookingLoanService {
 
     public String getBookTitleByBookingLoan(BookingLoan bookingLoan){
         if(!this.bookingLoanRepository.existsById(bookingLoan.getId())){
-            throw new NotFoundException("No existe la reserva con el id proporcionado")
+            throw new NotFoundException("No existe la reserva con el id proporcionado");
         }
         return this.bookService.getBookTitleByBook(bookingLoan.getBook());
     }

@@ -33,6 +33,13 @@ public class User {
 
     public User(){
     }
+    public User(Long id,String name,String dni,String email,String lastName){
+        this.id = id;
+        this.name=name;
+        this.dni=dni;
+        this.email=email;
+        this.lastName=lastName;
+    }
     public User(String name,String dni,String email,String lastName){
         this.name=name;
         this.dni=dni;

@@ -40,16 +40,17 @@ public class Penalty {
 
     }
 
-    public Penalty(String description,String justificationPenalty,Boolean fulfilled, Boolean forgived, BookingLoan bookingLoan, Client client){
+    public Penalty(String description,String justificationPenalty,Boolean fulfilled, Boolean forgived,String type, BookingLoan bookingLoan, Client client){
         this.description = description;
         this.justificationPenalty = justificationPenalty;
         this.fulfilled = fulfilled;
         this.forgived = forgived;
         this.bookingLoan = bookingLoan;
         this.client = client;
+        this.type = type;
     }
 
-    public Penalty(Long id, String description,String justificationPenalty,Boolean fulfilled, Boolean forgived, BookingLoan bookingLoan, Client client){
+    public Penalty(Long id, String description,String justificationPenalty,Boolean fulfilled, Boolean forgived,String type , BookingLoan bookingLoan, Client client){
         this.id = id;
         this.description = description;
         this.justificationPenalty = justificationPenalty;
@@ -57,6 +58,7 @@ public class Penalty {
         this.forgived = forgived;
         this.bookingLoan = bookingLoan;
         this.client = client;
+        this.type = type;
     }
 
 }

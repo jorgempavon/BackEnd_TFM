@@ -16,5 +16,11 @@ public class Client {
     @OneToOne
     @JoinColumn(name = "userid", referencedColumnName = "id", unique = true)
     private User user;
+    public Client(){}
+
+    public Client(Long id, User user){
+        this.id = id;
+        this.user = user;
+    }
 
 }

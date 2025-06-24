@@ -23,4 +23,13 @@ public class TemporaryPeriodPenalty {
     @OneToOne
     @JoinColumn(name = "temporaryperiodruleid", referencedColumnName = "id", unique = true)
     private TemporaryPeriodRule temporaryPeriodRule;
+
+    public TemporaryPeriodPenalty(){}
+
+    public TemporaryPeriodPenalty(Long id,Date endDate,Penalty penalty,TemporaryPeriodRule temporaryPeriodRule){
+        this.id = id;
+        this.endDate = endDate;
+        this.penalty = penalty;
+        this.temporaryPeriodRule = temporaryPeriodRule;
+    }
 }

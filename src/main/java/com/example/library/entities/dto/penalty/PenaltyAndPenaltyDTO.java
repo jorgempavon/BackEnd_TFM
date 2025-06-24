@@ -10,11 +10,12 @@ import lombok.Setter;
 public class PenaltyAndPenaltyDTO {
     private Penalty penalty;
     private PenaltyDTO penaltyDTO;
-
+    private String clientEmail;
     public PenaltyAndPenaltyDTO(){}
 
-    public PenaltyAndPenaltyDTO(Penalty penalty, PenaltyDTO penaltyDTO){
+    public PenaltyAndPenaltyDTO(Penalty penalty, PenaltyDTO penaltyDTO,String clientEmail){
         this.penalty = penalty;
         this.penaltyDTO = penaltyDTO;
+        this.clientEmail = clientEmail;
     }
 }
