@@ -18,14 +18,7 @@ public class BookingPeriodPenaltyResource {
     public BookingPeriodPenaltyResource(BookingPeriodPenaltyService bookingPeriodPenaltyService){
         this.bookingPeriodPenaltyService = bookingPeriodPenaltyService;
     }
-    /*
-    @PostMapping
-    public ResponseEntity<?> create( @Valid @RequestBody TemporaryPeriodPenaltyCreateDTO temporaryPeriodPenaltyCreateDTO) {
-        TemporaryPeriodPenaltyDTO responsePenaltyCreateDTO = this.bookingPeriodRuleService.create(temporaryPeriodPenaltyCreateDTO);
-        URI location = URI.create("/penalties/bookingPeriodRule/" + responseRuleCreateDTO.getId());
-        return ResponseEntity.created(location).body(responsePenaltyCreateDTO);
-    }
-    */
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
