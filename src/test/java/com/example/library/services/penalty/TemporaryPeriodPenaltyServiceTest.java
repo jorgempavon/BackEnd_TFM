@@ -160,4 +160,15 @@ public class TemporaryPeriodPenaltyServiceTest {
             this.temporaryPeriodPenaltyService.findByPenaltyId(PENALTY_ID,USER_ID);
         });
     }
+    @Test
+    void delete_whenNotExistsTemporaryPenalty_successful(){
+        when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
+        this.temporaryPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
+    }
+    @Test
+    void delete_whenExistsTemporaryPenalty_successful(){
+        when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
+        when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
+        this.temporaryPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
+    }
 }
