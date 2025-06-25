@@ -3,7 +3,7 @@ package com.example.library.api.resources.user;
 import com.example.library.entities.dto.user.UserCreateDTO;
 import com.example.library.entities.dto.user.UserDTO;
 import com.example.library.entities.dto.user.UserRegisterDTO;
-import com.example.library.services.client.ClientService;
+import com.example.library.services.user.ClientService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

@@ -1,19 +1,26 @@
 package com.example.library.services.user;
 
+import com.example.library.api.exceptions.models.BadRequestException;
+import com.example.library.api.exceptions.models.ConflictException;
+import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.config.PasswordService;
-import com.example.library.entities.dto.user.UserCreateDTO;
-import com.example.library.entities.dto.user.UserSaveDTO;
+import com.example.library.entities.dto.user.UserAdminUpdateDTO;
+import com.example.library.entities.dto.user.UserExistenceDTO;
+import com.example.library.entities.dto.user.UserSelfUpdateDTO;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.user.UserRepository;
+import com.example.library.services.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Map;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,113 +28,357 @@ public class UserValidatorServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
+    private EmailService emailService;
+    @Mock
     private PasswordService passwordService;
     @InjectMocks
     private UserValidatorService userValidatorService;
-    private final String status = "status";
-    private final String statusEmail = "statusEmail";
-    private final String statusDni = "statusDni";
-    private static final String rol = "client";
-    private static final String exampleName = "example";
-    private static final String exampleLastName = "last name example";
-    private static final String exampleEmail = "test@example.com";
-    private static final String examplePass = "pass123";
-    private static final String exampleEncodedPass = "encodedPass";
-    private static final String exampleDni = "12345678A";
-    private static final String exampleOtherName = "Other Name";
+    private static final Long USER_ID = 2L;
 
-    private static final User user = new User(
-            exampleName,
-            exampleDni,
-            exampleEmail,
-            exampleLastName
+    private static final String ROL = "client";
+    private static final String EXAMPLE_NAME = "example";
+    private static final String EXAMPLE_LAST_NAME = "last name example";
+    private static final String EXAMPLE_EMAIL = "test@example.com";
+    private static final String EXAMPLE_PASS = "pass123";
+    private static final String EXAMPLE_ENCODED_PASS = "encodedPass";
+    private static final String EXAMPLE_DNI = "12345678A";
+    private static final String EXAMPLE_OTHER_NAME = "Other Name";
+    private static final String EXAMPLE_OTHER_PASS = "OtherPass123";
+    private static final String EXAMPLE_OTHER_EMAIL = "other@example.com";
+    private static final String EXAMPLE_OTHER_LAST_NAME = "Other Last Name";
+    private static final String EXAMPLE_OTHER_DNI = "23345452F";
+
+    private static final User USER = new User(
+            USER_ID,
+            EXAMPLE_NAME,
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_LAST_NAME
     );
-    private static final UserCreateDTO userCreateDTO = new UserCreateDTO(
-            exampleDni,
-            exampleEmail,
-            exampleName,
-            exampleLastName
+
+    private static final User OTHER_USER = new User(
+            55L,
+            EXAMPLE_OTHER_NAME,
+            EXAMPLE_OTHER_DNI,
+            EXAMPLE_OTHER_EMAIL,
+            EXAMPLE_OTHER_LAST_NAME
+    );
+    private static final String OLD_PASS = "old pass";
+    private static final UserSelfUpdateDTO USER_SELF_UPDATE_DTO = new UserSelfUpdateDTO(
+            EXAMPLE_OTHER_DNI,
+            EXAMPLE_OTHER_EMAIL,
+            OLD_PASS,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
+            EXAMPLE_OTHER_NAME,
+            EXAMPLE_OTHER_LAST_NAME
     );
 
     @Test
     void checkUserExistence_NotExistsUser(){
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
 
-        Map<String, Object> validationResult = this.userValidatorService.checkUserExistence(exampleEmail,exampleDni);
+        UserExistenceDTO validationResult = this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI);
 
-        assertFalse((Boolean) validationResult.get(status));
+        assertFalse(validationResult.getStatus());
     }
 
     @Test
     void checkUserExistence_ExistsUserWithDni(){
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
-        when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(user));
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(false);
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
+        when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(USER));
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
 
-        Map<String, Object> validationResult = this.userValidatorService.checkUserExistence(exampleEmail,exampleDni);
+        UserExistenceDTO validationResult = this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI);
 
-        assertTrue((Boolean) validationResult.get(status));
-        assertFalse((Boolean) validationResult.get(statusEmail));
-        assertTrue((Boolean) validationResult.get(statusDni));
+        assertTrue(validationResult.getStatus());
+        assertFalse(validationResult.getStatusEmail());
+        assertTrue(validationResult.getStatusDni());
     }
     @Test
     void checkUserExistence_ExistsUserWithEmail(){
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(false);
-        when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(USER));
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
 
-        Map<String, Object> validationResult = this.userValidatorService.checkUserExistence(exampleEmail,exampleDni);
+        UserExistenceDTO validationResult = this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI);
 
-        assertTrue((Boolean) validationResult.get(status));
-        assertTrue((Boolean) validationResult.get(statusEmail));
-        assertFalse((Boolean) validationResult.get(statusDni));
+        assertTrue(validationResult.getStatus());
+        assertTrue(validationResult.getStatusEmail());
+        assertFalse(validationResult.getStatusDni());
     }
 
     @Test
     void checkUserExistence_ExistsUserWithEmailAndDni(){
-        when(this.userRepository.existsByDni(exampleDni)).thenReturn(true);
-        when(this.userRepository.existsByEmail(exampleEmail)).thenReturn(true);
-        when(this.userRepository.findByDni(exampleDni)).thenReturn(Optional.of(user));
-        when(this.userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
+        when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
+        when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(USER));
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(USER));
 
 
-        Map<String, Object> validationResult = this.userValidatorService.checkUserExistence(exampleEmail,exampleDni);
-
-        assertTrue((Boolean) validationResult.get(status));
-        assertTrue((Boolean) validationResult.get(statusEmail));
-        assertTrue((Boolean) validationResult.get(statusDni));
+        UserExistenceDTO validationResult = this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI);
+        assertTrue(validationResult.getStatus());
+        assertTrue(validationResult.getStatusEmail());
+        assertTrue(validationResult.getStatusDni());
     }
 
     @Test
-    void isValidAndChanged_returnsTrue(){
-        assertTrue(this.userValidatorService.isValidAndChanged(exampleName,exampleOtherName));
+    void updateUserDataInSelfUpdate_successful(){
+        this.userValidatorService.updateUserDataInSelfUpdate(USER,USER_SELF_UPDATE_DTO);
     }
 
     @Test
-    void isValidAndChanged_returnsFalse_nullNewValue(){
-        assertFalse(this.userValidatorService.isValidAndChanged(null,exampleOtherName));
+    void validateDataInSelfUpdate_successful(){
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
+        when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(false);
+        when(this.userRepository.findById(USER_ID)).thenReturn(Optional.of(USER));
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(true);
+
+        this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
     }
 
     @Test
-    void isValidAndChanged_returnsFalse_BlankNewValue(){
-        assertFalse(this.userValidatorService.isValidAndChanged("",exampleOtherName));
+    void validateDataInSelfUpdate_whenExistsOtherUserWithEmail_throwBadRequestException(){
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
+        when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(true);
+        when(this.userRepository.findByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(Optional.of(OTHER_USER));
+        when(this.userRepository.findById(USER_ID)).thenReturn(Optional.of(OTHER_USER));
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
+        });
+    }
+    @Test
+    void validateDataInSelfUpdate_whenExistsOtherUserWithDNI_throwBadRequestException(){
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(true);
+        when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(false);
+        when(this.userRepository.findByDni(EXAMPLE_OTHER_DNI)).thenReturn(Optional.of(OTHER_USER));
+        when(this.userRepository.findById(USER_ID)).thenReturn(Optional.of(OTHER_USER));
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
+        });
+    }
+    @Test
+    void validateDataInSelfUpdate_whenNotExistsUserId_throwNotFoundException(){
+        when(this.userRepository.existsById(USER_ID)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
+        });
+    }
+    @Test
+    void validatePasswordsInSelfUpdate_successful(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(true);
+        this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,USER_SELF_UPDATE_DTO);
     }
 
     @Test
-    void isValidAndChanged_returnsFalse_IsEqualsValues(){
-        assertFalse(this.userValidatorService.isValidAndChanged(exampleOtherName,exampleOtherName));
+    void validatePasswordsInSelfUpdate_OldPasswordNotMatches_throwBadRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                OLD_PASS,
+                EXAMPLE_PASS,
+                EXAMPLE_PASS,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+
+    @Test
+    void validatePasswordsInSelfUpdate_RepeatPasswordsNull_throwBadRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                OLD_PASS,
+                EXAMPLE_PASS,
+                null,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+
+    @Test
+    void validatePasswordsInSelfUpdate_RepeatPasswordsBlank_throwBadRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                OLD_PASS,
+                EXAMPLE_PASS,
+                "",
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+
+    @Test
+    void validatePasswordsInSelfUpdate_PasswordsBlank_throwBadRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                OLD_PASS,
+                "",
+                EXAMPLE_PASS,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+
+    @Test
+    void validatePasswordsInSelfUpdate_PasswordNull_throwBadRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                OLD_PASS,
+                null,
+                EXAMPLE_PASS,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
     }
     @Test
-    void buildUserSaveDto_successful(){
-        when(this.passwordService.encodePasswords(examplePass)).thenReturn(exampleEncodedPass);
-        UserSaveDTO reponseSaveDto = this.userValidatorService.buildUserSaveDto(userCreateDTO,examplePass,rol);
+    void updateUserDataInUpdateByAdmin_UpdateEmail_successful(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        when(this.passwordService.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
+        this.userValidatorService.updateUserDataInUpdateByAdmin(USER,userAdminUpdateDTO);
+    }
 
-        assertEquals(reponseSaveDto.getName(), exampleName);
-        assertEquals(reponseSaveDto.getLastName(), exampleLastName);
-        assertEquals(reponseSaveDto.getDni(), exampleDni);
-        assertEquals(reponseSaveDto.getRol(), rol);
-        assertEquals(reponseSaveDto.getEmail(), exampleEmail);
-        assertEquals(reponseSaveDto.getPasswordEncoded(), exampleEncodedPass);
+    @Test
+    void updateUserDataInUpdateByAdmin_ResetPassword_successful(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        when(this.passwordService.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
+        this.userValidatorService.updateUserDataInUpdateByAdmin(USER,userAdminUpdateDTO);
+    }
+    @Test
+    void validateDataToUpdateInUpdateByAdmin_successful(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
+
+        this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
+    }
+    @Test
+    void validateDataToUpdateInUpdateByAdmin_whenUserNotExists_throwNotFoundException(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        when(this.userRepository.existsById(USER_ID)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
+        });
+    }
+
+    @Test
+    void validateDataToUpdateInUpdateByAdmin_ExistsUserWithOtherEmail_throwBadRequestException(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        User userWithEmail = new User(77L, EXAMPLE_OTHER_NAME, EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(userWithEmail));
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
+        });
+    }
+    @Test
+    void validateDataToUpdateInUpdateByAdmin_ExistsUserWithOtherDni_throwBadRequestException(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+                EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
+        );
+        User userWithDni = new User(77L, EXAMPLE_OTHER_NAME, EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,EXAMPLE_OTHER_LAST_NAME);
+        when(this.userRepository.existsById(USER_ID)).thenReturn(true);
+        when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
+        when(this.userRepository.findByDni(EXAMPLE_OTHER_DNI)).thenReturn(Optional.of(userWithDni));
+        when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(true);
+
+        assertThrows(BadRequestException.class, () -> {
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
+        });
     }
 }
