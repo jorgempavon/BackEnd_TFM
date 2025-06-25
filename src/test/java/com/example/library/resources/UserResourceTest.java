@@ -2,12 +2,12 @@ package com.example.library.resources;
 
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.api.resources.UserResource;
+import com.example.library.api.resources.user.UserResource;
 import com.example.library.config.CustomUserDetails;
-import com.example.library.entities.dto.*;
-import com.example.library.services.User.UserSelfUpdateService;
-import com.example.library.services.User.UserService;
-import com.example.library.services.User.UserUpdateByAdminService;
+import com.example.library.entities.dto.user.*;
+import com.example.library.services.user.UserSelfUpdateService;
+import com.example.library.services.user.UserService;
+import com.example.library.services.user.UserUpdateByAdminService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,10 +31,11 @@ public class UserResourceTest {
     private UserSelfUpdateService userSelfUpdateService;
     @Mock
     private UserService userService;
-    @InjectMocks
-    private UserResource userResource;
     @Mock
     private CustomUserDetails mockUserDetails;
+    @InjectMocks
+    private UserResource userResource;
+
     private static final Long exampleId = 2L;
     private static final String exampleName = "example";
     private static final String exampleEmail = "test@example.com";

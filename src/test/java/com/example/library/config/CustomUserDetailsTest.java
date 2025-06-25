@@ -1,9 +1,8 @@
 package com.example.library.config;
 
-import com.example.library.config.CustomUserDetails;
-import com.example.library.entities.model.User;
-import com.example.library.entities.repository.AdminRepository;
-import com.example.library.entities.repository.ClientRepository;
+import com.example.library.entities.model.user.User;
+import com.example.library.entities.repository.user.AdminRepository;
+import com.example.library.entities.repository.user.ClientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

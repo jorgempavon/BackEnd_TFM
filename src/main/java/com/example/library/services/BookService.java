@@ -175,7 +175,12 @@ public class BookService {
         }
         
     }
-
+    public String getBookTitleByBook(Book book){
+        if (!this.bookRepository.existsById(book.getId())){
+            throw new NotFoundException("No existe el libro con el id proporcionado");
+        }
+        return book.getTitle();
+    }
     public boolean isEmptyString(String value){
         return (value!= null && !value.isEmpty());
     }
