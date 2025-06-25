@@ -1,5 +1,6 @@
 package com.example.library.entities.model;
 
+import com.example.library.entities.model.user.Client;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

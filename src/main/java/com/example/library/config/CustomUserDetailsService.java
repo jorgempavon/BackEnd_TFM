@@ -1,10 +1,10 @@
 package com.example.library.config;
 
 import com.example.library.api.exceptions.models.UnauthorizedException;
-import com.example.library.entities.model.User;
-import com.example.library.entities.repository.AdminRepository;
-import com.example.library.entities.repository.ClientRepository;
-import com.example.library.entities.repository.UserRepository;
+import com.example.library.entities.model.user.User;
+import com.example.library.entities.repository.user.AdminRepository;
+import com.example.library.entities.repository.user.ClientRepository;
+import com.example.library.entities.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;

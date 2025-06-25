@@ -1,8 +1,8 @@
 package com.example.library.config;
 
-import com.example.library.entities.model.User;
-import com.example.library.entities.repository.AdminRepository;
-import com.example.library.entities.repository.ClientRepository;
+import com.example.library.entities.model.user.User;
+import com.example.library.entities.repository.user.AdminRepository;
+import com.example.library.entities.repository.user.ClientRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

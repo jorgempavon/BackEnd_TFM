@@ -5,11 +5,14 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class EmailService {
     private final String BIBLIOKIE =  "Bibliokie";
     private final String DEAR = "Estimado/a ";
     private final String BIBLIOKIE_EMAIL =  "bibliokiejackie@gmail.com";
+    private final String FULFILL = "Puede cumplimentar una justificación por el retraso en la devolución del libro.\n\n";
     private final JavaMailSender mailSender;
 
     public EmailService(JavaMailSender mailSender){
@@ -139,6 +142,56 @@ public class EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             throw new BadRequestException("No se pudo enviar el correo de restablecimiento de contraseña.");
+        }
+    }
+
+    public void sendTemporaryPeriodPenaltyEmail(String email, String userName, String bookName, Date date) {
+        try {
+            String subject = "Penalización temporal en " + BIBLIOKIE;
+
+            String body =
+                    DEAR + userName + ":\n\n" +
+                            "Le informamos que se le ha penalizado por la reserva del libro "+bookName+" en " + BIBLIOKIE + ".\n" +
+                            "No podrás realizar una nueva reserva de libros hasta la siguiente fecha: " + date.toString() + "\n" +
+                            FULFILL+
+                            "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
+                            "Atentamente,\n" +
+                            BIBLIOKIE + "\n" +
+                            BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo enviar el correo de nueva penalizacion temporal");
+        }
+    }
+
+    public void sendBookingPeriodPenaltyEmail(String email, String userName, String bookName,Integer days) {
+        try {
+            String subject = "Penalización de intervalo en " + BIBLIOKIE;
+
+            String body =
+                    DEAR + userName + ":\n\n" +
+                            "Le informamos que se le ha penalizado por la reserva del libro "+bookName+" en " + BIBLIOKIE + ".\n" +
+                            "Para la siguiente reserva de libro dispondrá de " + days.toString() + " días para devolverlo \n" +
+                            FULFILL+
+                            "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
+                            "Atentamente,\n" +
+                            BIBLIOKIE + "\n" +
+                            BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo enviar el correo de nueva penalizacion temporal");
         }
     }
 
