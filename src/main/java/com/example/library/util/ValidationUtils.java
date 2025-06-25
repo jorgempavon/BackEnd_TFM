@@ -2,6 +2,7 @@ package com.example.library.util;
 
 import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.rule.Rule;
+import com.example.library.entities.model.user.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ValidationUtils {
@@ -26,6 +27,14 @@ public class ValidationUtils {
         return spec;
     }
 
+    public static Specification<User> buildQueryUserStringByField(Specification<User> spec, String field, String value) {
+        if (value != null && !value.isBlank()) {
+            return spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get(field)), "%" + value.toLowerCase() + "%")
+            );
+        }
+        return spec;
+    }
 
     public static Specification<Rule> buildQueryIntegerByField(Specification<Rule> spec, String field, Integer value) {
         if (value != null) {

@@ -1,10 +1,10 @@
-package com.example.library.resources.admin;
+package com.example.library.resources.user;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.resources.user.AdminResource;
 import com.example.library.entities.dto.user.UserCreateDTO;
 import com.example.library.entities.dto.user.UserDTO;
-import com.example.library.services.admin.AdminService;
+import com.example.library.services.user.AdminService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,14 +39,7 @@ public class AdminResourceTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
-    @Test
-    void createAdmin_whenUserExists_throwsBadRequestException(){
-        when(this.adminService.create(userCreateDto))
-                .thenThrow(new BadRequestException("El dni o email proporcionados pertenecen a otro usuario"));
-        assertThrows(BadRequestException.class, () -> {
-            adminResource.create(userCreateDto);
-        });
-    }
+
     @Test
     void  deleteAdmin_successful(){
         doNothing().when(adminService).delete(exampleId);

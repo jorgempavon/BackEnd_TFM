@@ -1,14 +1,17 @@
 package com.example.library.services.user;
+import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetailsService;
 import com.example.library.config.JwtService;
 import com.example.library.config.PasswordService;
-import com.example.library.entities.dto.user.LoginDTO;
-import com.example.library.entities.dto.user.SessionDTO;
-import com.example.library.entities.dto.user.UserDTO;
+import com.example.library.entities.dto.user.*;
+import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.user.UserRepository;
+import com.example.library.services.EmailService;
+import com.example.library.util.ValidationUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,18 +23,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
-
+    private final  EmailService emailService;
     private final PasswordService passwordService;
 
+    private final UserValidatorService userValidatorService;
 
-    public UserService( PasswordService passwordService,
-                        CustomUserDetailsService userDetailsService,
-                        UserRepository userRepository,
+    public UserService(UserValidatorService userValidatorService,PasswordService passwordService,
+                       CustomUserDetailsService userDetailsService, UserRepository userRepository, EmailService emailService,
                        JwtService jwtService) {
+        this.emailService = emailService;
         this.passwordService = passwordService;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.userValidatorService = userValidatorService;
     }
 
     public UserDTO findById(Long id){
@@ -45,9 +50,9 @@ public class UserService {
     public List<UserDTO> findByNameAndDniAndEmail(String name, String dni, String email) {
         Specification<User> spec = Specification.where(null);
 
-        this.buildQueryByField(spec,"name",name);
-        this.buildQueryByField(spec,"dni",name);
-        this.buildQueryByField(spec,"email",name);
+        spec = ValidationUtils.buildQueryUserStringByField(spec,"name",name);
+        spec = ValidationUtils.buildQueryUserStringByField(spec,"dni",name);
+        spec = ValidationUtils.buildQueryUserStringByField(spec,"email",name);
 
         List<User> users = this.userRepository.findAll(spec);
         List<UserDTO> responseList= new ArrayList<>();
@@ -58,14 +63,6 @@ public class UserService {
         }
 
         return responseList;
-    }
-
-    private void buildQueryByField(Specification<User> spec,String field, String value){
-        if (value != null && !value.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get(field)), "%" + value.toLowerCase() + "%")
-            );
-        }
     }
 
     public SessionDTO login(LoginDTO loginDTO){
@@ -91,6 +88,76 @@ public class UserService {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
         if (this.jwtService.isTokenValid(token,userDetails)){
             this.jwtService.invalidateToken(token);
+        }
+    }
+    @Transactional
+    public UserAndUserDTO create(UserCreateDTO userCreateDTO,String rol, String password){
+        UserExistenceDTO responseExistsUser = this.userValidatorService.checkUserExistence(userCreateDTO.getEmail(),
+                userCreateDTO.getDni());
+        if (responseExistsUser.getStatus()) {
+            throw new BadRequestException(responseExistsUser.getMessage());
+        }
+
+        String userFullName = userCreateDTO.getName() +" "+ userCreateDTO.getLastName();
+        if (password.isBlank()){
+            password = this.passwordService.generateStrongPassword();
+            this.emailService.newAccountEmail(userCreateDTO.getEmail(),userFullName,password);
+        }else {
+            this.emailService.newAccountEmail(userCreateDTO.getEmail(),userFullName,"");
+        }
+
+        UserSaveDTO userSaveDTO = this.buildUserSaveDto(userCreateDTO,password, rol);
+        User user = new User(userSaveDTO.getName(),userSaveDTO.getDni(),userSaveDTO.getEmail(),
+                userSaveDTO.getLastName());
+        user.setPassword(userSaveDTO.getPasswordEncoded());
+        user.setRol(rol);
+        this.userRepository.save(user);
+
+        UserDTO userDTO = new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),
+                user.getLastName(),user.getRol());
+        return new UserAndUserDTO(user, userDTO);
+    }
+    public UserSaveDTO buildUserSaveDto(UserCreateDTO userDTO, String password, String rol){
+        String passwordEncoded = this.passwordService.encodePasswords(password);
+        return new UserSaveDTO(
+                userDTO.getDni(),
+                userDTO.getEmail(),
+                userDTO.getName(),
+                userDTO.getLastName(),
+                passwordEncoded,
+                rol
+        );
+    }
+    @Transactional
+    public UserDTO update(Long id, UserSelfUpdateDTO userSelfUpdateDTO){
+        this.userValidatorService.validateDataInSelfUpdate(id, userSelfUpdateDTO);
+
+        User user = this.userRepository.findById(id).get();
+        this.userValidatorService.updateUserDataInSelfUpdate(user,userSelfUpdateDTO);
+
+        if (userSelfUpdateDTO.getPassword() != null && !userSelfUpdateDTO.getPassword().isBlank()) {
+            String encodedPassword = this.passwordService.encodePasswords(userSelfUpdateDTO.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        this.userRepository.save(user);
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
+    }
+    @Transactional
+    public UserDTO update(Long id, UserAdminUpdateDTO userAdminUpdateDTO){
+        this.userValidatorService.validateDataToUpdateInUpdateByAdmin(id,userAdminUpdateDTO);
+
+        User user = this.userRepository.findById(id).get();
+        this.userValidatorService.updateUserDataInUpdateByAdmin(user,userAdminUpdateDTO);
+        this.userRepository.save(user);
+
+        return new UserDTO(user.getId(),user.getName(),user.getEmail(),user.getDni(),user.getLastName(),user.getRol());
+    }
+
+    @Transactional
+    public void delete(Long id){
+        if (this.userRepository.existsById(id)){
+            User user = this.userRepository.findById(id).get();
+            this.userRepository.delete(user);
         }
     }
 
