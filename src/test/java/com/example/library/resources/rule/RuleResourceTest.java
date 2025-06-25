@@ -52,7 +52,7 @@ public class RuleResourceTest {
         assertTrue(result.getBody() instanceof RuleDTO);
     }
     @Test
-    void findByNameAndDniAndEmail_successful_parametersAreEmpty(){
+    void findByNameAndDniAndEmail_successful(){
         when(this.ruleService.findByNameAndNumMimPenalties(RULE_NAME,RULE_NUM_PENALTIES)).thenReturn(LIST_RULES_DTO);
 
         ResponseEntity<?> result = ruleResource.findByNameAndNumMimPenalties(RULE_NAME,RULE_NUM_PENALTIES);
