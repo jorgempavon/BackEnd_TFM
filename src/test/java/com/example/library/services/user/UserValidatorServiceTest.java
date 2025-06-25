@@ -185,7 +185,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_OldPasswordNotMatches_throwBadRequestException(){
+    void validatePasswordsInSelfUpdate_OldPasswordNotMatches_throwConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -208,9 +208,54 @@ public class UserValidatorServiceTest {
             this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
         });
     }
-
     @Test
-    void validatePasswordsInSelfUpdate_RepeatPasswordsNull_throwBadRequestException(){
+    void validatePasswordsInSelfUpdate_OldPasswordNull_throwConflictRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                null,
+                EXAMPLE_PASS,
+                EXAMPLE_PASS,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+    @Test
+    void validatePasswordsInSelfUpdate_OldPasswordBlank_throwConflictRequestException(){
+        User userWithPass = new User(
+                55L,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        UserSelfUpdateDTO otherSelfUpdate = new UserSelfUpdateDTO(
+                EXAMPLE_OTHER_DNI,
+                EXAMPLE_OTHER_EMAIL,
+                "",
+                EXAMPLE_PASS,
+                EXAMPLE_PASS,
+                EXAMPLE_OTHER_NAME,
+                EXAMPLE_OTHER_LAST_NAME
+        );
+        userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
+        assertThrows(ConflictException.class, () -> {
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
+        });
+    }
+    @Test
+    void validatePasswordsInSelfUpdate_RepeatPasswordsNull_throwConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -235,7 +280,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_RepeatPasswordsBlank_throwBadRequestException(){
+    void validatePasswordsInSelfUpdate_RepeatPasswordsBlank_throwConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -260,7 +305,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_PasswordsBlank_throwBadRequestException(){
+    void validatePasswordsInSelfUpdate_PasswordsBlank_throwConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -285,7 +330,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_PasswordNull_throwBadRequestException(){
+    void validatePasswordsInSelfUpdate_PasswordNull_throwConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,

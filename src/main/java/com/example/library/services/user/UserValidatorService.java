@@ -100,6 +100,7 @@ public class UserValidatorService {
                 || (dto.getRepeatPassword() != null && !dto.getRepeatPassword().isBlank()));
 
         if ( (oldPasswordProvided && !this.passwordService.matchesPasswords(dto.getOldPassword(),user.getPassword()))
+                || (!oldPasswordProvided && isNewPasswordProvided)
                 || (isNewPasswordProvided && !Objects.equals(dto.getPassword(), dto.getRepeatPassword()))){
             throw new ConflictException("Las contraseñas proporcionadas no son validas");
         }
