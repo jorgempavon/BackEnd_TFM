@@ -9,7 +9,7 @@ import com.example.library.entities.dto.rule.RuleUpdateDTO;
 import com.example.library.entities.model.user.Admin;
 import com.example.library.entities.model.rule.Rule;
 import com.example.library.entities.repository.rule.RuleRepository;
-import com.example.library.services.admin.AdminService;
+import com.example.library.services.user.AdminService;
 import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;

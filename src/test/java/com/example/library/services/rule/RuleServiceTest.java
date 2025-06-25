@@ -10,7 +10,7 @@ import com.example.library.entities.model.user.Admin;
 import com.example.library.entities.model.rule.Rule;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.rule.RuleRepository;
-import com.example.library.services.admin.AdminService;
+import com.example.library.services.user.AdminService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

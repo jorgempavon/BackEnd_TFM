@@ -2,7 +2,7 @@ package com.example.library.api.resources.user;
 
 import com.example.library.entities.dto.user.UserCreateDTO;
 import com.example.library.entities.dto.user.UserDTO;
-import com.example.library.services.admin.AdminService;
+import com.example.library.services.user.AdminService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

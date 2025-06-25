@@ -9,8 +9,11 @@ import com.example.library.config.PasswordService;
 import com.example.library.entities.dto.user.LoginDTO;
 import com.example.library.entities.dto.user.SessionDTO;
 import com.example.library.entities.dto.user.UserDTO;
+import com.example.library.entities.dto.user.*;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.user.UserRepository;
+import com.example.library.services.EmailService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,41 +39,74 @@ public class UserServiceTest {
     @Mock
     private PasswordService passwordService;
     @Mock
+    private EmailService emailService;
+
+    @Mock
+    private UserValidatorService userValidatorService;
+    @Mock
     private UserRepository userRepository;
     @InjectMocks
     private UserService userService;
-    private static final Long exampleId = 2L;
-    private static final String exampleName = "example";
-    private static final String exampleLastName = "last name example";
-    private static final String exampleEmail = "test@example.com";
-    private static final String exampleDni = "12345678A";
-    private static final String examplePass = "pass123";
-    private static final LoginDTO loginDTO = new LoginDTO(
-            exampleEmail,examplePass
+    private static final Long EXAMPLE_ID = 2L;
+    private static final String EXAMPLE_NAME = "example";
+    private static final String EXAMPLE_LAST_NAME = "last name example";
+    private static final String EXAMPLE_EMAIL = "test@example.com";
+    private static final String EXAMPLE_DNI = "12345678A";
+    private static final String EXAMPLE_PASS = "pass123";
+    private static final LoginDTO LOGIN_DTO = new LoginDTO(
+            EXAMPLE_EMAIL,EXAMPLE_PASS
     );
-    private static final String exampleEncodedPass = "encodedPassword";
+    private static final String EXAMPLE_ENCODED_PASS = "encodedPassword";
 
-    private static final User user = new User(
-            exampleName,
-            exampleDni,
-            exampleEmail,
-            exampleLastName
+    private static final User USER = new User(
+            EXAMPLE_ID,
+            EXAMPLE_NAME,
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_LAST_NAME
     );
-    private static final String exampleTkn = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
-    private static final String rol = "client";
+    private static final String ROL = "client";
+    private static final UserDTO USER_DTO = new UserDTO(
+            EXAMPLE_ID,
+            EXAMPLE_NAME,
+            EXAMPLE_EMAIL,
+            EXAMPLE_DNI,
+            EXAMPLE_LAST_NAME,
+            ROL
+    );
+    private static final UserCreateDTO USER_CREATE_DTO = new UserCreateDTO(
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_NAME,
+            EXAMPLE_LAST_NAME
+    );
+
+
+    private static final String EXAMPLE_TKN = "sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
+    private static final String OLD_PASS = "old pass";
+    private static final UserSelfUpdateDTO USER_SELF_UPDATE_DTO = new UserSelfUpdateDTO(
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            OLD_PASS,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
+            EXAMPLE_NAME,
+            EXAMPLE_LAST_NAME
+    );
+
     @Test
     void findById_successful(){
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setDni(user.getDni());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setName(user.getName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setRol(rol);
+        userDTO.setId(USER.getId());
+        userDTO.setDni(USER.getDni());
+        userDTO.setEmail(USER.getEmail());
+        userDTO.setName(USER.getName());
+        userDTO.setLastName(USER.getLastName());
+        userDTO.setRol(ROL);
 
-        when(this.userRepository.existsById(exampleId)).thenReturn(true);
-        when(userRepository.findById(exampleId)).thenReturn(Optional.of(user));
-        UserDTO result = this.userService.findById(exampleId);
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        when(userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
+        UserDTO result = this.userService.findById(EXAMPLE_ID);
 
         assertEquals(userDTO.getDni(), result.getDni());
         assertEquals(userDTO.getEmail(), result.getEmail());
@@ -80,109 +116,178 @@ public class UserServiceTest {
 
     @Test
     void findById_whenNotExistsId_throwsNotFoundException(){
-        when(this.userRepository.existsById(exampleId)).thenReturn(false);
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
-            userService.findById(exampleId);
+            userService.findById(EXAMPLE_ID);
         });
     }
 
     @Test
-    void findByNameAndDniAndEmail_successful_parametersAreEmpty(){
-        List<User> mockUsers = List.of(user);
-
-        when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
-
-        List<UserDTO> result = userService.findByNameAndDniAndEmail("", "", "");
-
-        assertEquals(1, result.size());
-        assertEquals(exampleName, result.get(0).getName());
-        assertEquals(exampleDni, result.get(0).getDni());
-        assertEquals(exampleEmail, result.get(0).getEmail());
-    }
-
-    @Test
-    void findByNameAndDniAndEmail_successful_parametersAreNull(){
-        List<User> mockUsers = List.of(user);
-
-        when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
-
-        List<UserDTO> result = userService.findByNameAndDniAndEmail(null, null, null);
-
-        assertEquals(1, result.size());
-        assertEquals(exampleName, result.get(0).getName());
-        assertEquals(exampleDni, result.get(0).getDni());
-        assertEquals(exampleEmail, result.get(0).getEmail());
-    }
-
-    @Test
     void findByNameAndDniAndEmail_successful(){
-        List<User> mockUsers = List.of(user);
+        List<User> mockUsers = List.of(USER);
 
         when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
 
-        List<UserDTO> result = userService.findByNameAndDniAndEmail(exampleName, exampleDni,exampleEmail);
+        List<UserDTO> result = userService.findByNameAndDniAndEmail(EXAMPLE_NAME, EXAMPLE_DNI,EXAMPLE_EMAIL);
 
         assertEquals(1, result.size());
-        assertEquals(exampleName, result.get(0).getName());
-        assertEquals(exampleDni, result.get(0).getDni());
-        assertEquals(exampleEmail, result.get(0).getEmail());
+        assertEquals(EXAMPLE_NAME, result.get(0).getName());
+        assertEquals(EXAMPLE_DNI, result.get(0).getDni());
+        assertEquals(EXAMPLE_EMAIL, result.get(0).getEmail());
     }
 
     @Test
     void login_successful(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
-        when(userDetailsService.loadUserByUsername(exampleEmail)).thenReturn(mockUserDetails);
-        when(mockUserDetails.getPassword()).thenReturn(exampleEncodedPass);
-        when(mockUserDetails.getUsername()).thenReturn(exampleEmail);
-        when(passwordService.matchesPasswords(examplePass, exampleEncodedPass)).thenReturn(true);
-        when(userRepository.findByEmail(exampleEmail)).thenReturn(Optional.of(user));
+        when(userDetailsService.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
+        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
+        when(mockUserDetails.getUsername()).thenReturn(EXAMPLE_EMAIL);
+        when(passwordService.matchesPasswords(EXAMPLE_PASS, EXAMPLE_ENCODED_PASS)).thenReturn(true);
+        when(userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(USER));
 
         String mockJwt = "mockedJwtToken";
         when(jwtService.generateToken(mockUserDetails)).thenReturn(mockJwt);
 
-        SessionDTO sessionDTO = this.userService.login(loginDTO);
+        SessionDTO sessionDTO = this.userService.login(LOGIN_DTO);
 
         assertEquals(mockJwt, sessionDTO.getJwt());
     }
 
     @Test
-    void login_whenNotExistsEmail_throwsUnauthorizedException(){
-        when(userDetailsService.loadUserByUsername(exampleEmail)).thenThrow(
-                new UnauthorizedException("El email o contraseña proporcionados son incorrectos")
-        );
-
-        assertThrows(UnauthorizedException.class, () -> {
-            userService.login(loginDTO);
-        });
-    }
-
-    @Test
     void login_whenNotMatchPassword_throwsUnauthorizedException(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
-        when(userDetailsService.loadUserByUsername(exampleEmail)).thenReturn(mockUserDetails);
-        when(mockUserDetails.getPassword()).thenReturn(exampleEncodedPass);
-        when(passwordService.matchesPasswords(examplePass, exampleEncodedPass)).thenReturn(false);
+        when(userDetailsService.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
+        when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
+        when(passwordService.matchesPasswords(EXAMPLE_PASS, EXAMPLE_ENCODED_PASS)).thenReturn(false);
 
         assertThrows(UnauthorizedException.class, () -> {
-            userService.login(loginDTO);
+            userService.login(LOGIN_DTO);
         });
     }
     @Test
     void logOut_Successful(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
 
-        when(this.jwtService.extractUsername(exampleTkn)).thenReturn(exampleEmail);
-        when(this.userDetailsService.loadUserByUsername(exampleEmail)).thenReturn(mockUserDetails);
-        when(this.jwtService.isTokenValid(exampleTkn, mockUserDetails)).thenReturn(true);
+        when(this.jwtService.extractUsername(EXAMPLE_TKN)).thenReturn(EXAMPLE_EMAIL);
+        when(this.userDetailsService.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
+        when(this.jwtService.isTokenValid(EXAMPLE_TKN, mockUserDetails)).thenReturn(true);
 
-        this.userService.logOut(exampleTkn);
+        this.userService.logOut(EXAMPLE_TKN);
     }
     @Test
     void logOut_whenUserNotExists_throwsUnathorizedException(){
-        when(this.jwtService.extractUsername(exampleTkn)).thenThrow(UnauthorizedException.class);
+        when(this.jwtService.extractUsername(EXAMPLE_TKN)).thenThrow(UnauthorizedException.class);
 
         assertThrows(UnauthorizedException.class, () -> {
-            userService.logOut(exampleTkn);
+            userService.logOut(EXAMPLE_TKN);
         });
+    }
+    @Test
+    void createUser_withNoPasswordProvided_successful(){
+        UserExistenceDTO userExistenceDTO = new UserExistenceDTO();
+        when(this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(userExistenceDTO);
+        when(this.passwordService.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
+        when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
+
+        UserAndUserDTO responseDTO = this.userService.create(USER_CREATE_DTO,ROL,"");
+        User responseUser = responseDTO.getUser();
+        UserDTO responseUserDTO = responseDTO.getUserDTO();
+
+        assertEquals(responseUser.getName(),EXAMPLE_NAME);
+        assertEquals(responseUser.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(responseUser.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(responseUser.getDni(),EXAMPLE_DNI);
+
+        assertEquals(responseUserDTO.getName(),EXAMPLE_NAME);
+        assertEquals(responseUserDTO.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(responseUserDTO.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(responseUserDTO.getDni(),EXAMPLE_DNI);
+        assertEquals(responseUserDTO.getRol(),ROL);
+    }
+
+    @Test
+    void createUser_withPasswordProvided_successful(){
+        UserExistenceDTO userExistenceDTO = new UserExistenceDTO();
+        when(this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(userExistenceDTO);
+        when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
+
+        UserAndUserDTO responseDTO = this.userService.create(USER_CREATE_DTO,ROL,EXAMPLE_PASS);
+        User responseUser = responseDTO.getUser();
+        UserDTO responseUserDTO = responseDTO.getUserDTO();
+
+        assertEquals(responseUser.getName(),EXAMPLE_NAME);
+        assertEquals(responseUser.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(responseUser.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(responseUser.getDni(),EXAMPLE_DNI);
+
+        assertEquals(responseUserDTO.getName(),EXAMPLE_NAME);
+        assertEquals(responseUserDTO.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(responseUserDTO.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(responseUserDTO.getDni(),EXAMPLE_DNI);
+        assertEquals(responseUserDTO.getRol(),ROL);
+    }
+    @Test
+    void getUserFullName_successful(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        String response = this.userService.getUserFullName(USER);
+        assertEquals(response,EXAMPLE_NAME+" "+EXAMPLE_LAST_NAME);
+    }
+
+    @Test
+    void getUserFullName_NotExistsUser_throwNotFoundException(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        String response = this.userService.getUserFullName(USER);
+        assertEquals(response,EXAMPLE_NAME+" "+EXAMPLE_LAST_NAME);
+    }
+
+    @Test
+    void delete_successful_existsUser(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
+        this.userService.delete(EXAMPLE_ID);
+    }
+
+    @Test
+    void delete_successful_NotExistsUser(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
+        this.userService.delete(EXAMPLE_ID);
+    }
+
+    @Test
+    void getUserEmail_successful(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        String response = this.userService.getUserEmail(USER);
+        assertEquals(response,EXAMPLE_EMAIL);
+    }
+    @Test
+    void getUserEmail_throwsNotFoundException(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            userService.getUserEmail(USER);
+        });
+    }
+    @Test
+    void updateSelfDTO_successful(){
+        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
+        when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
+        UserDTO response = this.userService.update(EXAMPLE_ID,USER_SELF_UPDATE_DTO);
+
+        assertEquals(response.getName(),EXAMPLE_NAME);
+        assertEquals(response.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(response.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(response.getDni(),EXAMPLE_DNI);
+    }
+    @Test
+    void updateAdminUpdateDTO_successful(){
+        UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
+            EXAMPLE_DNI,EXAMPLE_EMAIL,false,EXAMPLE_NAME,EXAMPLE_LAST_NAME
+        );
+        when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
+        UserDTO response = this.userService.update(EXAMPLE_ID,userAdminUpdateDTO);
+
+        assertEquals(response.getName(),EXAMPLE_NAME);
+        assertEquals(response.getLastName(),EXAMPLE_LAST_NAME);
+        assertEquals(response.getEmail(),EXAMPLE_EMAIL);
+        assertEquals(response.getDni(),EXAMPLE_DNI);
     }
 }

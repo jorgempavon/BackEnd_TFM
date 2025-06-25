@@ -3,9 +3,7 @@ package com.example.library.api.resources.user;
 import com.example.library.api.exceptions.models.UnauthorizedException;
 import com.example.library.config.CustomUserDetails;
 import com.example.library.entities.dto.user.*;
-import com.example.library.services.user.UserSelfUpdateService;
 import com.example.library.services.user.UserService;
-import com.example.library.services.user.UserUpdateByAdminService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +16,9 @@ import java.util.List;
 @RequestMapping("/bibliokie/users")
 public class UserResource {
     private final UserService userService;
-    private final UserSelfUpdateService userSelfUpdateService;
-    private final UserUpdateByAdminService userUpdateByAdminService;
 
-    public UserResource( UserUpdateByAdminService userUpdateByAdminService,
-                         UserService userService,
-                         UserSelfUpdateService userSelfUpdateService){
+    public UserResource(UserService userService){
         this.userService = userService;
-        this.userSelfUpdateService = userSelfUpdateService;
-        this.userUpdateByAdminService = userUpdateByAdminService;
     }
 
     @GetMapping("/{id}")
@@ -41,14 +33,14 @@ public class UserResource {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserAdminUpdateDTO userAdminUpdateDTO) {
-        UserDTO responseUserDTO = this.userUpdateByAdminService.update(id,userAdminUpdateDTO);
+        UserDTO responseUserDTO = this.userService.update(id,userAdminUpdateDTO);
         return ResponseEntity.ok(responseUserDTO);
     }
     @PutMapping("/myself")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody UserSelfUpdateDTO userSelfUpdateDTO){
         Long id = userDetails.getId();
-        UserDTO userDTO = this.userSelfUpdateService.update(id, userSelfUpdateDTO);
+        UserDTO userDTO = this.userService.update(id, userSelfUpdateDTO);
         return ResponseEntity.ok(userDTO);
     }
 
