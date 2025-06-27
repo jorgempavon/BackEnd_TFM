@@ -77,7 +77,17 @@ public class ClientService {
         return client.getId();
     }
 
+    public Client getClientByUserId(Long userId){
+        if(!this.clientRepository.existsByUserId(userId)){
+            throw new NotFoundException("No existe el cliente proporcionado");
+        }
+        return this.clientRepository.findByUserId(userId).get();
+    }
+
     public Boolean isClientEqualsByUserIdAndClient(Client client,Long userId){
+        if(!this.userService.existsById(userId)){
+            throw new NotFoundException("No existe el usuario con el id proporcionado");
+        }
         if (!this.clientRepository.existsByUserId(userId)){
             return false;
         }
@@ -94,5 +104,9 @@ public class ClientService {
             throw new NotFoundException("No existe el cliente proporcionado");
         }
         return this.userService.getUserEmail(client.getUser());
+    }
+
+    public boolean isClientByUserId(Long userId){
+        return this.clientRepository.existsByUserId(userId);
     }
 }

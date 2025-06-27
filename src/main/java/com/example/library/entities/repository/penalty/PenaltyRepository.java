@@ -4,5 +4,11 @@ import com.example.library.entities.model.penalty.Penalty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface PenaltyRepository extends JpaRepository<Penalty, Long>, JpaSpecificationExecutor<Penalty> {
+    boolean existsByClientIdAndTypeAndForgived(Long clientId,String type,Boolean forgived);
+
+    Optional<List<Penalty>> findByClientIdAndTypeAndForgived(Long clientId, String type, Boolean forgived);
 }

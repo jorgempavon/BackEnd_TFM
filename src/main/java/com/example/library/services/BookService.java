@@ -2,11 +2,12 @@ package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.BookCreateDTO;
-import com.example.library.entities.dto.BookDTO;
-import com.example.library.entities.dto.BookUpdateDTO;
+import com.example.library.entities.dto.book.BookCreateDTO;
+import com.example.library.entities.dto.book.BookDTO;
+import com.example.library.entities.dto.book.BookUpdateDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.repository.BookRepository;
+import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -78,30 +79,10 @@ public class BookService {
 
     public List<BookDTO> findByTitleAndAuthorAndIsbnAndGenre(String title,String author,String isbn,String genre){
         Specification<Book> spec = Specification.where(null);
-
-        if (title != null && !title.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%")
-            );
-        }
-
-        if (author != null && !author.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("author")), "%" + author.toLowerCase() + "%")
-            );
-        }
-
-        if (isbn != null && !isbn.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("isbn")), "%" + isbn.toLowerCase() + "%")
-            );
-        }
-
-        if (genre != null && !genre.isBlank()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.like(cb.lower(root.get("genre")), "%" + genre.toLowerCase() + "%")
-            );
-        }
+        spec = ValidationUtils.buildQueryBookStringByField(spec,"title",title);
+        spec = ValidationUtils.buildQueryBookStringByField(spec,"author",author);
+        spec = ValidationUtils.buildQueryBookStringByField(spec,"isbn",isbn);
+        spec = ValidationUtils.buildQueryBookStringByField(spec,"genre",genre);
 
         List<Book> books = this.bookRepository.findAll(spec);
         List<BookDTO> responseList = new ArrayList<>();
@@ -155,22 +136,22 @@ public class BookService {
         String newAuthor =  bookUpdateDTO.getAuthor();
         String newGenre =  bookUpdateDTO.getGenre();
 
-        if(this.isEmptyString(newIsbn) && !book.getIsbn().equals(newIsbn)){
+        if(ValidationUtils.isValidAndChangedString(newIsbn,book.getIsbn())){
             book.setIsbn(newIsbn);
         }
-        if(this.isEmptyString(newTitle) && !book.getTitle().equals(newTitle)){
+        if(ValidationUtils.isValidAndChangedString(newTitle,book.getTitle())){
             book.setTitle(newTitle);
         }
-        if( newStock!= null && !book.getStock().equals(newStock)){
+        if(ValidationUtils.isValidAndChangedInteger(newStock,book.getStock())){
             book.setStock(newStock);
         }
-        if( newReleaseDate!= null && !book.getReleaseDate().equals(newReleaseDate)){
+        if(ValidationUtils.isValidAndChangedDate(newReleaseDate,book.getReleaseDate())){
             book.setReleaseDate(newReleaseDate);
         }
-        if(this.isEmptyString(newAuthor) && !book.getAuthor().equals(newAuthor)){
+        if(ValidationUtils.isValidAndChangedString(newAuthor,book.getAuthor())){
             book.setAuthor(newAuthor);
         }
-        if(this.isEmptyString(newGenre) && !book.getGenre().equals(newGenre)){
+        if(ValidationUtils.isValidAndChangedString(newGenre,book.getGenre())){
             book.setGenre(newGenre);
         }
         
@@ -181,7 +162,11 @@ public class BookService {
         }
         return book.getTitle();
     }
-    public boolean isEmptyString(String value){
-        return (value!= null && !value.isEmpty());
+
+    public Book getBookByBookId(Long bookId){
+        if (!this.bookRepository.existsById(bookId)){
+            throw new NotFoundException("No existe el libro con el id proporcionado");
+        }
+        return this.bookRepository.findById(bookId).get();
     }
 }

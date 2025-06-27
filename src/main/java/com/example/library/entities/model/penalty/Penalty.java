@@ -40,7 +40,8 @@ public class Penalty {
 
     }
 
-    public Penalty(String description,String justificationPenalty,Boolean fulfilled, Boolean forgived,String type, BookingLoan bookingLoan, Client client){
+    public Penalty(String description,String justificationPenalty,Boolean fulfilled,
+                   Boolean forgived,String type, BookingLoan bookingLoan, Client client){
         this.description = description;
         this.justificationPenalty = justificationPenalty;
         this.fulfilled = fulfilled;
@@ -48,6 +49,7 @@ public class Penalty {
         this.bookingLoan = bookingLoan;
         this.client = client;
         this.type = type;
+        this.creationDate = new Date();
     }
 
     public Penalty(Long id, String description,String justificationPenalty,Boolean fulfilled, Boolean forgived,String type , BookingLoan bookingLoan, Client client){

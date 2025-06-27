@@ -1,4 +1,4 @@
-package com.example.library.entities.dto;
+package com.example.library.entities.dto.book;
 
 import com.example.library.entities.dto.validator.AtLeastOneField;
 import jakarta.validation.constraints.Size;
