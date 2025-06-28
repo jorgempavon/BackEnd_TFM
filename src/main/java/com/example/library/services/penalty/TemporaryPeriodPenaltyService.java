@@ -56,6 +56,7 @@ public class TemporaryPeriodPenaltyService implements TemporaryPenaltyLookUpServ
                 penaltyDTO,temporaryPeriodPenalty.getEndDate(),temporaryPeriodRuleName
         );
     }
+    @Override
     @Transactional
     public TemporaryPeriodPenaltyDTO create(TemporaryPeriodPenaltyCreateDTO temporaryPeriodPenaltyCreateDTO){
         PenaltyAndPenaltyDTO penaltyAndPenaltyDTO = this.penaltyService.create(

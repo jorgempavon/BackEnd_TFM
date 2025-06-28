@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PenaltyRepository extends JpaRepository<Penalty, Long>, JpaSpecificationExecutor<Penalty> {
+    Integer countByClientId(Long clientId);
     boolean existsByClientIdAndTypeAndForgived(Long clientId,String type,Boolean forgived);
 
     Optional<List<Penalty>> findByClientIdAndTypeAndForgived(Long clientId, String type, Boolean forgived);

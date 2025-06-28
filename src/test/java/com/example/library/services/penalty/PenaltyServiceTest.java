@@ -303,4 +303,12 @@ public class PenaltyServiceTest {
         assertTrue(response.getExistsPenalty());
         assertEquals(response.getPenaltyId(),PENALTY_ID);
     }
+
+    @Test
+    void getNumPenaltiesOfClient_successful(){
+        Integer numPenalties = 7;
+        when(this.penaltyRepository.countByClientId(CLIENT_ID)).thenReturn(numPenalties);
+        Integer response = this.penaltyService.getNumPenaltiesOfClient(CLIENT);
+        assertEquals(response,numPenalties);
+    }
 }

@@ -9,12 +9,18 @@ import com.example.library.entities.TemporaryPenaltyLookUpService;
 import com.example.library.entities.dto.bookingLoan.BookingLoanCreateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
-import com.example.library.entities.dto.penalty.BookingPeriodPenaltyExistenceDTO;
-import com.example.library.entities.dto.penalty.TemporaryPeriodPenaltyExistenceDTO;
+import com.example.library.entities.dto.penalty.*;
+import com.example.library.entities.dto.rule.RuleDTO;
+import com.example.library.entities.dto.rule.RuleExistenceDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.model.BookingLoan;
+import com.example.library.entities.model.rule.BookingPeriodRule;
+import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.repository.BookingLoanRepository;
+import com.example.library.services.penalty.PenaltyService;
+import com.example.library.services.rule.BookingPeriodRuleInfoService;
+import com.example.library.services.rule.TemporaryPeriodRuleInfoService;
 import com.example.library.services.user.ClientService;
 import com.example.library.util.ValidationUtils;
 import org.springframework.stereotype.Service;
@@ -29,17 +35,29 @@ public class BookingLoanService {
     private final BookingLoanRepository bookingLoanRepository;
     private final BookService bookService;
     private final ClientService clientService;
+    private final PenaltyService penaltyService;
     private final TemporaryPenaltyLookUpService temporaryPeriodPenaltyService;
     private final BookingPenaltyLookUpService bookingPeriodPenaltyService;
+    private final BookingPeriodRuleInfoService bookingPeriodRuleInfoService;
+    private final TemporaryPeriodRuleInfoService temporaryPeriodRuleInfoService;
+
+    private final EmailService emailService;
 
     public BookingLoanService(BookingLoanRepository bookingLoanRepository,
                               BookService bookService,ClientService clientService,
                               BookingPenaltyLookUpService bookingPeriodPenaltyService,
-                              TemporaryPenaltyLookUpService temporaryPeriodPenaltyService){
+                              TemporaryPenaltyLookUpService temporaryPeriodPenaltyService,
+                              BookingPeriodRuleInfoService bookingPeriodRuleInfoService,
+                              TemporaryPeriodRuleInfoService temporaryPeriodRuleInfoService,
+                              EmailService emailService,PenaltyService penaltyService){
         this.bookingLoanRepository = bookingLoanRepository;
         this.bookService = bookService;
         this.clientService = clientService;
-        this.bookingPeriodPenaltyService=bookingPeriodPenaltyService;
+        this.emailService = emailService;
+        this.bookingPeriodPenaltyService = bookingPeriodPenaltyService;
+        this.bookingPeriodRuleInfoService = bookingPeriodRuleInfoService;
+        this.temporaryPeriodRuleInfoService = temporaryPeriodRuleInfoService;
+        this.penaltyService = penaltyService;
         this.temporaryPeriodPenaltyService = temporaryPeriodPenaltyService;
     }
     public String getBookTitleByBookingLoan(BookingLoan bookingLoan){
@@ -90,20 +108,65 @@ public class BookingLoanService {
     }
     public BookingLoan updateBookingLoanData(Long id, BookingLoanUpdateDTO bookingLoanUpdateDTO){
         BookingLoan bookingLoan = this.bookingLoanRepository.findById(id).get();
+
+        if (ValidationUtils.isValidAndChangedBoolean(bookingLoanUpdateDTO.getReturned(),bookingLoan.getReturned())){
+            if (bookingLoanUpdateDTO.getReturned()){
+                this.checkReturnedBookingHasPenalties(bookingLoan);
+            }
+            bookingLoan.setReturned(bookingLoanUpdateDTO.getReturned());
+        }
         if (ValidationUtils.isValidAndChangedDate(bookingLoanUpdateDTO.getBeginDate(),bookingLoan.getBeginDate())){
             bookingLoan.setBeginDate(bookingLoanUpdateDTO.getBeginDate());
         }
         if (ValidationUtils.isValidAndChangedDate(bookingLoanUpdateDTO.getEndDate(),bookingLoan.getEndDate())){
             bookingLoan.setEndDate(bookingLoanUpdateDTO.getEndDate());
         }
-
-        if (ValidationUtils.isValidAndChangedBoolean(bookingLoanUpdateDTO.getReturned(),bookingLoan.getReturned())){
-            bookingLoan.setReturned(bookingLoanUpdateDTO.getReturned());
-        }
         if (ValidationUtils.isValidAndChangedBoolean(bookingLoanUpdateDTO.getCollected(),bookingLoan.getCollected())){
             bookingLoan.setCollected(bookingLoanUpdateDTO.getCollected());
         }
         return bookingLoan;
+    }
+    public void checkReturnedBookingHasPenalties(BookingLoan bookingLoan){
+        LocalDate bookingEndLocalDate = bookingLoan.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        if (!today.isAfter(bookingEndLocalDate)){
+            return;
+        }
+        Integer numPenaltiesOfClient = this.penaltyService.getNumPenaltiesOfClient(bookingLoan.getClient());
+        this.checkBookingPeriodPenalties(numPenaltiesOfClient,bookingLoan);
+        this.checkTemporaryPeriodPenalties(numPenaltiesOfClient,bookingLoan);
+    }
+    public void checkBookingPeriodPenalties(Integer numPenalties,BookingLoan bookingLoan){
+        RuleExistenceDTO existsBookingRuleDTO = this.bookingPeriodRuleInfoService.findByNumPenalties(numPenalties);
+        if(existsBookingRuleDTO.getExistsRule()){
+            RuleDTO ruleDTO = existsBookingRuleDTO.getRuleDTO();
+            PenaltyCreateDTO penaltyCreateDTO = new PenaltyCreateDTO(ruleDTO.getName(),ruleDTO.getType(),
+                    bookingLoan,bookingLoan.getClient());
+
+            BookingPeriodRule bookingPeriodRule = this.bookingPeriodRuleInfoService.findById(ruleDTO.getId());
+            BookingPeriodPenaltyCreateDTO bookingPenaltyCreateDTO = new BookingPeriodPenaltyCreateDTO(
+                    penaltyCreateDTO,ruleDTO.getDays(),bookingPeriodRule
+            );
+            this.bookingPeriodPenaltyService.create(bookingPenaltyCreateDTO);
+        }
+    }
+    public void checkTemporaryPeriodPenalties(Integer numPenalties,BookingLoan bookingLoan){
+        RuleExistenceDTO existsTemporaryRuleDTO = this.temporaryPeriodRuleInfoService.findByNumPenalties(numPenalties);
+        if(existsTemporaryRuleDTO.getExistsRule()){
+            RuleDTO ruleDTO = existsTemporaryRuleDTO.getRuleDTO();
+            PenaltyCreateDTO penaltyCreateDTO = new PenaltyCreateDTO(ruleDTO.getName(),ruleDTO.getType(),
+                    bookingLoan,bookingLoan.getClient());
+
+            TemporaryPeriodRule temporaryPeriodRule = this.temporaryPeriodRuleInfoService.findById(ruleDTO.getId());
+            LocalDate localDate = LocalDate.now().plusDays(ruleDTO.getDays());
+            Date endDatePenalty = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            TemporaryPeriodPenaltyCreateDTO temporaryPeriodPenaltyCreateDTO = new TemporaryPeriodPenaltyCreateDTO(
+                    penaltyCreateDTO,endDatePenalty,temporaryPeriodRule
+            );
+            this.temporaryPeriodPenaltyService.create(temporaryPeriodPenaltyCreateDTO);
+        }
     }
     @Transactional
     public BookingLoanDTO create(BookingLoanCreateDTO createDTO){
@@ -116,9 +179,14 @@ public class BookingLoanService {
                 createDTO.getBeginDate(),endDate,false,false,
                 book,client
         );
-        String bookTitle = this.getBookTitleByBookingLoan(bookingLoan);
-        String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
 
+        String bookTitle = this.bookService.getBookTitleByBook(book);
+        String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
+        String clientEmail = this.clientService.getUserEmailByClient(client);
+        this.emailService.sendBookingLoanPenaltyEmail(clientEmail,clientName,bookTitle,
+                createDTO.getBeginDate(),endDate);
+
+        this.bookingLoanRepository.save(bookingLoan);
         return new BookingLoanDTO(bookingLoan.getBeginDate(),bookingLoan.getEndDate(),
                 bookingLoan.getCollected(), bookingLoan.getReturned(), bookTitle, clientName
         );
@@ -131,7 +199,7 @@ public class BookingLoanService {
         BookingLoan bookingLoan = this.bookingLoanRepository.findById(id).get();
         Date bookingBeginDate = bookingLoan.getBeginDate();
 
-        if(this.clientService.isClientByUserId(userId) && !isOneDayBeforeBeginDate(bookingBeginDate)){
+        if(this.clientService.isClientByUserId(userId) && !isTodayDayBeforeBeginDate(bookingBeginDate)){
             throw new ConflictException("Error, la reserva debe ser cancelada con un minimo de" +
                     " 24 horas respecto a la fecha inicial de reserva");
         }
@@ -154,7 +222,7 @@ public class BookingLoanService {
             throw new BadRequestException("Error, actualmente no quedan existencias de este libro");
         }
 
-        if(!isOneDayBeforeBeginDate(beginDate)){
+        if(!isTodayDayBeforeBeginDate(beginDate)){
             throw new ConflictException("Error, la reserva debe ser creada con un minimo de" +
                     " 24 horas respecto a la fecha inicial de reserva");
         }
@@ -185,7 +253,7 @@ public class BookingLoanService {
         }
     }
 
-    public boolean isOneDayBeforeBeginDate(Date beginDate){
+    public boolean isTodayDayBeforeBeginDate(Date beginDate){
         LocalDate bookingBeginLocalDate = beginDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate today = LocalDate.now();
 

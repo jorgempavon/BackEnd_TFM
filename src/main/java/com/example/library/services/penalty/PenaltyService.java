@@ -162,4 +162,8 @@ public class PenaltyService {
         return response;
     }
 
+    public Integer getNumPenaltiesOfClient(Client client){
+        return this.penaltyRepository.countByClientId(client.getId());
+    }
+
 }

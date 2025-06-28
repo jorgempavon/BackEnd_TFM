@@ -52,6 +52,7 @@ public class BookingPeriodPenaltyService implements BookingPenaltyLookUpService 
                 penaltyDTO,bookingPeriodPenalty.getDays(),bookingPeriodRuleName
         );
     }
+    @Override
     @Transactional
     public BookingPeriodPenaltyDTO create(BookingPeriodPenaltyCreateDTO bookingPeriodPenaltyCreateDTO){
         PenaltyAndPenaltyDTO penaltyAndPenaltyDTO = this.penaltyService.create(
