@@ -65,14 +65,7 @@ public class UserServiceTest {
             EXAMPLE_LAST_NAME
     );
     private static final String ROL = "client";
-    private static final UserDTO USER_DTO = new UserDTO(
-            EXAMPLE_ID,
-            EXAMPLE_NAME,
-            EXAMPLE_EMAIL,
-            EXAMPLE_DNI,
-            EXAMPLE_LAST_NAME,
-            ROL
-    );
+
     private static final UserCreateDTO USER_CREATE_DTO = new UserCreateDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,

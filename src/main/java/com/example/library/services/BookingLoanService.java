@@ -12,11 +12,13 @@ import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
 import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.dto.rule.RuleDTO;
 import com.example.library.entities.dto.rule.RuleExistenceDTO;
+import com.example.library.entities.dto.user.UserDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.model.BookingLoan;
 import com.example.library.entities.model.rule.BookingPeriodRule;
 import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.model.user.Client;
+import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
 import com.example.library.services.penalty.PenaltyService;
 import com.example.library.services.rule.BookingPeriodRuleInfoService;
@@ -28,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class BookingLoanService {
@@ -85,6 +89,30 @@ public class BookingLoanService {
                 bookTitle,
                 clientName
         );
+    }
+    public List<BookingLoanDTO> findByUserId(Long userId){
+        Long clientId = this.clientService.getClientIdByUserId(userId);
+        List<BookingLoanDTO> responseList= new ArrayList<>();
+
+        if (!this.bookingLoanRepository.existsByClientId(clientId)){
+            return responseList;
+        }
+
+        List<BookingLoan> bookingLoanList = this.bookingLoanRepository.findByClientId(clientId).get();
+        for (BookingLoan bookingLoan : bookingLoanList) {
+            String bookTitle = this.getBookTitleByBookingLoan(bookingLoan);
+            String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
+            BookingLoanDTO bookingLoanDTO = new BookingLoanDTO(
+                    bookingLoan.getBeginDate(),
+                    bookingLoan.getEndDate(),
+                    bookingLoan.getCollected(),
+                    bookingLoan.getReturned(),
+                    bookTitle,
+                    clientName
+            );
+            responseList.add(bookingLoanDTO);
+        }
+        return responseList;
     }
     @Transactional
     public BookingLoanDTO update(Long id, BookingLoanUpdateDTO bookingLoanUpdateDTO){
