@@ -1,9 +1,9 @@
 package com.example.library.api.resources;
 
 
-import com.example.library.entities.dto.BookCreateDTO;
-import com.example.library.entities.dto.BookDTO;
-import com.example.library.entities.dto.BookUpdateDTO;
+import com.example.library.entities.dto.book.BookCreateDTO;
+import com.example.library.entities.dto.book.BookDTO;
+import com.example.library.entities.dto.book.BookUpdateDTO;
 import com.example.library.services.BookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

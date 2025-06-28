@@ -1,10 +1,8 @@
 package com.example.library.services.penalty;
 
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.penalty.BookingPeriodPenaltyCreateDTO;
-import com.example.library.entities.dto.penalty.BookingPeriodPenaltyDTO;
-import com.example.library.entities.dto.penalty.PenaltyAndPenaltyDTO;
-import com.example.library.entities.dto.penalty.PenaltyDTO;
+import com.example.library.entities.BookingPenaltyLookUpService;
+import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.model.penalty.BookingPeriodPenalty;
 import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.rule.BookingPeriodRule;
@@ -14,14 +12,11 @@ import com.example.library.services.rule.BookingPeriodRuleService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
-public class BookingPeriodPenaltyService {
+public class BookingPeriodPenaltyService implements BookingPenaltyLookUpService {
     private final BookingPeriodPenaltyRepository bookingPeriodPenaltyRepository;
     private final PenaltyService penaltyService;
     private final EmailService emailService;
-
     private final BookingPeriodRuleService bookingPeriodRuleService;
 
     public BookingPeriodPenaltyService(BookingPeriodPenaltyRepository bookingPeriodPenaltyRepository,
@@ -57,6 +52,7 @@ public class BookingPeriodPenaltyService {
                 penaltyDTO,bookingPeriodPenalty.getDays(),bookingPeriodRuleName
         );
     }
+    @Override
     @Transactional
     public BookingPeriodPenaltyDTO create(BookingPeriodPenaltyCreateDTO bookingPeriodPenaltyCreateDTO){
         PenaltyAndPenaltyDTO penaltyAndPenaltyDTO = this.penaltyService.create(
@@ -81,5 +77,21 @@ public class BookingPeriodPenaltyService {
         return new BookingPeriodPenaltyDTO(
                 penaltyDTO,days,bookingPeriodRuleName
         );
+    }
+    @Override
+    public BookingPeriodPenaltyExistenceDTO getBookingPeriodPenaltyByClientId(Long ClientId){
+        BookingPeriodPenaltyExistenceDTO response = new BookingPeriodPenaltyExistenceDTO(false,0);
+        String type = "Intervalo de reserva";
+
+        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(ClientId,type);
+        if (!responseExistsPenalty.getExistsPenalty()){
+            return response;
+        }
+        Long penaltyId = responseExistsPenalty.getPenaltyId();
+        BookingPeriodPenalty bookingPeriodPenalty = this.bookingPeriodPenaltyRepository.findByPenaltyId(penaltyId).get();
+
+        response.setExistsPenalty(true);
+        response.setDays(bookingPeriodPenalty.getDays());
+        return response;
     }
 }

@@ -23,8 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +44,7 @@ public class BookingPeriodPenaltyServiceTest {
     private static final String BOOKING_PERIOD_RULE_NAME = "Booking period rule name";
     private static final String PENALTY_DESCRIPTION = "penalty description";
     private static final String PENALTY_JUSTIFICATION = "penalty justification";
-    private static final String PENALTY_TYPE = "temporal";
+    private static final String PENALTY_TYPE = "Intervalo de reserva";
     private static final String CLIENT_FULL_NAME = "client full name";
     private static final String USER_EMAIL = "test@example.com";
     private static final Long USER_ID = 7L;
@@ -87,7 +86,7 @@ public class BookingPeriodPenaltyServiceTest {
 
     private static final PenaltyDTO PENALTY_DTO = new PenaltyDTO(PENALTY_ID,PENALTY_DESCRIPTION,PENALTY_TYPE,
             PENALTY_JUSTIFICATION,false,false,
-            BOOK_TITLE,CLIENT_FULL_NAME
+            BOOK_TITLE,CLIENT_FULL_NAME,new Date()
     );
 
     private static final PenaltyAndPenaltyDTO PENALTY_AND_PENALTY_DTO = new PenaltyAndPenaltyDTO(
@@ -166,4 +165,33 @@ public class BookingPeriodPenaltyServiceTest {
         when(this.bookingPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         this.bookingPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
     }
+
+    @Test
+    void getBookingPeriodPenaltyByClientId_returnsNotExists(){
+        PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
+            false,PENALTY_ID
+        );
+        when(this.penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE)).thenReturn(penaltyExistenceDTO);
+
+        BookingPeriodPenaltyExistenceDTO response = this.bookingPeriodPenaltyService.getBookingPeriodPenaltyByClientId(CLIENT_ID);
+
+        assertFalse(response.getExistsPenalty());
+    }
+
+    @Test
+    void getBookingPeriodPenaltyByClientId_returnsExists(){
+        PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
+                true,PENALTY_ID
+        );
+        BookingPeriodPenalty bookingPeriodPenalty = new BookingPeriodPenalty(
+                24L,BOOKING_PERIOD_DAYS,PENALTY,BOOKING_PERIOD_RULE
+        );
+        when(this.penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE)).thenReturn(penaltyExistenceDTO);
+        when(this.bookingPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(bookingPeriodPenalty));
+        BookingPeriodPenaltyExistenceDTO response = this.bookingPeriodPenaltyService.getBookingPeriodPenaltyByClientId(CLIENT_ID);
+
+        assertTrue(response.getExistsPenalty());
+        assertEquals(response.getDays(),BOOKING_PERIOD_DAYS);
+    }
+
 }

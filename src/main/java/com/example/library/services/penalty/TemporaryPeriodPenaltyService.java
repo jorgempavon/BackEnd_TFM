@@ -1,10 +1,8 @@
 package com.example.library.services.penalty;
 
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.penalty.PenaltyAndPenaltyDTO;
-import com.example.library.entities.dto.penalty.PenaltyDTO;
-import com.example.library.entities.dto.penalty.TemporaryPeriodPenaltyCreateDTO;
-import com.example.library.entities.dto.penalty.TemporaryPeriodPenaltyDTO;
+import com.example.library.entities.TemporaryPenaltyLookUpService;
+import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.penalty.TemporaryPeriodPenalty;
 import com.example.library.entities.model.rule.TemporaryPeriodRule;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class TemporaryPeriodPenaltyService {
+public class TemporaryPeriodPenaltyService implements TemporaryPenaltyLookUpService {
     private final TemporaryPeriodPenaltyRepository temporaryPeriodPenaltyRepository;
     private final PenaltyService penaltyService;
     private final EmailService emailService;
@@ -58,6 +56,7 @@ public class TemporaryPeriodPenaltyService {
                 penaltyDTO,temporaryPeriodPenalty.getEndDate(),temporaryPeriodRuleName
         );
     }
+    @Override
     @Transactional
     public TemporaryPeriodPenaltyDTO create(TemporaryPeriodPenaltyCreateDTO temporaryPeriodPenaltyCreateDTO){
         PenaltyAndPenaltyDTO penaltyAndPenaltyDTO = this.penaltyService.create(
@@ -83,5 +82,25 @@ public class TemporaryPeriodPenaltyService {
         return new TemporaryPeriodPenaltyDTO(
                 penaltyDTO,endDate,temporaryPeriodRuleName
         );
+    }
+    @Override
+    public TemporaryPeriodPenaltyExistenceDTO getTemporaryPeriodPenaltyByClientId(Long ClientId){
+        TemporaryPeriodPenaltyExistenceDTO response = new TemporaryPeriodPenaltyExistenceDTO(false,null);
+        String type = "Temporal";
+
+        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(ClientId,type);
+        if (!responseExistsPenalty.getExistsPenalty()){
+            return response;
+        }
+        Long penaltyId = responseExistsPenalty.getPenaltyId();
+        TemporaryPeriodPenalty bookingPeriodPenalty = this.temporaryPeriodPenaltyRepository.findByPenaltyId(penaltyId).get();
+        Date today = new Date();
+
+        if(bookingPeriodPenalty.getEndDate().before(today)){
+           return response;
+        }
+        response.setExistsPenalty(true);
+        response.setEndDate(bookingPeriodPenalty.getEndDate());
+        return response;
     }
 }

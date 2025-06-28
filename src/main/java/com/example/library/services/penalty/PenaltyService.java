@@ -2,40 +2,36 @@ package com.example.library.services.penalty;
 
 import com.example.library.api.exceptions.models.ForbiddenException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.penalty.PenaltyAndPenaltyDTO;
-import com.example.library.entities.dto.penalty.PenaltyCreateDTO;
-import com.example.library.entities.dto.penalty.PenaltyDTO;
-import com.example.library.entities.dto.penalty.PenaltyJustificationDTO;
+import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.repository.penalty.PenaltyRepository;
-import com.example.library.services.BookingLoanService;
-import com.example.library.services.EmailService;
-import com.example.library.services.user.AdminService;
+import com.example.library.services.BookingLoanInfoService;
 import com.example.library.services.user.ClientService;
 import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class PenaltyService {
     private final PenaltyRepository penaltyRepository;
     private final ClientService clientService;
-    private final AdminService adminService;
-    private final BookingLoanService bookingLoanService;
+    private final BookingLoanInfoService bookingLoanInfoService;
 
 
     public PenaltyService(PenaltyRepository penaltyRepository,ClientService clientService,
-                          BookingLoanService bookingLoanService,AdminService adminService,
-                          EmailService emailService){
+                          BookingLoanInfoService bookingLoanInfoService){
         this.penaltyRepository = penaltyRepository;
         this.clientService = clientService;
-        this.bookingLoanService = bookingLoanService;
-        this.adminService = adminService;
+        this.bookingLoanInfoService = bookingLoanInfoService;
     }
 
     public PenaltyDTO findById(Long id,Long userId){
@@ -46,15 +42,15 @@ public class PenaltyService {
         Client client =  penalty.getClient();
         Boolean isUserLoggedOwnerOfPenalty = this.clientService.isClientEqualsByUserIdAndClient(client,userId);
 
-        if(!this.adminService.isAdminByUserId(userId) && !isUserLoggedOwnerOfPenalty){
+        if(this.clientService.isClientByUserId(userId) && !isUserLoggedOwnerOfPenalty){
             throw new ForbiddenException("No tienes permisos para  acceder a la penalización del id proporcionado");
         }
 
         String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-        String bookTitle = this.bookingLoanService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+        String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
         return new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
                 penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                bookTitle,clientFullName);
+                bookTitle,clientFullName,penalty.getCreationDate());
     }
 
     public List<PenaltyDTO> findByUserAndFulfilled(Long userId, Boolean fulfilled) {
@@ -69,11 +65,11 @@ public class PenaltyService {
 
         for (Penalty penalty : penalties) {
             String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-            String bookTitle = this.bookingLoanService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+            String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
 
             PenaltyDTO penaltyDTO = new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
                     penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                    bookTitle,clientFullName);
+                    bookTitle,clientFullName,penalty.getCreationDate());
             responseList.add(penaltyDTO);
         }
         return responseList;
@@ -90,11 +86,11 @@ public class PenaltyService {
         this.penaltyRepository.save(penalty);
 
         String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-        String bookTitle = this.bookingLoanService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+        String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
 
         return new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
                 penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                bookTitle,clientFullName);
+                bookTitle,clientFullName,penalty.getCreationDate());
     }
     @Transactional
     public PenaltyDTO fulfillPenalty(Long id, PenaltyJustificationDTO penaltyJustificationDTO,Long userId){
@@ -105,7 +101,7 @@ public class PenaltyService {
         Client client =  penalty.getClient();
         Boolean isUserLoggedOwnerOfPenalty = this.clientService.isClientEqualsByUserIdAndClient(client,userId);
 
-        if(!this.adminService.isAdminByUserId(userId) && !isUserLoggedOwnerOfPenalty){
+        if(this.clientService.isClientByUserId(userId) && !isUserLoggedOwnerOfPenalty){
             throw new ForbiddenException("No tienes permisos para cumplimentar a la penalización del id proporcionado");
         }
         penalty.setJustificationPenalty(penaltyJustificationDTO.getJustificationPenalty());
@@ -113,11 +109,11 @@ public class PenaltyService {
         this.penaltyRepository.save(penalty);
 
         String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-        String bookTitle = this.bookingLoanService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+        String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
 
         return new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
                 penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                bookTitle,clientFullName);
+                bookTitle,clientFullName,penalty.getCreationDate());
     }
     @Transactional
     public PenaltyAndPenaltyDTO create(PenaltyCreateDTO penaltyCreateDTO){
@@ -128,10 +124,10 @@ public class PenaltyService {
 
         String clientEmail = this.clientService.getUserEmailByClient(penalty.getClient());
         String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-        String bookTitle = this.bookingLoanService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+        String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
         PenaltyDTO penaltyDTO =  new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
                 penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                bookTitle,clientFullName);
+                bookTitle,clientFullName,penalty.getCreationDate());
         return new PenaltyAndPenaltyDTO(
                 penalty,
                 penaltyDTO,
@@ -145,4 +141,29 @@ public class PenaltyService {
             this.penaltyRepository.delete(penalty);
         }
     }
+    public PenaltyExistenceDTO getPenaltyByClientIdAndType(Long clientId, String type){
+        PenaltyExistenceDTO response = new PenaltyExistenceDTO(false,null);
+        if(!this.penaltyRepository.existsByClientIdAndTypeAndForgived(clientId,type,false)){
+            return response;
+        }
+        List<Penalty> penalties = this.penaltyRepository.findByClientIdAndTypeAndForgived(clientId, type, false).get();
+
+        LocalDate today = LocalDate.now();
+        Penalty closestPenalty = penalties.stream()
+                .min(Comparator.comparing(p -> {
+                    LocalDate penaltyDate = p.getCreationDate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    return Math.abs(ChronoUnit.DAYS.between(penaltyDate, today));
+                })).orElse(null);
+
+        response.setExistsPenalty(true);
+        response.setPenaltyId(closestPenalty.getId());
+        return response;
+    }
+
+    public Integer getNumPenaltiesOfClient(Client client){
+        return this.penaltyRepository.countByClientId(client.getId());
+    }
+
 }

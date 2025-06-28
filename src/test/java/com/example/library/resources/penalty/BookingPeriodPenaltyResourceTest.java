@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
@@ -44,7 +46,7 @@ public class BookingPeriodPenaltyResourceTest {
     {
         PenaltyDTO penaltyDTO = new PenaltyDTO(PENALTY_ID,"PENALTY_DESCRIPTION","Intervalo de reserva",
                 "penalty justification",false,false,
-                "BOOK_TITLE","CLIENT_FULL_NAME"
+                "BOOK_TITLE","CLIENT_FULL_NAME",new Date()
         );
         BookingPeriodPenaltyDTO bookingPeriodPenaltyDTO= new BookingPeriodPenaltyDTO(
                 penaltyDTO,20,"BOOKING PERIOD RULE NAME"

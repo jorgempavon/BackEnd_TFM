@@ -174,4 +174,7 @@ public class UserService {
         }
         return user.getEmail();
     }
+    public boolean existsById(Long id){
+        return this.userRepository.existsById(id);
+    }
 }

@@ -163,6 +163,7 @@ public class ClientServiceTest {
 
     @Test
     void isClientEqualsByUserIdAndClient_Equals(){
+        when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(true);
         when(this.clientRepository.findByUserId(USER_ID)).thenReturn(Optional.of(CLIENT));
@@ -171,10 +172,19 @@ public class ClientServiceTest {
         assertTrue(response);
     }
     @Test
+    void isClientEqualsByUserIdAndClient_NotFound(){
+        Long otherUserId = 72L;
+        when(this.userService.existsById(otherUserId)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            this.clientService.isClientEqualsByUserIdAndClient(CLIENT,otherUserId);
+        });
+    }
+    @Test
     void isClientEqualsByUserIdAndClient_NotEquals(){
         Long otherUserId = 72L;
         long otherClientId = 12L;
         Client otherClient = new Client(12L,USER);
+        when(this.userService.existsById(otherUserId)).thenReturn(true);
         when(this.clientRepository.existsByUserId(otherUserId)).thenReturn(true);
         when(this.clientRepository.existsById(otherClientId)).thenReturn(true);
         when(this.clientRepository.findByUserId(otherUserId)).thenReturn(Optional.of(CLIENT));
@@ -184,6 +194,7 @@ public class ClientServiceTest {
     }
     @Test
     void isClientEqualsByUserIdAndClient_NotExistsUserLogged(){
+        when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
 
         Boolean response =  this.clientService.isClientEqualsByUserIdAndClient(CLIENT,USER_ID);
@@ -191,6 +202,7 @@ public class ClientServiceTest {
     }
     @Test
     void isClientEqualsByUserIdAndClient_NotExistsClientProvided(){
+        when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
 
@@ -212,6 +224,22 @@ public class ClientServiceTest {
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.clientService.getUserEmailByClient(CLIENT);
+        });
+    }
+
+    @Test
+    void getClientByUserId_successful(){
+        when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
+        when(this.clientRepository.findByUserId(USER_ID)).thenReturn(Optional.of(CLIENT));
+        Client responseClient =  this.clientService.getClientByUserId(USER_ID);
+
+        assertEquals(responseClient,CLIENT);
+    }
+    @Test
+    void getClientByUserId_NotExistsClient_throwNotFoundException(){
+        when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
+        assertThrows(NotFoundException.class, () -> {
+            clientService.getClientByUserId(USER_ID);
         });
     }
 }

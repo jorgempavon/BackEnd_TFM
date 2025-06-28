@@ -2,9 +2,9 @@ package com.example.library.services;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.BookCreateDTO;
-import com.example.library.entities.dto.BookDTO;
-import com.example.library.entities.dto.BookUpdateDTO;
+import com.example.library.entities.dto.book.BookCreateDTO;
+import com.example.library.entities.dto.book.BookDTO;
+import com.example.library.entities.dto.book.BookUpdateDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -30,83 +30,83 @@ public class BookServiceTest {
     private BookRepository bookRepository;
     @InjectMocks
     private BookService bookService;
-    private static final Long exampleId = 4L;
-    private static final Long exampleOtherId = 2L;
-    private static final String exampleQr= "d9b2d63d-a233-4123-847a-7ac09a557b05\n";
-    private static final String exampleIsbn = "9781234567890";
-    private static final String exampleTitle= "El Misterio del Bosque";
-    private static final Integer exampleStock = 20;
-    private static final Date exampleReleaseDate = new Date();
-    private static final String exampleGenre = "Ficción";
-    private static final String exampleAuthor = "Laura Márquez";
+    private static final Long BOOK_ID = 4L;
+    private static final Long OTHER_BOOK_ID = 2L;
+    private static final String BOOK_QR= "d9b2d63d-a233-4123-847a-7ac09a557b05\n";
+    private static final String BOOK_ISBN = "9781234567890";
+    private static final String BOOK_TITLE= "El Misterio del Bosque";
+    private static final Integer BOOK_STOCK = 20;
+    private static final Date BOOK_RELEASE_DATE = new Date();
+    private static final String BOOK_GENRE = "Ficción";
+    private static final String BOOK_AUTHOR = "Laura Márquez";
 
-    private static final String exampleOtherIsbn = "9781234567893";
-    private static final String exampleOtherTitle= "El Tiempo Expandido";
-    private static final Integer exampleOtherStock = 10;
-    private static final Date exampleOtherReleaseDate = new Date();
-    private static final String exampleOtherGenre = "Fantasía";
-    private static final String exampleOtherAuthor = "María Torres";
-
-    private static final Book book = new Book(
-            exampleIsbn,
-            exampleTitle,
-            exampleQr,
-            exampleReleaseDate,
-            exampleStock,
-            exampleGenre,
-            exampleAuthor
+    private static final String OTHER_BOOK_ISBN = "9781234567893";
+    private static final String OTHER_BOOK_TITLE= "El Tiempo Expandido";
+    private static final Integer OTHER_BOOK_STOCK = 10;
+    private static final Date OTHER_BOOK_RELEASE_DATE = new Date();
+    private static final String OTHER_BOOK_GENRE = "Fantasía";
+    private static final String OTHER_BOOK_AUTHOR = "María Torres";
+    private static final Book BOOK = new Book(
+            BOOK_ID,
+            BOOK_ISBN,
+            BOOK_TITLE,
+            BOOK_QR,
+            BOOK_RELEASE_DATE,
+            BOOK_STOCK,
+            BOOK_GENRE,
+            BOOK_AUTHOR
     );
 
-    private static final Book otherBook = new Book(
-            exampleOtherId,
-            exampleIsbn,
-            exampleTitle,
-            exampleQr,
-            exampleReleaseDate,
-            exampleStock,
-            exampleGenre,
-            exampleAuthor
+    private static final Book OTHER_BOOK = new Book(
+            OTHER_BOOK_ID,
+            BOOK_ISBN,
+            BOOK_TITLE,
+            BOOK_QR,
+            BOOK_RELEASE_DATE,
+            BOOK_STOCK,
+            BOOK_GENRE,
+            BOOK_AUTHOR
     );
 
 
     private static final BookUpdateDTO bookUpdateDTO = new BookUpdateDTO(
-            exampleOtherIsbn,exampleOtherTitle,exampleOtherReleaseDate,
-            exampleOtherStock,exampleOtherGenre,exampleOtherAuthor
+            OTHER_BOOK_ISBN,OTHER_BOOK_TITLE,OTHER_BOOK_RELEASE_DATE,
+            OTHER_BOOK_STOCK,OTHER_BOOK_GENRE,OTHER_BOOK_AUTHOR
     );
 
     @Test
     void createBook_successful(){
         BookCreateDTO newBookCreateDTO = new BookCreateDTO(
-                exampleIsbn,
-                exampleTitle,
-                exampleReleaseDate,
-                exampleStock,
-                exampleGenre,
-                exampleAuthor
+                BOOK_ISBN,
+                BOOK_TITLE,
+                BOOK_RELEASE_DATE,
+                BOOK_STOCK,
+                BOOK_GENRE,
+                BOOK_AUTHOR
         );
-        when(this.bookRepository.existsByIsbn(exampleIsbn)).thenReturn(false);
+        when(this.bookRepository.existsByIsbn(BOOK_ISBN)).thenReturn(false);
 
         BookDTO resultBookDTO = this.bookService.create(newBookCreateDTO);
 
-        assertEquals(resultBookDTO.getIsbn(), exampleIsbn);
-        assertEquals(resultBookDTO.getTitle(), exampleTitle);
-        assertEquals(resultBookDTO.getReleaseDate(), exampleReleaseDate);
-        assertEquals(resultBookDTO.getStock(), exampleStock);
-        assertEquals(resultBookDTO.getGenre(), exampleGenre);
-        assertEquals(resultBookDTO.getAuthor(), exampleAuthor);
+        assertEquals(resultBookDTO.getIsbn(), BOOK_ISBN);
+        assertEquals(resultBookDTO.getTitle(), BOOK_TITLE);
+        assertEquals(resultBookDTO.getReleaseDate(), BOOK_RELEASE_DATE);
+        assertEquals(resultBookDTO.getStock(), BOOK_STOCK);
+        assertEquals(resultBookDTO.getGenre(), BOOK_GENRE);
+        assertEquals(resultBookDTO.getAuthor(), BOOK_AUTHOR);
     }
 
     @Test
     void createBook_whenExistsBook_throwsBadRequestException(){
         BookCreateDTO newBookCreateDTO = new BookCreateDTO(
-                exampleIsbn,
-                exampleTitle,
-                exampleReleaseDate,
-                exampleStock,
-                exampleGenre,
-                exampleAuthor
+                BOOK_ISBN,
+                BOOK_TITLE,
+                BOOK_RELEASE_DATE,
+                BOOK_STOCK,
+                BOOK_GENRE,
+                BOOK_AUTHOR
         );
-        when(this.bookRepository.existsByIsbn(exampleIsbn)).thenReturn(true);
+        when(this.bookRepository.existsByIsbn(BOOK_ISBN)).thenReturn(true);
 
         assertThrows(BadRequestException.class, () -> {
             bookService.create(newBookCreateDTO);
@@ -114,75 +114,104 @@ public class BookServiceTest {
     }
     @Test
     void findById_successful(){
-        when(this.bookRepository.existsById(exampleId)).thenReturn(true);
-        when(this.bookRepository.findById(exampleId)).thenReturn(Optional.of(book));
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
+        when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
 
-        BookDTO resultBookDTO = bookService.findById(exampleId);
-        assertEquals(resultBookDTO.getIsbn(), exampleIsbn);
-        assertEquals(resultBookDTO.getTitle(), exampleTitle);
-        assertEquals(resultBookDTO.getReleaseDate(), exampleReleaseDate);
-        assertEquals(resultBookDTO.getStock(), exampleStock);
-        assertEquals(resultBookDTO.getGenre(), exampleGenre);
-        assertEquals(resultBookDTO.getAuthor(), exampleAuthor);
+        BookDTO resultBookDTO = bookService.findById(BOOK_ID);
+        assertEquals(resultBookDTO.getIsbn(), BOOK_ISBN);
+        assertEquals(resultBookDTO.getTitle(), BOOK_TITLE);
+        assertEquals(resultBookDTO.getReleaseDate(), BOOK_RELEASE_DATE);
+        assertEquals(resultBookDTO.getStock(), BOOK_STOCK);
+        assertEquals(resultBookDTO.getGenre(), BOOK_GENRE);
+        assertEquals(resultBookDTO.getAuthor(), BOOK_AUTHOR);
     }
     @Test
     void findById_whenNotExistsBook_throwsNotFoundException(){
-        when(this.bookRepository.existsById(exampleId)).thenReturn(false);
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> {
-            bookService.findById(exampleId);
+            bookService.findById(BOOK_ID);
         });
     }
     @Test
     void delete_successful_whenExistsBook(){
-        when(this.bookRepository.existsById(exampleId)).thenReturn(true);
-        when(this.bookRepository.findById(exampleId)).thenReturn(Optional.of(book));
-        this.bookService.delete(exampleId);
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
+        when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
+        this.bookService.delete(BOOK_ID);
     }
 
     @Test
     void delete_successful_whenNotExistsBook(){
-        when(this.bookRepository.existsById(exampleId)).thenReturn(false);
-        this.bookService.delete(exampleId);
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
+        this.bookService.delete(BOOK_ID);
     }
 
     @Test
     void findByTitleAndAuthorAndIsbnAndGenre(){
-        List<Book> mockBooks = List.of(book);
+        List<Book> mockBooks = List.of(BOOK);
 
         when(bookRepository.findAll(any(Specification.class))).thenReturn(mockBooks);
 
-        List<BookDTO> result = bookService.findByTitleAndAuthorAndIsbnAndGenre(exampleTitle, exampleAuthor,exampleIsbn,exampleGenre);
+        List<BookDTO> result = bookService.findByTitleAndAuthorAndIsbnAndGenre(BOOK_TITLE, BOOK_AUTHOR,BOOK_ISBN,BOOK_GENRE);
 
         assertEquals(1, result.size());
-        assertEquals(exampleTitle, result.get(0).getTitle());
-        assertEquals(exampleAuthor, result.get(0).getAuthor());
-        assertEquals(exampleIsbn, result.get(0).getIsbn());
-        assertEquals(exampleGenre, result.get(0).getGenre());
+        assertEquals(BOOK_TITLE, result.get(0).getTitle());
+        assertEquals(BOOK_AUTHOR, result.get(0).getAuthor());
+        assertEquals(BOOK_ISBN, result.get(0).getIsbn());
+        assertEquals(BOOK_GENRE, result.get(0).getGenre());
     }
 
     @Test
     void updateBook_successful(){
-        when(bookRepository.existsByIsbn(exampleOtherIsbn)).thenReturn(false);
-        when(bookRepository.findById(exampleId)).thenReturn(Optional.of(otherBook));
+        when(bookRepository.existsByIsbn(OTHER_BOOK_ISBN)).thenReturn(false);
+        when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(OTHER_BOOK));
 
-        BookDTO responseUpdate = this.bookService.update(exampleId,bookUpdateDTO);
+        BookDTO responseUpdate = this.bookService.update(BOOK_ID,bookUpdateDTO);
 
-        assertEquals(responseUpdate.getIsbn(), exampleOtherIsbn);
-        assertEquals(responseUpdate.getTitle(), exampleOtherTitle);
-        assertEquals(responseUpdate.getReleaseDate(), exampleOtherReleaseDate);
-        assertEquals(responseUpdate.getStock(), exampleOtherStock);
-        assertEquals(responseUpdate.getGenre(), exampleOtherGenre);
-        assertEquals(responseUpdate.getAuthor(), exampleOtherAuthor);
+        assertEquals(responseUpdate.getIsbn(), OTHER_BOOK_ISBN);
+        assertEquals(responseUpdate.getTitle(), OTHER_BOOK_TITLE);
+        assertEquals(responseUpdate.getReleaseDate(), OTHER_BOOK_RELEASE_DATE);
+        assertEquals(responseUpdate.getStock(), OTHER_BOOK_STOCK);
+        assertEquals(responseUpdate.getGenre(), OTHER_BOOK_GENRE);
+        assertEquals(responseUpdate.getAuthor(), OTHER_BOOK_AUTHOR);
     }
 
     @Test
     void updateBook_whenExistsOtherBookWithIsbn_throwsBadRequestException(){
-        when(bookRepository.existsByIsbn(exampleOtherIsbn)).thenReturn(true);
-        when(bookRepository.findByIsbn(exampleOtherIsbn)).thenReturn(Optional.of(otherBook));
+        when(bookRepository.existsByIsbn(OTHER_BOOK_ISBN)).thenReturn(true);
+        when(bookRepository.findByIsbn(OTHER_BOOK_ISBN)).thenReturn(Optional.of(OTHER_BOOK));
         assertThrows(BadRequestException.class, () -> {
-            bookService.update(exampleId,bookUpdateDTO);
+            bookService.update(BOOK_ID,bookUpdateDTO);
         });
     }
 
+    @Test
+    void getBookTitleByBook_successful(){
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
+        String response = this.bookService.getBookTitleByBook(BOOK);
+        assertEquals(response,BOOK_TITLE);
+    }
+    @Test
+    void getBookTitleByBook_whenNotExists_throwNotFoundException(){
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> {
+            bookService.getBookTitleByBook(BOOK);
+        });
+    }
+    @Test
+    void getBookByBookId_successful(){
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
+        when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
+        Book response = this.bookService.getBookByBookId(BOOK_ID);
+        assertEquals(response,BOOK);
+    }
+    @Test
+    void getBookByBook_whenNotExists_throwNotFoundException(){
+        when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> {
+            bookService.getBookByBookId(BOOK_ID);
+        });
+    }
 }
