@@ -1,14 +1,9 @@
 package com.example.library.resources.penalty;
 import com.example.library.api.resources.penalty.PenaltyResource;
 import com.example.library.config.CustomUserDetails;
-import com.example.library.entities.dto.penalty.PenaltyCreateDTO;
 import com.example.library.entities.dto.penalty.PenaltyDTO;
 import com.example.library.entities.dto.penalty.PenaltyJustificationDTO;
-import com.example.library.entities.model.Book;
-import com.example.library.entities.model.BookingLoan;
-import com.example.library.entities.model.penalty.Penalty;
-import com.example.library.entities.model.user.Client;
-import com.example.library.entities.model.user.User;
+
 import com.example.library.services.penalty.PenaltyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +41,7 @@ public class PenaltyResourceTest {
     );
     private static final PenaltyDTO PENALTY_DTO = new PenaltyDTO(PENALTY_ID,PENALTY_DESCRIPTION,PENALTY_TYPE,
             PENALTY_JUSTIFICATION,false,false,
-            BOOK_TITLE,CLIENT_FULL_NAME
+            BOOK_TITLE,CLIENT_FULL_NAME,new Date()
     );
 
     @Test

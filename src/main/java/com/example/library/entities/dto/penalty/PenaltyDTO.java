@@ -32,7 +32,7 @@ public class PenaltyDTO {
     }
 
     public PenaltyDTO(String description,String type,String justificationPenalty,Boolean fulfilled,
-                      Boolean forgived, String bookTitle, String clientName){
+                      Boolean forgived, String bookTitle, String clientName,Date creationDate){
         this.description = description;
         this.justificationPenalty = justificationPenalty;
         this.fulfilled = fulfilled;
@@ -40,10 +40,11 @@ public class PenaltyDTO {
         this.bookTitle = bookTitle;
         this.clientName = clientName;
         this.type = type;
+        this.creationDate = creationDate;
     }
 
     public PenaltyDTO(Long id, String description,String type,String justificationPenalty,
-                      Boolean fulfilled, Boolean forgived, String bookTitle, String clientName){
+                      Boolean fulfilled, Boolean forgived, String bookTitle, String clientName,Date creationDate){
         this.id = id;
         this.description = description;
         this.justificationPenalty = justificationPenalty;
@@ -52,5 +53,6 @@ public class PenaltyDTO {
         this.bookTitle = bookTitle;
         this.clientName = clientName;
         this.type = type;
+        this.creationDate = creationDate;
     }
 }

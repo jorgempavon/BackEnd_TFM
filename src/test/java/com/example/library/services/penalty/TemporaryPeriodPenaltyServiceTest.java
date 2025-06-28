@@ -11,10 +11,8 @@ import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.model.user.Admin;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
-import com.example.library.entities.repository.penalty.BookingPeriodPenaltyRepository;
 import com.example.library.entities.repository.penalty.TemporaryPeriodPenaltyRepository;
 import com.example.library.services.EmailService;
-import com.example.library.services.rule.BookingPeriodRuleService;
 import com.example.library.services.rule.TemporaryPeriodRuleService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,11 +20,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +45,7 @@ public class TemporaryPeriodPenaltyServiceTest {
     private static final String TEMPORARY_PERIOD_RULE_NAME = "temporary period rule name";
     private static final String PENALTY_DESCRIPTION = "penalty description";
     private static final String PENALTY_JUSTIFICATION = "penalty justification";
-    private static final String PENALTY_TYPE = "temporal";
+    private static final String PENALTY_TYPE = "Temporal";
     private static final String CLIENT_FULL_NAME = "client full name";
     private static final String USER_EMAIL = "test@example.com";
     private static final Long USER_ID = 7L;
@@ -89,7 +87,7 @@ public class TemporaryPeriodPenaltyServiceTest {
 
     private static final PenaltyDTO PENALTY_DTO = new PenaltyDTO(PENALTY_ID,PENALTY_DESCRIPTION,PENALTY_TYPE,
                 PENALTY_JUSTIFICATION,false,false,
-            BOOK_TITLE,CLIENT_FULL_NAME
+            BOOK_TITLE,CLIENT_FULL_NAME,new Date()
     );
 
     private static final PenaltyAndPenaltyDTO PENALTY_AND_PENALTY_DTO = new PenaltyAndPenaltyDTO(
@@ -100,7 +98,7 @@ public class TemporaryPeriodPenaltyServiceTest {
             ADMIN_ID,
             USER
     );
-    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,"temporal");
+    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,"Temporal");
     private static final TemporaryPeriodRule TEMPORARY_PERIOD_RULE = new TemporaryPeriodRule(
               3L,RULE
     );
@@ -167,5 +165,61 @@ public class TemporaryPeriodPenaltyServiceTest {
         when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
         when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         this.temporaryPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
+    }
+    @Test
+    void getTemporaryPeriodPenaltyByClientId_returnsNotExists(){
+        PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
+                false,PENALTY_ID
+        );
+        when(this.penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE)).thenReturn(penaltyExistenceDTO);
+
+        TemporaryPeriodPenaltyExistenceDTO response = this.temporaryPeriodPenaltyService
+                .getTemporaryPeriodPenaltyByClientId(CLIENT_ID);
+
+        assertFalse(response.getExistsPenalty());
+    }
+
+    @Test
+    void getTemporaryPeriodPenaltyByClientId_returnsNotExists_IsBeforeEndDate(){
+        PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
+                true,PENALTY_ID
+        );
+        Calendar calBefore = Calendar.getInstance();
+        calBefore.setTime(new Date());
+        calBefore.add(Calendar.DAY_OF_MONTH, -1);
+        Date dateBefore = calBefore.getTime();
+
+        TemporaryPeriodPenalty bookingPeriodPenalty = new TemporaryPeriodPenalty(
+                24L,dateBefore,PENALTY,TEMPORARY_PERIOD_RULE
+        );
+
+        when(this.penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE)).thenReturn(penaltyExistenceDTO);
+        when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(bookingPeriodPenalty));
+        TemporaryPeriodPenaltyExistenceDTO response = this.temporaryPeriodPenaltyService
+                .getTemporaryPeriodPenaltyByClientId(CLIENT_ID);
+
+        assertFalse(response.getExistsPenalty());
+    }
+
+    @Test
+    void getTemporaryPeriodPenaltyByClientId_returnsExists(){
+        PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
+                true,PENALTY_ID
+        );
+        Calendar calAfter = Calendar.getInstance();
+        calAfter.setTime(new Date());
+        calAfter.add(Calendar.DAY_OF_MONTH, 1);
+        Date dateAfter = calAfter.getTime();
+
+        TemporaryPeriodPenalty bookingPeriodPenalty = new TemporaryPeriodPenalty(
+                24L,dateAfter,PENALTY,TEMPORARY_PERIOD_RULE
+        );
+
+        when(this.penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE)).thenReturn(penaltyExistenceDTO);
+        when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(bookingPeriodPenalty));
+        TemporaryPeriodPenaltyExistenceDTO response = this.temporaryPeriodPenaltyService
+                .getTemporaryPeriodPenaltyByClientId(CLIENT_ID);
+
+        assertTrue(response.getExistsPenalty());
     }
 }

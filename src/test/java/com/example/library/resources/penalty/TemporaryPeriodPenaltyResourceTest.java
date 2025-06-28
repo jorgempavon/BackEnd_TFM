@@ -45,7 +45,7 @@ public class TemporaryPeriodPenaltyResourceTest {
     {
         PenaltyDTO penaltyDTO = new PenaltyDTO(PENALTY_ID,"PENALTY_DESCRIPTION","temporal",
                 "penalty justification",false,false,
-                "BOOK_TITLE","CLIENT_FULL_NAME"
+                "BOOK_TITLE","CLIENT_FULL_NAME",new Date()
         );
         TemporaryPeriodPenaltyDTO temporaryPeriodPenaltyDTO = new TemporaryPeriodPenaltyDTO(
                 penaltyDTO,new Date(),"TEMPORARY PERIOD RULE NAME"

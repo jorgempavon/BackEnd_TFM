@@ -145,13 +145,13 @@ public class EmailService {
         }
     }
 
-    public void sendTemporaryPeriodPenaltyEmail(String email, String userName, String bookName, Date date) {
+    public void sendTemporaryPeriodPenaltyEmail(String email, String userName, String bookTitle, Date date) {
         try {
             String subject = "Penalización temporal en " + BIBLIOKIE;
 
             String body =
                     DEAR + userName + ":\n\n" +
-                            "Le informamos que se le ha penalizado por la reserva del libro "+bookName+" en " + BIBLIOKIE + ".\n" +
+                            "Le informamos que se le ha penalizado por la reserva del libro "+bookTitle+" en " + BIBLIOKIE + ".\n" +
                             "No podrás realizar una nueva reserva de libros hasta la siguiente fecha: " + date.toString() + "\n" +
                             FULFILL+
                             "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
@@ -170,13 +170,13 @@ public class EmailService {
         }
     }
 
-    public void sendBookingPeriodPenaltyEmail(String email, String userName, String bookName,Integer days) {
+    public void sendBookingPeriodPenaltyEmail(String email, String userName, String bookTitle,Integer days) {
         try {
             String subject = "Penalización de intervalo en " + BIBLIOKIE;
 
             String body =
                     DEAR + userName + ":\n\n" +
-                            "Le informamos que se le ha penalizado por la reserva del libro "+bookName+" en " + BIBLIOKIE + ".\n" +
+                            "Le informamos que se le ha penalizado por la reserva del libro "+bookTitle+" en " + BIBLIOKIE + ".\n" +
                             "Para la siguiente reserva de libro dispondrá de " + days.toString() + " días para devolverlo \n" +
                             FULFILL+
                             "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
@@ -194,5 +194,32 @@ public class EmailService {
             throw new BadRequestException("No se pudo enviar el correo de nueva penalizacion temporal");
         }
     }
+
+    public void sendBookingLoanPenaltyEmail(String email, String userName, String bookTitle, Date beginDate,Date endDate) {
+        try {
+            String subject = "Penalización de intervalo en " + BIBLIOKIE;
+
+            String body =
+                    DEAR + userName + ":\n\n" +
+                            "Le informamos que ha realizado la reserva del libro "+bookTitle+" en " + BIBLIOKIE + ".\n" +
+                            "El periodo de reserva del libro comienza el " + beginDate.toString()+ " y finaliza el "
+                            + endDate.toString() + " días para devolverlo \n" +
+                            FULFILL+
+                            "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
+                            "Atentamente,\n" +
+                            BIBLIOKIE + "\n" +
+                            BIBLIOKIE_EMAIL;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new BadRequestException("No se pudo enviar el correo de nueva penalizacion temporal");
+        }
+    }
+
 
 }

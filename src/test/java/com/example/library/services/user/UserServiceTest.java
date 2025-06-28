@@ -24,8 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,14 +65,7 @@ public class UserServiceTest {
             EXAMPLE_LAST_NAME
     );
     private static final String ROL = "client";
-    private static final UserDTO USER_DTO = new UserDTO(
-            EXAMPLE_ID,
-            EXAMPLE_NAME,
-            EXAMPLE_EMAIL,
-            EXAMPLE_DNI,
-            EXAMPLE_LAST_NAME,
-            ROL
-    );
+
     private static final UserCreateDTO USER_CREATE_DTO = new UserCreateDTO(
             EXAMPLE_DNI,
             EXAMPLE_EMAIL,
@@ -289,5 +281,15 @@ public class UserServiceTest {
         assertEquals(response.getLastName(),EXAMPLE_LAST_NAME);
         assertEquals(response.getEmail(),EXAMPLE_EMAIL);
         assertEquals(response.getDni(),EXAMPLE_DNI);
+    }
+    @Test
+    void existsById_returnsTrue(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
+        assertTrue(this.userService.existsById(EXAMPLE_ID));
+    }
+    @Test
+    void existsById_returnsFalse(){
+        when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
+        assertFalse(this.userService.existsById(EXAMPLE_ID));
     }
 }
