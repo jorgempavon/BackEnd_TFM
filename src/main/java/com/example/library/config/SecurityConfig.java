@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/bibliokie/users/login",
-                                "/bibliokie/users/register"
+                                "/bibliokie/users/client/register"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
