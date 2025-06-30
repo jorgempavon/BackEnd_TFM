@@ -44,9 +44,8 @@ public class CustomerDetailsServiceTest {
         when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
                 .thenThrow(UnauthorizedException.class);
 
-        assertThrows(UnauthorizedException.class, () -> {
-            customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL));
 
     }
 }

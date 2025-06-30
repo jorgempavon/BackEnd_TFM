@@ -123,9 +123,7 @@ public class ClientServiceTest {
         String exampleBadPass = "pass";
         newUserRegisterDto.setRepeatPassword(exampleBadPass);
 
-        assertThrows(ConflictException.class, () -> {
-            clientService.register(newUserRegisterDto);
-        });
+        assertThrows(ConflictException.class, () -> clientService.register(newUserRegisterDto));
     }
     @Test
     void getUserFullNameByClientSuccessful(){
@@ -139,9 +137,7 @@ public class ClientServiceTest {
     @Test
     void getUserFullNameByClientNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            clientService.getUserFullNameByClient(CLIENT);
-        });
+        assertThrows(NotFoundException.class, () -> clientService.getUserFullNameByClient(CLIENT));
     }
 
     @Test
@@ -156,9 +152,7 @@ public class ClientServiceTest {
     @Test
     void getClientIdByUserIdNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            clientService.getClientIdByUserId(USER_ID);
-        });
+        assertThrows(NotFoundException.class, () -> clientService.getClientIdByUserId(USER_ID));
     }
 
     @Test
@@ -175,9 +169,8 @@ public class ClientServiceTest {
     void isClientEqualsByUserIdAndClientNotFound(){
         Long otherUserId = 72L;
         when(this.userService.existsById(otherUserId)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.clientService.isClientEqualsByUserIdAndClient(CLIENT,otherUserId);
-        });
+        assertThrows(NotFoundException.class, () ->
+                this.clientService.isClientEqualsByUserIdAndClient(CLIENT,otherUserId));
     }
     @Test
     void isClientEqualsByUserIdAndClientNotEquals(){
@@ -222,9 +215,7 @@ public class ClientServiceTest {
     @Test
     void getUserEmailByClientNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.clientService.getUserEmailByClient(CLIENT);
-        });
+        assertThrows(NotFoundException.class, () -> this.clientService.getUserEmailByClient(CLIENT));
     }
 
     @Test
@@ -238,8 +229,6 @@ public class ClientServiceTest {
     @Test
     void getClientByUserIdNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            clientService.getClientByUserId(USER_ID);
-        });
+        assertThrows(NotFoundException.class, () -> clientService.getClientByUserId(USER_ID));
     }
 }
