@@ -51,8 +51,8 @@ public class UserService {
         Specification<User> spec = Specification.where(null);
 
         spec = ValidationUtils.buildQueryUserStringByField(spec,"name",name);
-        spec = ValidationUtils.buildQueryUserStringByField(spec,"dni",name);
-        spec = ValidationUtils.buildQueryUserStringByField(spec,"email",name);
+        spec = ValidationUtils.buildQueryUserStringByField(spec,"dni",dni);
+        spec = ValidationUtils.buildQueryUserStringByField(spec,"email",email);
 
         List<User> users = this.userRepository.findAll(spec);
         List<UserDTO> responseList= new ArrayList<>();

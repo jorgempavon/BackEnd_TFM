@@ -84,11 +84,11 @@ public class TemporaryPeriodPenaltyService implements TemporaryPenaltyLookUpServ
         );
     }
     @Override
-    public TemporaryPeriodPenaltyExistenceDTO getTemporaryPeriodPenaltyByClientId(Long ClientId){
+    public TemporaryPeriodPenaltyExistenceDTO getTemporaryPeriodPenaltyByClientId(Long clientId){
         TemporaryPeriodPenaltyExistenceDTO response = new TemporaryPeriodPenaltyExistenceDTO(false,null);
         String type = "Temporal";
 
-        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(ClientId,type);
+        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(clientId,type);
         if (!responseExistsPenalty.getExistsPenalty()){
             return response;
         }

@@ -47,7 +47,7 @@ public class BookingPeriodRuleResourceTest {
     );
 
     @Test
-    void createBookingPeriodRule_successful() {
+    void createBookingPeriodRuleSuccessful() {
         when(this.bookingPeriodRuleService.create(RULE_ID,RULE_CREATE_DTO)).thenReturn(RULE_DTO);
         when(this.mockUserDetails.getId()).thenReturn(RULE_ID);
 
@@ -62,7 +62,7 @@ public class BookingPeriodRuleResourceTest {
     }
 
     @Test
-    void deleteBookingPeriodRule_successful(){
+    void deleteBookingPeriodRuleSuccessful(){
         doNothing().when(this.bookingPeriodRuleService).deleteByRuleId(RULE_ID);
         ResponseEntity<?> result = bookingPeriodRuleResource.delete(RULE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());

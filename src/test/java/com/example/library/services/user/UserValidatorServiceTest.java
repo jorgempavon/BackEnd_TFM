@@ -35,7 +35,6 @@ public class UserValidatorServiceTest {
     private UserValidatorService userValidatorService;
     private static final Long USER_ID = 2L;
 
-    private static final String ROL = "client";
     private static final String EXAMPLE_NAME = "example";
     private static final String EXAMPLE_LAST_NAME = "last name example";
     private static final String EXAMPLE_EMAIL = "test@example.com";
@@ -43,7 +42,6 @@ public class UserValidatorServiceTest {
     private static final String EXAMPLE_ENCODED_PASS = "encodedPass";
     private static final String EXAMPLE_DNI = "12345678A";
     private static final String EXAMPLE_OTHER_NAME = "Other Name";
-    private static final String EXAMPLE_OTHER_PASS = "OtherPass123";
     private static final String EXAMPLE_OTHER_EMAIL = "other@example.com";
     private static final String EXAMPLE_OTHER_LAST_NAME = "Other Last Name";
     private static final String EXAMPLE_OTHER_DNI = "23345452F";
@@ -75,7 +73,7 @@ public class UserValidatorServiceTest {
     );
 
     @Test
-    void checkUserExistence_NotExistsUser(){
+    void checkUserExistenceNotExistsUser(){
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
 
@@ -85,7 +83,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void checkUserExistence_ExistsUserWithDni(){
+    void checkUserExistenceExistsUserWithDni(){
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
         when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(USER));
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(false);
@@ -97,7 +95,7 @@ public class UserValidatorServiceTest {
         assertTrue(validationResult.getStatusDni());
     }
     @Test
-    void checkUserExistence_ExistsUserWithEmail(){
+    void checkUserExistenceExistsUserWithEmail(){
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(false);
         when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(USER));
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
@@ -110,7 +108,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void checkUserExistence_ExistsUserWithEmailAndDni(){
+    void checkUserExistenceExistsUserWithEmailAndDni(){
         when(this.userRepository.existsByDni(EXAMPLE_DNI)).thenReturn(true);
         when(this.userRepository.existsByEmail(EXAMPLE_EMAIL)).thenReturn(true);
         when(this.userRepository.findByDni(EXAMPLE_DNI)).thenReturn(Optional.of(USER));
@@ -124,12 +122,12 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void updateUserDataInSelfUpdate_successful(){
+    void updateUserDataInSelfUpdateSuccessful(){
         this.userValidatorService.updateUserDataInSelfUpdate(USER,USER_SELF_UPDATE_DTO);
     }
 
     @Test
-    void validateDataInSelfUpdate_successful(){
+    void validateDataInSelfUpdateSuccessful(){
         when(this.userRepository.existsById(USER_ID)).thenReturn(true);
         when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
         when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(false);
@@ -140,7 +138,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validateDataInSelfUpdate_whenExistsOtherUserWithEmail_throwBadRequestException(){
+    void validateDataInSelfUpdateWhenExistsOtherUserWithEmailThrowBadRequestException(){
         when(this.userRepository.existsById(USER_ID)).thenReturn(true);
         when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
         when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(true);
@@ -152,7 +150,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validateDataInSelfUpdate_whenExistsOtherUserWithDNI_throwBadRequestException(){
+    void validateDataInSelfUpdateWhenExistsOtherUserWithDniThrowBadRequestException(){
         when(this.userRepository.existsById(USER_ID)).thenReturn(true);
         when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(true);
         when(this.userRepository.existsByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(false);
@@ -164,14 +162,14 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validateDataInSelfUpdate_whenNotExistsUserId_throwNotFoundException(){
+    void validateDataInSelfUpdateWhenNotExistsUserIdThrowNotFoundException(){
         when(this.userRepository.existsById(USER_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
         });
     }
     @Test
-    void validatePasswordsInSelfUpdate_successful(){
+    void validatePasswordsInSelfUpdateSuccessful(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -185,7 +183,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_OldPasswordNotMatches_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdateOldPasswordNotMatchesThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -209,7 +207,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validatePasswordsInSelfUpdate_OldPasswordNull_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdateOldPasswordNullThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -232,7 +230,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validatePasswordsInSelfUpdate_OldPasswordBlank_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdateOldPasswordBlankThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -255,7 +253,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validatePasswordsInSelfUpdate_RepeatPasswordsNull_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdateRepeatPasswordsNullThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -280,7 +278,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_RepeatPasswordsBlank_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdateRepeatPasswordsBlankThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -305,7 +303,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_PasswordsBlank_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdatePasswordsBlankThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -330,7 +328,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validatePasswordsInSelfUpdate_PasswordNull_throwConflictRequestException(){
+    void validatePasswordsInSelfUpdatePasswordNullThrowConflictRequestException(){
         User userWithPass = new User(
                 55L,
                 EXAMPLE_OTHER_NAME,
@@ -354,7 +352,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void updateUserDataInUpdateByAdmin_UpdateEmail_successful(){
+    void updateUserDataInUpdateByAdminUpdateEmailSuccessful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_OTHER_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
@@ -364,7 +362,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void updateUserDataInUpdateByAdmin_ResetPassword_successful(){
+    void updateUserDataInUpdateByAdminResetPasswordSuccessful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
@@ -373,7 +371,7 @@ public class UserValidatorServiceTest {
         this.userValidatorService.updateUserDataInUpdateByAdmin(USER,userAdminUpdateDTO);
     }
     @Test
-    void validateDataToUpdateInUpdateByAdmin_successful(){
+    void validateDataToUpdateInUpdateByAdminSuccessful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
@@ -384,7 +382,7 @@ public class UserValidatorServiceTest {
         this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
     }
     @Test
-    void validateDataToUpdateInUpdateByAdmin_whenUserNotExists_throwNotFoundException(){
+    void validateDataToUpdateInUpdateByAdminWhenUserNotExistsThrowNotFoundException(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
@@ -395,7 +393,7 @@ public class UserValidatorServiceTest {
     }
 
     @Test
-    void validateDataToUpdateInUpdateByAdmin_ExistsUserWithOtherEmail_throwBadRequestException(){
+    void validateDataToUpdateInUpdateByAdminExistsUserWithOtherEmailThrowBadRequestException(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
@@ -411,7 +409,7 @@ public class UserValidatorServiceTest {
         });
     }
     @Test
-    void validateDataToUpdateInUpdateByAdmin_ExistsUserWithOtherDni_throwBadRequestException(){
+    void validateDataToUpdateInUpdateByAdminExistsUserWithOtherDniThrowBadRequestException(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );

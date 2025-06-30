@@ -76,7 +76,7 @@ public class TemporaryPeriodRuleServiceTest {
             TEMPORARY_PERIOD_RULE_ID,RULE
     );
     @Test
-    void createTemporaryPeriodRule_successful(){
+    void createTemporaryPeriodRuleSuccessful(){
         RuleAndRuleDTO ruleAndRuleDTO = new RuleAndRuleDTO(RULE,RULE_DTO);
         when(this.ruleService.create(RULE_ID,RULE_CREATE_DTO,RULE_TYPE)).thenReturn(ruleAndRuleDTO);
 
@@ -90,13 +90,13 @@ public class TemporaryPeriodRuleServiceTest {
     }
 
     @Test
-    void delete_successful_whenExistsTemporaryPeriodRule(){
+    void deleteSuccessfulWhenExistsTemporaryPeriodRule(){
         when(this.temporaryPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(true);
         when(this.temporaryPeriodRuleRepository.findByRuleId(RULE_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_RULE));
         temporaryPeriodRuleService.deleteByRuleId(RULE_ID);
     }
     @Test
-    void delete_successful_whenNotExistsTemporaryPeriodRule(){
+    void deleteSuccessfulWhenNotExistsTemporaryPeriodRule(){
         when(this.temporaryPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(false);
         temporaryPeriodRuleService.deleteByRuleId(RULE_ID);
     }

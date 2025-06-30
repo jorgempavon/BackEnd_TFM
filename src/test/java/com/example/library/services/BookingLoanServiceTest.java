@@ -16,10 +16,10 @@ import com.example.library.entities.dto.rule.RuleDTO;
 import com.example.library.entities.dto.rule.RuleExistenceDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.model.BookingLoan;
-import com.example.library.entities.model.user.Admin;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
+import com.example.library.services.bookingLoan.BookingLoanService;
 import com.example.library.services.penalty.PenaltyService;
 import com.example.library.services.rule.BookingPeriodRuleInfoService;
 import com.example.library.services.rule.TemporaryPeriodRuleInfoService;
@@ -114,12 +114,12 @@ public class BookingLoanServiceTest {
     private static final BookingLoan BOOKING_LOAN = new BookingLoan(
             BOOKING_LOAN_ID,DATE,DATE,false,false,BOOK,CLIENT
     );
-    private static String CLIENT_FULL_NAME = "example last name example";
+    private static final String CLIENT_FULL_NAME = "example last name example";
 
-    private static Integer NUM_PENALTIES = 6;
+    private static final Integer NUM_PENALTIES = 6;
 
     @Test
-    void delete_BookingLoan_successful_existBookingLoan(){
+    void deleteBookingLoanSuccessfulWhenExistBookingLoan(){
         Calendar calAfter = Calendar.getInstance();
         calAfter.setTime(new Date());
         calAfter.add(Calendar.DAY_OF_MONTH, 4);
@@ -138,13 +138,13 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void deleteBookingLoan_successful_notExistsBookingLoan(){
+    void deleteBookingLoanSuccessfulWhenNotExistsBookingLoan(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(false);
         this.bookingLoanService.delete(BOOKING_LOAN_ID,USER_ID);
     }
 
     @Test
-    void validateUserIsAdminOrOwnerOfBooking_throwsForbiddenException(){
+    void validateUserIsAdminOrOwnerOfBookingThrowsForbiddenException(){
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
         when(this.clientService.isClientEqualsByUserIdAndClient(CLIENT,USER_ID)).thenReturn(false);
 
@@ -153,7 +153,7 @@ public class BookingLoanServiceTest {
         });
     }
     @Test
-    void deleteBookingLoan_successful_throwsConflictException(){
+    void deleteBookingLoanThrowsConflictException(){
         Calendar calBefore = Calendar.getInstance();
         calBefore.setTime(new Date());
         calBefore.add(Calendar.DAY_OF_MONTH, -2);
@@ -173,7 +173,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void getBookTitleByBookingLoan_successful(){
+    void getBookTitleByBookingLoanSuccessful(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(true);
         when(this.bookService.getBookTitleByBook(BOOK)).thenReturn(BOOK_TITLE);
 
@@ -182,7 +182,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void getBookTitleByBookingLoan_notExists_throwNotFoundException(){
+    void getBookTitleByBookingLoanNotExistsThrowNotFoundException(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(true);
         when(this.bookService.getBookTitleByBook(BOOK)).thenReturn(BOOK_TITLE);
 
@@ -191,7 +191,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void validateBookingLoanCreationDate_throwsConflictException(){
+    void validateBookingLoanCreationDateThrowsConflictException(){
         TemporaryPeriodPenaltyExistenceDTO temporaryExistenceDTO = new TemporaryPeriodPenaltyExistenceDTO(
                 true,new Date()
         );
@@ -208,7 +208,7 @@ public class BookingLoanServiceTest {
         });
     }
     @Test
-    void validateBookingLoanCreationDate_throwsBadRequestException(){
+    void validateBookingLoanCreationDateThrowsBadRequestException(){
         TemporaryPeriodPenaltyExistenceDTO temporaryExistenceDTO = new TemporaryPeriodPenaltyExistenceDTO(
                 false,null
         );
@@ -228,7 +228,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void validateBookingLoanCreationDate_BeginDateBefore_throwsConflictRequestException(){
+    void validateBookingLoanCreationWhenDateBeginDateBeforeThrowsConflictRequestException(){
         TemporaryPeriodPenaltyExistenceDTO temporaryExistenceDTO = new TemporaryPeriodPenaltyExistenceDTO(
                 false,null
         );
@@ -246,7 +246,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void findByIdBookingLoan_successful(){
+    void findByIdBookingLoanSuccessful(){
 
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(true);
         when(this.bookingLoanRepository.findById(BOOKING_LOAN_ID)).thenReturn(Optional.of(BOOKING_LOAN));
@@ -266,7 +266,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void findById_whenNotExistsBooking_throwNotFoundException(){
+    void findByIdWhenNotExistsBookingThrowNotFoundException(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.bookingLoanService.findById(BOOKING_LOAN_ID,USER_ID);
@@ -274,7 +274,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void createBookingLoan_successful(){
+    void createBookingLoanSuccessful(){
         Calendar calAfter = Calendar.getInstance();
         calAfter.setTime(new Date());
         calAfter.add(Calendar.DAY_OF_MONTH, 4);
@@ -311,7 +311,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void checkTemporaryPeriodPenalties_successful(){
+    void checkTemporaryPeriodPenaltiesSuccessful(){
         RuleExistenceDTO ruleExistenceDTO = new RuleExistenceDTO(true,RULE_DTO);
         when(this.temporaryPeriodRuleInfoService.findByNumPenalties(NUM_PENALTIES)).thenReturn(ruleExistenceDTO);
 
@@ -319,7 +319,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void checkBookingPeriodPenalties_successful(){
+    void checkBookingPeriodPenaltiesSuccessful(){
         RuleExistenceDTO ruleExistenceDTO = new RuleExistenceDTO(true,RULE_DTO);
         when(this.bookingPeriodRuleInfoService.findByNumPenalties(NUM_PENALTIES)).thenReturn(ruleExistenceDTO);
 
@@ -327,7 +327,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void checkReturnedBookingHasPenalties_successful(){
+    void checkReturnedBookingHasPenaltiesSuccessful(){
         Calendar calBegin = Calendar.getInstance();
         calBegin.setTime(new Date());
         calBegin.add(Calendar.DAY_OF_MONTH, -19);
@@ -350,7 +350,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void updateBookingLoan_whenNotExistsId_throwNotFoundException(){
+    void updateBookingLoanWhenNotExistsIdThrowNotFoundException(){
         BookingLoanUpdateDTO bookingLoanUpdateDTO = new BookingLoanUpdateDTO(
             new Date(),new Date(),true,true
         );
@@ -361,7 +361,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void updateBookingLoan_successful(){
+    void updateBookingLoanSuccessful(){
         Calendar calBeginUpdate = Calendar.getInstance();
         calBeginUpdate.setTime(new Date());
         calBeginUpdate.add(Calendar.DAY_OF_MONTH, -13);
@@ -402,7 +402,7 @@ public class BookingLoanServiceTest {
 
 
     @Test
-    void findByUserId_successful(){
+    void findByUserIdSuccessful(){
         List<BookingLoan> mockBookingLoans = List.of(BOOKING_LOAN);
 
         when(this.clientService.getClientIdByUserId(USER_ID)).thenReturn(CLIENT_ID);
@@ -421,7 +421,7 @@ public class BookingLoanServiceTest {
     }
 
     @Test
-    void findByUserId_withNoBookings(){
+    void findByUserIdWithNoBookings(){
         when(this.clientService.getClientIdByUserId(USER_ID)).thenReturn(CLIENT_ID);
         when(this.bookingLoanRepository.existsByClientId(CLIENT_ID)).thenReturn(false);
         List<BookingLoanDTO> result = bookingLoanService.findByUserId(USER_ID);

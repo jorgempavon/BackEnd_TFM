@@ -22,28 +22,27 @@ public class AdminResourceTest {
     private AdminService adminService;
     @InjectMocks
     private AdminResource adminResource;
-    private static final Long exampleId = 2L;
-    private static final String exampleName = "example";
-    private static final String exampleEmail = "test@example.com";
-    private static final String examplePass = "pass123";
-    private static final String exampleDni = "12345678A";
-    private static final String exampleLastName = "last name example";
-    private static final String rol = "admin";
-    private static final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName);
-    private static final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,rol);
+    private static final Long EXAMPLE_ID = 2L;
+    private static final String EXAMPLE_NAME = "example";
+    private static final String EXAMPLE_EMAIL = "test@example.com";
+    private static final String EXAMPLE_DNI = "12345678A";
+    private static final String EXAMPLE_LAST_NAME = "last name example";
+    private static final String ROL = "admin";
+    private static final UserCreateDTO USER_CREATE_DTO = new UserCreateDTO(EXAMPLE_DNI, EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_LAST_NAME);
+    private static final UserDTO USER_DTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,ROL);
 
     @Test
     void createAdmin_successful(){
-        when(this.adminService.create(userCreateDto)).thenReturn(userDTO);
-        ResponseEntity<?> result =adminResource.create(userCreateDto);
+        when(this.adminService.create(USER_CREATE_DTO)).thenReturn(USER_DTO);
+        ResponseEntity<?> result =adminResource.create(USER_CREATE_DTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
 
     @Test
     void  deleteAdmin_successful(){
-        doNothing().when(adminService).delete(exampleId);
-        ResponseEntity<?> result = adminResource.delete(exampleId);
+        doNothing().when(adminService).delete(EXAMPLE_ID);
+        ResponseEntity<?> result = adminResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 }

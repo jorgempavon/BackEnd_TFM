@@ -21,84 +21,84 @@ public class EmailServiceTest {
     private JavaMailSender mailSender;
     @InjectMocks
     private EmailService emailService;
-    private static final String exampleName = "example";
-    private static final String exampleEmail = "test@example.com";
-    private static final String exampleOldEmail = "oldTest@example.com";
-    private static final String examplePass = "pass123";
-    private static final String badResponseEmail = "El correo proporcionado no existe";
+    private static final String EXAMPLE_NAME = "example";
+    private static final String EXAMPLE_EMAIL = "test@example.com";
+    private static final String EXAMPLE_OLD_EMAIL = "oldTest@example.com";
+    private static final String EXAMPLE_PASS = "pass123";
+    private static final String BAD_RESPONSE_EMAIL = "El correo proporcionado no existe";
     
     @Test
-    void newAccountEmail_successful(){
+    void newAccountEmailSuccessful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.newAccountEmail(exampleEmail,exampleName,examplePass);
+        this.emailService.newAccountEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
     @Test
-    void deleteAccountEmail_successful(){
+    void deleteAccountEmailSuccessful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.deleteAccountEmail(exampleEmail,exampleName);
+        this.emailService.deleteAccountEmail(EXAMPLE_EMAIL,EXAMPLE_NAME);
     }
 
     @Test
-    void oldAccountEmail_successful(){
+    void oldAccountEmailSuccessful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.oldAccountEmail(exampleOldEmail,exampleEmail,exampleName);
+        this.emailService.oldAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL,EXAMPLE_NAME);
     }
 
     @Test
-    void modifiedAccountEmail_successful(){
+    void modifiedAccountEmailSuccessful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.modifiedAccountEmail(exampleOldEmail,exampleEmail,exampleName,examplePass);
+        this.emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
 
     @Test
-    void regeneratedPasswordEmail_successful(){
+    void regeneratedPasswordEmailSuccessful(){
         doNothing().when(mailSender).send(any(SimpleMailMessage.class));
-        this.emailService.regeneratedPasswordEmail(exampleEmail,exampleName,examplePass);
+        this.emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL,EXAMPLE_NAME,EXAMPLE_PASS);
     }
     @Test
-    void newAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException(badResponseEmail))
+    void newAccountEmailWhenNotExistsEmailThrowBadRequestException(){
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
 
         assertThrows(BadRequestException.class, () ->
-                emailService.newAccountEmail(exampleEmail, exampleName, examplePass)
+                emailService.newAccountEmail(EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_PASS)
         );
     }
     @Test
-    void deleteAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException(badResponseEmail))
+    void deleteAccountEmailWhenNotExistsEmailThrowBadRequestException(){
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.deleteAccountEmail(exampleEmail, exampleName)
+                emailService.deleteAccountEmail(EXAMPLE_EMAIL, EXAMPLE_NAME)
         );
     }
     @Test
-    void oldAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException(badResponseEmail))
+    void oldAccountEmailWhenNotExistsEmailThrowBadRequestException(){
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.oldAccountEmail(exampleOldEmail,exampleEmail, exampleName)
+                emailService.oldAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL, EXAMPLE_NAME)
         );
     }
     @Test
-    void modifiedAccountEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException(badResponseEmail))
+    void modifiedAccountEmailWhenNotExistsEmailThrowBadRequestException(){
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.modifiedAccountEmail(exampleOldEmail,exampleEmail, exampleName,examplePass)
+                emailService.modifiedAccountEmail(EXAMPLE_OLD_EMAIL,EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASS)
         );
     }
     @Test
-    void regeneratedPasswordEmail_whenNotExistsEmail_throwBadRequestException(){
-        doThrow(new BadRequestException(badResponseEmail))
+    void regeneratedPasswordEmailWhenNotExistsEmailThrowBadRequestException(){
+        doThrow(new BadRequestException(BAD_RESPONSE_EMAIL))
                 .when(mailSender)
                 .send(any(SimpleMailMessage.class));
         assertThrows(BadRequestException.class, () ->
-                emailService.regeneratedPasswordEmail(exampleEmail, exampleName,examplePass)
+                emailService.regeneratedPasswordEmail(EXAMPLE_EMAIL, EXAMPLE_NAME,EXAMPLE_PASS)
         );
     }
 }

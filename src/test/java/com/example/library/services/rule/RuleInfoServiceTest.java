@@ -62,7 +62,7 @@ public class RuleInfoServiceTest {
     );
 
     @Test
-    void findByNumPenalties_returnsNotExists(){
+    void findByNumPenaltiesReturnsNotExists(){
         when(this.ruleRepository.existsByNumPenalties(RULE_NUM_PENALTIES)).thenReturn(false);
         RuleExistenceDTO response = this.ruleInfoService.findByNumPenalties(RULE_NUM_PENALTIES);
 
@@ -70,7 +70,7 @@ public class RuleInfoServiceTest {
     }
 
     @Test
-    void findByNumPenalties_returnsExists(){
+    void findByNumPenaltiesReturnsExists(){
         when(this.ruleRepository.existsByNumPenalties(RULE_NUM_PENALTIES)).thenReturn(true);
         java.util.List<Rule> mockRules = List.of(RULE);
         when(this.ruleRepository.findByNumPenalties(RULE_NUM_PENALTIES)).thenReturn(Optional.of(mockRules));

@@ -1,8 +1,9 @@
-package com.example.library.services;
+package com.example.library.services.bookingLoan;
 
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.model.BookingLoan;
 import com.example.library.entities.repository.BookingLoanRepository;
+import com.example.library.services.BookService;
 import org.springframework.stereotype.Service;
 
 @Service

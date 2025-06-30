@@ -67,7 +67,7 @@ public class ClientServiceTest {
     );
 
     @Test
-    void createClient_createDto_successful(){
+    void createClientCreateDtoSuccessful(){
         when(this.userService.create(USER_CREATE_DTO,ROL,"")).thenReturn(USER_AND_USER_DTO);
 
         UserDTO response = this.clientService.create(USER_CREATE_DTO);
@@ -79,14 +79,14 @@ public class ClientServiceTest {
     }
 
     @Test
-    void deleteClient_successful_whenUserNotExists(){
+    void deleteClientSuccessfulWhenUserNotExists(){
         when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
         doNothing().when(this.userService).delete(EXAMPLE_ID);
         this.clientService.delete(EXAMPLE_ID);
     }
 
     @Test
-    void deleteClient_successful_whenUserIsClient(){
+    void deleteClientSuccessfulWhenUserIsClient(){
         Client client =  new Client();
         client.setUser(USER);
         when(this.clientRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
@@ -96,7 +96,7 @@ public class ClientServiceTest {
         this.clientService.delete(EXAMPLE_ID);
     }
     @Test
-    void registerDto_successful(){
+    void registerDtoSuccessful(){
         UserRegisterDTO USER_REGISTER_DTO = new UserRegisterDTO(
                 EXAMPLE_DNI,EXAMPLE_EMAIL,EXAMPLE_PASS,EXAMPLE_PASS,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME
@@ -113,7 +113,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void register_whenPasswordsDoNotMatch_throwsConflictException() {
+    void registerWhenPasswordsDoNotMatchThrowsConflictException() {
         UserRegisterDTO newUserRegisterDto = new UserRegisterDTO();
         newUserRegisterDto.setName(EXAMPLE_NAME);
         newUserRegisterDto.setName(EXAMPLE_LAST_NAME);
@@ -128,7 +128,7 @@ public class ClientServiceTest {
         });
     }
     @Test
-    void getUserFullNameByClient_successful(){
+    void getUserFullNameByClientSuccessful(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(true);
         when(this.userService.getUserFullName(USER)).thenReturn(FULL_NAME);
 
@@ -137,7 +137,7 @@ public class ClientServiceTest {
         assertEquals(responseFullName,FULL_NAME);
     }
     @Test
-    void getUserFullNameByClient_NotExistsClient_throwNotFoundException(){
+    void getUserFullNameByClientNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             clientService.getUserFullNameByClient(CLIENT);
@@ -145,7 +145,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void getClientIdByUserId_successful(){
+    void getClientIdByUserIdSuccessful(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.findByUserId(USER_ID)).thenReturn(Optional.of(CLIENT));
 
@@ -154,7 +154,7 @@ public class ClientServiceTest {
         assertEquals(responseClient,CLIENT_ID);
     }
     @Test
-    void getClientIdByUserId_NotExistsClient_throwNotFoundException(){
+    void getClientIdByUserIdNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             clientService.getClientIdByUserId(USER_ID);
@@ -162,7 +162,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void isClientEqualsByUserIdAndClient_Equals(){
+    void isClientEqualsByUserIdAndClientEquals(){
         when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(true);
@@ -172,7 +172,7 @@ public class ClientServiceTest {
         assertTrue(response);
     }
     @Test
-    void isClientEqualsByUserIdAndClient_NotFound(){
+    void isClientEqualsByUserIdAndClientNotFound(){
         Long otherUserId = 72L;
         when(this.userService.existsById(otherUserId)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
@@ -180,7 +180,7 @@ public class ClientServiceTest {
         });
     }
     @Test
-    void isClientEqualsByUserIdAndClient_NotEquals(){
+    void isClientEqualsByUserIdAndClientNotEquals(){
         Long otherUserId = 72L;
         long otherClientId = 12L;
         Client otherClient = new Client(12L,USER);
@@ -193,7 +193,7 @@ public class ClientServiceTest {
         assertFalse(response);
     }
     @Test
-    void isClientEqualsByUserIdAndClient_NotExistsUserLogged(){
+    void isClientEqualsByUserIdAndClientNotExistsUserLogged(){
         when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
 
@@ -201,7 +201,7 @@ public class ClientServiceTest {
         assertFalse(response);
     }
     @Test
-    void isClientEqualsByUserIdAndClient_NotExistsClientProvided(){
+    void isClientEqualsByUserIdAndClientNotExistsClientProvided(){
         when(this.userService.existsById(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
@@ -211,7 +211,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void getUserEmailByClient_successful(){
+    void getUserEmailByClientSuccessful(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(true);
         when(this.userService.getUserEmail(USER)).thenReturn(EXAMPLE_EMAIL);
 
@@ -220,7 +220,7 @@ public class ClientServiceTest {
         assertEquals(responseClient,EXAMPLE_EMAIL);
     }
     @Test
-    void getUserEmailByClient_NotExistsClient_throwNotFoundException(){
+    void getUserEmailByClientNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsById(CLIENT_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.clientService.getUserEmailByClient(CLIENT);
@@ -228,7 +228,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void getClientByUserId_successful(){
+    void getClientByUserIdSuccessful(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.clientRepository.findByUserId(USER_ID)).thenReturn(Optional.of(CLIENT));
         Client responseClient =  this.clientService.getClientByUserId(USER_ID);
@@ -236,7 +236,7 @@ public class ClientServiceTest {
         assertEquals(responseClient,CLIENT);
     }
     @Test
-    void getClientByUserId_NotExistsClient_throwNotFoundException(){
+    void getClientByUserIdNotExistsClientThrowNotFoundException(){
         when(this.clientRepository.existsByUserId(USER_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             clientService.getClientByUserId(USER_ID);
