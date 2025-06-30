@@ -97,9 +97,8 @@ public class UserResourceTest {
     void loginWhenEmptyLoginDtoThrowsException() {
         LoginDTO emptyloginDTO = new LoginDTO();
 
-        assertThrows(Exception.class, () -> {
-            userResource.login(emptyloginDTO);
-        });
+        assertThrows(Exception.class, () ->
+            userResource.login(emptyloginDTO));
     }
     
     @Test
@@ -113,8 +112,7 @@ public class UserResourceTest {
 
     @Test
     void logOutWhenTokenIsNullThrowsUnauthorizedException(){
-        assertThrows(UnauthorizedException.class, () -> {
-            userResource.logOut(null);
-        });
+        assertThrows(UnauthorizedException.class, () ->
+            userResource.logOut(null));
     }
 }

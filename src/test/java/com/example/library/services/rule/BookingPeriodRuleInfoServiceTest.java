@@ -110,8 +110,7 @@ public class BookingPeriodRuleInfoServiceTest {
     @Test
     void findByIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
         when(this.bookingPeriodRuleRepository.existsById(BOOKING_RULE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            bookingPeriodRuleInfoService.findById(BOOKING_RULE_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            bookingPeriodRuleInfoService.findById(BOOKING_RULE_ID));
     }
 }

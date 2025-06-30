@@ -145,9 +145,8 @@ public class UserValidatorServiceTest {
         when(this.userRepository.findByEmail(EXAMPLE_OTHER_EMAIL)).thenReturn(Optional.of(OTHER_USER));
         when(this.userRepository.findById(USER_ID)).thenReturn(Optional.of(OTHER_USER));
 
-        assertThrows(BadRequestException.class, () -> {
-            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+                this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO));
     }
     @Test
     void validateDataInSelfUpdateWhenExistsOtherUserWithDniThrowBadRequestException(){
@@ -164,9 +163,8 @@ public class UserValidatorServiceTest {
     @Test
     void validateDataInSelfUpdateWhenNotExistsUserIdThrowNotFoundException(){
         when(this.userRepository.existsById(USER_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
-        });
+        assertThrows(NotFoundException.class, () ->
+            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO));
     }
     @Test
     void validatePasswordsInSelfUpdateSuccessful(){
@@ -202,9 +200,8 @@ public class UserValidatorServiceTest {
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
         when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
     @Test
     void validatePasswordsInSelfUpdateOldPasswordNullThrowConflictRequestException(){
@@ -225,9 +222,8 @@ public class UserValidatorServiceTest {
                 EXAMPLE_OTHER_LAST_NAME
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
     @Test
     void validatePasswordsInSelfUpdateOldPasswordBlankThrowConflictRequestException(){
@@ -248,9 +244,8 @@ public class UserValidatorServiceTest {
                 EXAMPLE_OTHER_LAST_NAME
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
     @Test
     void validatePasswordsInSelfUpdateRepeatPasswordsNullThrowConflictRequestException(){
@@ -272,9 +267,8 @@ public class UserValidatorServiceTest {
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
         when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
 
     @Test
@@ -297,9 +291,8 @@ public class UserValidatorServiceTest {
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
         when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
 
     @Test
@@ -322,9 +315,8 @@ public class UserValidatorServiceTest {
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
         when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
 
     @Test
@@ -347,9 +339,8 @@ public class UserValidatorServiceTest {
         );
         userWithPass.setPassword(EXAMPLE_ENCODED_PASS);
         when(this.passwordService.matchesPasswords(any(String.class),any(String.class))).thenReturn(false);
-        assertThrows(ConflictException.class, () -> {
-            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.userValidatorService.validatePasswordsInSelfUpdate(userWithPass,otherSelfUpdate));
     }
     @Test
     void updateUserDataInUpdateByAdminUpdateEmailSuccessful(){
@@ -387,9 +378,8 @@ public class UserValidatorServiceTest {
                 EXAMPLE_OTHER_DNI,EXAMPLE_EMAIL,true,EXAMPLE_OTHER_NAME,EXAMPLE_OTHER_LAST_NAME
         );
         when(this.userRepository.existsById(USER_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
-        });
+        assertThrows(NotFoundException.class, () ->
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO));
     }
 
     @Test
@@ -404,9 +394,8 @@ public class UserValidatorServiceTest {
         when(this.userRepository.findByEmail(EXAMPLE_EMAIL)).thenReturn(Optional.of(userWithEmail));
         when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(false);
 
-        assertThrows(BadRequestException.class, () -> {
-            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO));
     }
     @Test
     void validateDataToUpdateInUpdateByAdminExistsUserWithOtherDniThrowBadRequestException(){
@@ -420,8 +409,7 @@ public class UserValidatorServiceTest {
         when(this.userRepository.findByDni(EXAMPLE_OTHER_DNI)).thenReturn(Optional.of(userWithDni));
         when(this.userRepository.existsByDni(EXAMPLE_OTHER_DNI)).thenReturn(true);
 
-        assertThrows(BadRequestException.class, () -> {
-            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            this.userValidatorService.validateDataToUpdateInUpdateByAdmin(USER_ID,userAdminUpdateDTO));
     }
 }

@@ -99,9 +99,7 @@ public class AdminServiceTest {
     @Test
     void getUserFullNameByAdminNotExistsAdminThrowNotFoundException(){
         when(this.adminRepository.existsById(ADMIN_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            adminService.getUserFullNameByAdmin(ADMIN);
-        });
+        assertThrows(NotFoundException.class, () -> adminService.getUserFullNameByAdmin(ADMIN));
     }
     @Test
     void getAdminByUserIdSuccessful(){
@@ -115,9 +113,7 @@ public class AdminServiceTest {
     @Test
     void getAdminByUserIdNotExistsAdminThrowNotFoundException(){
         when(this.adminRepository.existsByUserId(USER_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            adminService.getAdminByUserId(USER_ID);
-        });
+        assertThrows(NotFoundException.class, () -> adminService.getAdminByUserId(USER_ID));
     }
     @Test
     void isAdminByUserIdTrue(){

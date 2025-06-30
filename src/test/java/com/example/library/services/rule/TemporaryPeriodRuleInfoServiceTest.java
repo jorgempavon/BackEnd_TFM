@@ -114,8 +114,7 @@ public class TemporaryPeriodRuleInfoServiceTest {
     @Test
     void findByIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
         when(this.temporaryPeriodRuleRepository.existsById(TEMPORARY_PERIOD_RULE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            temporaryPeriodRuleInfoService.findById(TEMPORARY_PERIOD_RULE_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            temporaryPeriodRuleInfoService.findById(TEMPORARY_PERIOD_RULE_ID));
     }
 }
