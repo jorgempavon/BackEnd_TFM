@@ -26,54 +26,54 @@ public class ClientResourceTest {
     private ClientService clientService;
     @InjectMocks
     private ClientResource clientResource;
-    private static final Long exampleId = 2L;
-    private static final String exampleName = "example";
-    private static final String exampleEmail = "test@example.com";
-    private static final String examplePass = "pass123";
-    private static final String exampleDni = "12345678A";
-    private static final String exampleLastName = "last name example";
-    private static final String rol = "client";
-    private static final UserRegisterDTO userRegisterDTO = new UserRegisterDTO(
-            exampleDni,
-            exampleEmail,
-            examplePass,
-            examplePass,
-            exampleName,
-            exampleLastName
+    private static final Long EXAMPLE_ID = 2L;
+    private static final String EXAMPLE_NAME = "example";
+    private static final String EXAMPLE_EMAIL = "test@example.com";
+    private static final String EXAMPLE_PASS = "pass123";
+    private static final String EXAMPLE_DNI = "12345678A";
+    private static final String EXAMPLE_LAST_NAME = "last name example";
+    private static final String ROL = "client";
+    private static final UserRegisterDTO USER_REGISTER_DTO = new UserRegisterDTO(
+            EXAMPLE_DNI,
+            EXAMPLE_EMAIL,
+            EXAMPLE_PASS,
+            EXAMPLE_PASS,
+            EXAMPLE_NAME,
+            EXAMPLE_LAST_NAME
     );
-    private static final UserCreateDTO userCreateDto = new UserCreateDTO(exampleDni, exampleEmail, exampleName, exampleLastName);
-    private static final UserDTO userDTO = new UserDTO(exampleId,exampleName, exampleEmail, exampleDni, exampleLastName,rol);
+    private static final UserCreateDTO USER_CREATE_DTO = new UserCreateDTO(EXAMPLE_DNI, EXAMPLE_EMAIL, EXAMPLE_NAME, EXAMPLE_LAST_NAME);
+    private static final UserDTO USER_DTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,ROL);
 
     @Test
     void register_successful() {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setName(exampleName);
-        userDTO.setEmail(exampleEmail);
-        userDTO.setDni(exampleDni);
+        UserDTO USER_DTO = new UserDTO();
+        USER_DTO.setName(EXAMPLE_NAME);
+        USER_DTO.setEmail(EXAMPLE_EMAIL);
+        USER_DTO.setDni(EXAMPLE_DNI);
 
-        when(this.clientService.register(userRegisterDTO)).thenReturn(userDTO);
+        when(this.clientService.register(USER_REGISTER_DTO)).thenReturn(USER_DTO);
 
-        ResponseEntity<?> result = clientResource.register(userRegisterDTO);
+        ResponseEntity<?> result = clientResource.register(USER_REGISTER_DTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
 
         UserDTO resultDto = (UserDTO) result.getBody();
-        assertEquals(userDTO.getEmail(), resultDto.getEmail());
-        assertEquals(userDTO.getDni(), resultDto.getDni());
+        assertEquals(USER_DTO.getEmail(), resultDto.getEmail());
+        assertEquals(USER_DTO.getDni(), resultDto.getDni());
     }
 
     @Test
     void createClient_successful(){
-        when(this.clientService.create(userCreateDto)).thenReturn(userDTO);
-        ResponseEntity<?> result = clientResource.create(userCreateDto);
+        when(this.clientService.create(USER_CREATE_DTO)).thenReturn(USER_DTO);
+        ResponseEntity<?> result = clientResource.create(USER_CREATE_DTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
 
     @Test
     void  deleteClient_successful(){
-        doNothing().when(clientService).delete(exampleId);
-        ResponseEntity<?> result = clientResource.delete(exampleId);
+        doNothing().when(clientService).delete(EXAMPLE_ID);
+        ResponseEntity<?> result = clientResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 

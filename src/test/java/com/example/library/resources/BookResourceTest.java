@@ -73,7 +73,7 @@ public class BookResourceTest {
     );
 
     @Test
-    void createBook_successful(){
+    void createBookSuccessful(){
         BookCreateDTO newBookCreateDTO = new BookCreateDTO(
                 EXAMPLE_ISBN,
                 EXAMPLE_TITLE,
@@ -92,7 +92,7 @@ public class BookResourceTest {
     }
 
     @Test
-    void findById_successful(){
+    void findByIdSuccessful(){
         when(this.bookService.findById(EXAMPLE_ID)).thenReturn(NEW_BOOK_DTO);
 
         ResponseEntity<?> responseFindBook = this.bookResource.findById(EXAMPLE_ID);
@@ -102,7 +102,7 @@ public class BookResourceTest {
     }
 
     @Test
-    void delete_successful(){
+    void deleteSuccessful(){
         doNothing().when(this.bookService).delete(EXAMPLE_ID);
         ResponseEntity<?> responseDeleteBook = this.bookResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, responseDeleteBook.getStatusCode());
@@ -121,7 +121,7 @@ public class BookResourceTest {
     }
 
     @Test
-    void update_successful(){
+    void updateBookSuccessful(){
         when(this.bookService.update(EXAMPLE_ID,BOOK_UPDATE_DTO)).thenReturn(OTHER_BOOK_DTO);
         ResponseEntity<?> result = bookResource.update(EXAMPLE_ID,BOOK_UPDATE_DTO);
         BookDTO resultBody = (BookDTO) result.getBody();

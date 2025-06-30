@@ -45,14 +45,14 @@ public class RuleResourceTest {
     );
     private static final List<RuleDTO> LIST_RULES_DTO = List.of(RULE_DTO);
     @Test
-    void findRuleById_successful(){
+    void findRuleByIdSuccessful(){
         when(this.ruleService.findById(RULE_ID)).thenReturn(RULE_DTO);
         ResponseEntity<?> result = ruleResource.findById(RULE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.getBody() instanceof RuleDTO);
     }
     @Test
-    void findByNameAndDniAndEmail_successful(){
+    void findByNameAndDniAndEmailSuccessful(){
         when(this.ruleService.findByNameAndNumMimPenalties(RULE_NAME,RULE_NUM_PENALTIES)).thenReturn(LIST_RULES_DTO);
 
         ResponseEntity<?> result = ruleResource.findByNameAndNumMimPenalties(RULE_NAME,RULE_NUM_PENALTIES);
@@ -60,7 +60,7 @@ public class RuleResourceTest {
         assertEquals(result.getBody(),LIST_RULES_DTO);
     }
     @Test
-    void updateRule_successful(){
+    void updateRuleSuccessful(){
         RuleUpdateDTO ruleUpdateDTO = new RuleUpdateDTO(
                 RULE_OTHER_NAME,RULE_OTHER_NUM_PENALTIES,RULE_OTHER_DAYS
         );

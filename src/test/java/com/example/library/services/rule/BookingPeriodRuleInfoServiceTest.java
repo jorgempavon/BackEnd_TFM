@@ -74,14 +74,14 @@ public class BookingPeriodRuleInfoServiceTest {
     );
     private static final RuleExistenceDTO RULE_EXISTENCE_DTO = new RuleExistenceDTO(true,RULE_DTO);
     @Test
-    void findByNumPenalties_NotExistsRule(){
+    void findByNumPenaltiesNotExistsRule(){
         RuleExistenceDTO dto = new RuleExistenceDTO(false,null);
         when(this.ruleInfoService.findByNumPenalties(NUM_PENALTIES)).thenReturn(dto);
         RuleExistenceDTO response = this.bookingPeriodRuleInfoService.findByNumPenalties(NUM_PENALTIES);
         assertFalse(response.getExistsRule());
     }
     @Test
-    void findByNumPenalties_NotExistsBookingRule(){
+    void findByNumPenaltiesNotExistsBookingRule(){
         when(this.ruleInfoService.findByNumPenalties(NUM_PENALTIES)).thenReturn(RULE_EXISTENCE_DTO);
         when(this.bookingPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(false);
         
@@ -90,7 +90,7 @@ public class BookingPeriodRuleInfoServiceTest {
     }
 
     @Test
-    void findByNumPenalties_Exists(){
+    void findByNumPenaltiesExists(){
         when(this.ruleInfoService.findByNumPenalties(NUM_PENALTIES)).thenReturn(RULE_EXISTENCE_DTO);
         when(this.bookingPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(true);
 
@@ -98,7 +98,7 @@ public class BookingPeriodRuleInfoServiceTest {
         assertTrue(response.getExistsRule());
     }
     @Test
-    void findByIdBookingPeriodRule_successful(){
+    void findByIdBookingPeriodRuleSuccessful(){
         when(this.bookingPeriodRuleRepository.existsById(BOOKING_RULE_ID)).thenReturn(true);
         when(this.bookingPeriodRuleRepository.findById(BOOKING_RULE_ID)).thenReturn(Optional.of(BOOKING_PERIOD_RULE));
 
@@ -108,7 +108,7 @@ public class BookingPeriodRuleInfoServiceTest {
     }
 
     @Test
-    void findByIdBookingPeriodRule_whenNotExists_throwNotFoundException(){
+    void findByIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
         when(this.bookingPeriodRuleRepository.existsById(BOOKING_RULE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             bookingPeriodRuleInfoService.findById(BOOKING_RULE_ID);

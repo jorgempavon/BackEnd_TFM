@@ -33,7 +33,7 @@ public class TemporaryPeriodPenaltyResourceTest {
 
 
     @Test
-    void deleteTemporaryPeriodPenalty_successful()
+    void deleteTemporaryPeriodPenaltySuccessful()
     {
         doNothing().when(this.temporaryPeriodPenaltyService).deleteByPenaltyId(PENALTY_ID);
         ResponseEntity<?> result = temporaryPeriodPenaltyResource.delete(PENALTY_ID);
@@ -41,7 +41,7 @@ public class TemporaryPeriodPenaltyResourceTest {
     }
 
     @Test
-    void findByIdTemporaryPeriodPenalty_successful()
+    void findByIdTemporaryPeriodPenaltySuccessful()
     {
         PenaltyDTO penaltyDTO = new PenaltyDTO(PENALTY_ID,"PENALTY_DESCRIPTION","temporal",
                 "penalty justification",false,false,

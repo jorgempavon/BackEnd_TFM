@@ -19,7 +19,7 @@ import java.util.Set;
 @Service
 public class JwtService {
     @Value("${jwt.secret}")
-    private  String SECRET_KEY;
+    private  String secretKey;
     private final Set<String> blacklistedTokens = Collections.synchronizedSet(new HashSet<>());
 
     public String generateToken(UserDetails userDetails) {
@@ -59,6 +59,6 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 }

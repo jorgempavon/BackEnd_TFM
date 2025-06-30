@@ -26,26 +26,26 @@ public class CustomerDetailsServiceTest {
     @InjectMocks
     private CustomUserDetailsService customUserDetailsService;
 
-    private final String exampleEmail= "test@example.com";
+    private final String EXAMPLE_EMAIL= "test@example.com";
     @Test
-    void loadUserByUsername_successful(){
+    void loadUserByUsernameSuccessful(){
         String EXAMPLE_NAME = "Example name";
-        User user = new User(EXAMPLE_NAME,"01234567L",exampleEmail,"Example last name");
-        when(this.userRepository.findByEmail(exampleEmail))
+        User user = new User(EXAMPLE_NAME,"01234567L",EXAMPLE_EMAIL,"Example last name");
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
                 .thenReturn(Optional.of(user));
-        CustomUserDetails response = this.customUserDetailsService.loadUserByUsername(exampleEmail);
+        CustomUserDetails response = this.customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
         assertNotNull(response);
-        assertSame(response.getUsername(), exampleEmail);
+        assertSame(response.getUsername(), EXAMPLE_EMAIL);
 
     }
 
     @Test
-    void loadUserByUsername_whenNotExists_throwsUnauthorizedException(){
-        when(this.userRepository.findByEmail(exampleEmail))
+    void loadUserByUsernameWhenNotExistsThrowsUnauthorizedException(){
+        when(this.userRepository.findByEmail(EXAMPLE_EMAIL))
                 .thenThrow(UnauthorizedException.class);
 
         assertThrows(UnauthorizedException.class, () -> {
-            customUserDetailsService.loadUserByUsername(exampleEmail);
+            customUserDetailsService.loadUserByUsername(EXAMPLE_EMAIL);
         });
 
     }

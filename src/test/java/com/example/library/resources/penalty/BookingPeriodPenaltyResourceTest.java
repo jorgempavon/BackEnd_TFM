@@ -34,7 +34,7 @@ public class BookingPeriodPenaltyResourceTest {
 
 
     @Test
-    void deleteBookingPeriodPenalty_successful()
+    void deleteBookingPeriodPenaltySuccessful()
     {
         doNothing().when(this.bookingPeriodPenaltyService).deleteByPenaltyId(PENALTY_ID);
         ResponseEntity<?> result = bookingPeriodPenaltyResource.delete(PENALTY_ID);
@@ -42,7 +42,7 @@ public class BookingPeriodPenaltyResourceTest {
     }
 
     @Test
-    void findByIdBookingPeriodPenalty_successful()
+    void findByIdBookingPeriodPenaltySuccessful()
     {
         PenaltyDTO penaltyDTO = new PenaltyDTO(PENALTY_ID,"PENALTY_DESCRIPTION","Intervalo de reserva",
                 "penalty justification",false,false,

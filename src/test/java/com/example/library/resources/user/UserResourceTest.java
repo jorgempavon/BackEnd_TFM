@@ -42,14 +42,14 @@ public class UserResourceTest {
             EXAMPLE_EMAIL,EXAMPLE_PASS
     );
     @Test
-    void findById_successful(){
+    void findByIdSuccessful(){
         when(this.userService.findById(EXAMPLE_ID)).thenReturn(USER_DTO);
         ResponseEntity<?> result = userResource.findById(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(result.getBody() instanceof UserDTO);
     }
     @Test
-    void findByNameAndDniAndEmail_successful(){
+    void findByNameAndDniAndEmailSuccessful(){
         when(this.userService.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL)).thenReturn(LIST_USERS_DTO);
 
         ResponseEntity<?> result = userResource.findByNameAndDniAndEmail(EXAMPLE_NAME,EXAMPLE_DNI,EXAMPLE_EMAIL);
@@ -58,7 +58,7 @@ public class UserResourceTest {
     }
 
     @Test
-    void updateAdminDto_successful(){
+    void updateAdminDtoSuccessful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,true,
                 EXAMPLE_NAME,EXAMPLE_LAST_NAME);
         when(this.userService.update(EXAMPLE_ID,userAdminUpdateDTO)).thenReturn(USER_DTO);
@@ -69,7 +69,7 @@ public class UserResourceTest {
     }
 
     @Test
-    void updateSelfDto_successful(){
+    void updateSelfDtoSuccessful(){
         String pass = "pass4342";
         UserSelfUpdateDTO userSelfUpdateDTO = new UserSelfUpdateDTO(EXAMPLE_DNI,EXAMPLE_EMAIL,"otherPass",
                 pass,pass, EXAMPLE_NAME,EXAMPLE_LAST_NAME);
@@ -82,7 +82,7 @@ public class UserResourceTest {
     }
 
     @Test
-    void login_successful() {
+    void loginSuccessful() {
         String mockJwt = "mockedJwtToken";
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setEmail(EXAMPLE_EMAIL);
@@ -94,7 +94,7 @@ public class UserResourceTest {
     }
 
     @Test
-    void login_whenEmptyLoginDto_throwsException() {
+    void loginWhenEmptyLoginDtoThrowsException() {
         LoginDTO emptyloginDTO = new LoginDTO();
 
         assertThrows(Exception.class, () -> {
@@ -103,7 +103,7 @@ public class UserResourceTest {
     }
     
     @Test
-    void logOut_Successful(){
+    void logOutSuccessful(){
         String exampleToken = "Bearer sdjinew0vw-rewrwegrgrge0cmtgtrgrtgtgnbynhyh09";
         doNothing().when(userService).logOut(anyString());
 
@@ -112,7 +112,7 @@ public class UserResourceTest {
     }
 
     @Test
-    void logOut_whenTokenIsNull_throwsUnauthorizedException(){
+    void logOutWhenTokenIsNullThrowsUnauthorizedException(){
         assertThrows(UnauthorizedException.class, () -> {
             userResource.logOut(null);
         });

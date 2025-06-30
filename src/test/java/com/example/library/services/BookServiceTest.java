@@ -97,7 +97,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void createBook_whenExistsBook_throwsBadRequestException(){
+    void createBookWhenExistsBookThrowsBadRequestException(){
         BookCreateDTO newBookCreateDTO = new BookCreateDTO(
                 BOOK_ISBN,
                 BOOK_TITLE,
@@ -113,7 +113,7 @@ public class BookServiceTest {
         });
     }
     @Test
-    void findById_successful(){
+    void findByIdSuccessful(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
         when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
 
@@ -126,7 +126,7 @@ public class BookServiceTest {
         assertEquals(resultBookDTO.getAuthor(), BOOK_AUTHOR);
     }
     @Test
-    void findById_whenNotExistsBook_throwsNotFoundException(){
+    void findByIdWhenNotExistsBookThrowsNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> {
@@ -134,14 +134,14 @@ public class BookServiceTest {
         });
     }
     @Test
-    void delete_successful_whenExistsBook(){
+    void deleteSuccessfulWhenExistsBook(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
         when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
         this.bookService.delete(BOOK_ID);
     }
 
     @Test
-    void delete_successful_whenNotExistsBook(){
+    void deleteSuccessfulWhenNotExistsBook(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
         this.bookService.delete(BOOK_ID);
     }
@@ -162,7 +162,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void updateBook_successful(){
+    void updateBookSuccessful(){
         when(bookRepository.existsByIsbn(OTHER_BOOK_ISBN)).thenReturn(false);
         when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(OTHER_BOOK));
 
@@ -177,7 +177,7 @@ public class BookServiceTest {
     }
 
     @Test
-    void updateBook_whenExistsOtherBookWithIsbn_throwsBadRequestException(){
+    void updateBookWhenExistsOtherBookWithIsbnThrowsBadRequestException(){
         when(bookRepository.existsByIsbn(OTHER_BOOK_ISBN)).thenReturn(true);
         when(bookRepository.findByIsbn(OTHER_BOOK_ISBN)).thenReturn(Optional.of(OTHER_BOOK));
         assertThrows(BadRequestException.class, () -> {
@@ -186,13 +186,13 @@ public class BookServiceTest {
     }
 
     @Test
-    void getBookTitleByBook_successful(){
+    void getBookTitleByBookSuccessful(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
         String response = this.bookService.getBookTitleByBook(BOOK);
         assertEquals(response,BOOK_TITLE);
     }
     @Test
-    void getBookTitleByBook_whenNotExists_throwNotFoundException(){
+    void getBookTitleByBookWhenNotExistsThrowNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> {
@@ -200,14 +200,14 @@ public class BookServiceTest {
         });
     }
     @Test
-    void getBookByBookId_successful(){
+    void getBookByBookIdSuccessful(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(true);
         when(this.bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(BOOK));
         Book response = this.bookService.getBookByBookId(BOOK_ID);
         assertEquals(response,BOOK);
     }
     @Test
-    void getBookByBook_whenNotExists_throwNotFoundException(){
+    void getBookByBookWhenNotExistsThrowNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
         assertThrows(NotFoundException.class, () -> {

@@ -107,7 +107,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void findById_whenNotExistsId_throwsNotFoundException(){
+    void findByIdWhenNotExistsIdThrowsNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             userService.findById(EXAMPLE_ID);
@@ -115,7 +115,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void findByNameAndDniAndEmail_successful(){
+    void findByNameAndDniAndEmailSuccessful(){
         List<User> mockUsers = List.of(USER);
 
         when(userRepository.findAll(any(Specification.class))).thenReturn(mockUsers);
@@ -129,7 +129,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void login_successful(){
+    void loginSuccessful(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsService.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
@@ -146,7 +146,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void login_whenNotMatchPassword_throwsUnauthorizedException(){
+    void loginWhenNotMatchPasswordThrowsUnauthorizedException(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
         when(userDetailsService.loadUserByUsername(EXAMPLE_EMAIL)).thenReturn(mockUserDetails);
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
@@ -157,7 +157,7 @@ public class UserServiceTest {
         });
     }
     @Test
-    void logOut_Successful(){
+    void logOutSuccessful(){
         CustomUserDetails mockUserDetails = mock(CustomUserDetails.class);
 
         when(this.jwtService.extractUsername(EXAMPLE_TKN)).thenReturn(EXAMPLE_EMAIL);
@@ -167,7 +167,7 @@ public class UserServiceTest {
         this.userService.logOut(EXAMPLE_TKN);
     }
     @Test
-    void logOut_whenUserNotExists_throwsUnathorizedException(){
+    void logOutWhenUserNotExistsThrowsUnathorizedException(){
         when(this.jwtService.extractUsername(EXAMPLE_TKN)).thenThrow(UnauthorizedException.class);
 
         assertThrows(UnauthorizedException.class, () -> {
@@ -175,7 +175,7 @@ public class UserServiceTest {
         });
     }
     @Test
-    void createUser_withNoPasswordProvided_successful(){
+    void createUserWithNoPasswordProvidedSuccessful(){
         UserExistenceDTO userExistenceDTO = new UserExistenceDTO();
         when(this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(userExistenceDTO);
         when(this.passwordService.generateStrongPassword()).thenReturn(EXAMPLE_PASS);
@@ -198,7 +198,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_withPasswordProvided_successful(){
+    void createUserWithPasswordProvidedSuccessful(){
         UserExistenceDTO userExistenceDTO = new UserExistenceDTO();
         when(this.userValidatorService.checkUserExistence(EXAMPLE_EMAIL,EXAMPLE_DNI)).thenReturn(userExistenceDTO);
         when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
@@ -219,47 +219,47 @@ public class UserServiceTest {
         assertEquals(responseUserDTO.getRol(),ROL);
     }
     @Test
-    void getUserFullName_successful(){
+    void getUserFullNameSuccessful(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         String response = this.userService.getUserFullName(USER);
         assertEquals(response,EXAMPLE_NAME+" "+EXAMPLE_LAST_NAME);
     }
 
     @Test
-    void getUserFullName_NotExistsUser_throwNotFoundException(){
+    void getUserFullNameNotExistsUserThrowNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         String response = this.userService.getUserFullName(USER);
         assertEquals(response,EXAMPLE_NAME+" "+EXAMPLE_LAST_NAME);
     }
 
     @Test
-    void delete_successful_existsUser(){
+    void deleteSuccessfulExistsUser(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
         this.userService.delete(EXAMPLE_ID);
     }
 
     @Test
-    void delete_successful_NotExistsUser(){
+    void deleteSuccessfulNotExistsUser(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         this.userService.delete(EXAMPLE_ID);
     }
 
     @Test
-    void getUserEmail_successful(){
+    void getUserEmailSuccessful(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         String response = this.userService.getUserEmail(USER);
         assertEquals(response,EXAMPLE_EMAIL);
     }
     @Test
-    void getUserEmail_throwsNotFoundException(){
+    void getUserEmailThrowsNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             userService.getUserEmail(USER);
         });
     }
     @Test
-    void updateSelfDTO_successful(){
+    void updateSelfDTOSuccessful(){
         when(this.userRepository.findById(EXAMPLE_ID)).thenReturn(Optional.of(USER));
         when(this.passwordService.encodePasswords(EXAMPLE_PASS)).thenReturn(EXAMPLE_ENCODED_PASS);
         UserDTO response = this.userService.update(EXAMPLE_ID,USER_SELF_UPDATE_DTO);
@@ -270,7 +270,7 @@ public class UserServiceTest {
         assertEquals(response.getDni(),EXAMPLE_DNI);
     }
     @Test
-    void updateAdminUpdateDTO_successful(){
+    void updateAdminUpdateDTOSuccessful(){
         UserAdminUpdateDTO userAdminUpdateDTO = new UserAdminUpdateDTO(
             EXAMPLE_DNI,EXAMPLE_EMAIL,false,EXAMPLE_NAME,EXAMPLE_LAST_NAME
         );
@@ -283,12 +283,12 @@ public class UserServiceTest {
         assertEquals(response.getDni(),EXAMPLE_DNI);
     }
     @Test
-    void existsById_returnsTrue(){
+    void existsByIdReturnsTrue(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(true);
         assertTrue(this.userService.existsById(EXAMPLE_ID));
     }
     @Test
-    void existsById_returnsFalse(){
+    void existsByIdReturnsFalse(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
         assertFalse(this.userService.existsById(EXAMPLE_ID));
     }
