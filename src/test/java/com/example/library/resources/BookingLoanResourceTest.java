@@ -6,7 +6,7 @@ import com.example.library.entities.dto.bookingLoan.BookingLoanCreateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
 
-import com.example.library.services.bookingLoan.BookingLoanService;
+import com.example.library.services.booking_loan.BookingLoanService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

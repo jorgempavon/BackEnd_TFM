@@ -156,9 +156,8 @@ public class UserValidatorServiceTest {
         when(this.userRepository.findByDni(EXAMPLE_OTHER_DNI)).thenReturn(Optional.of(OTHER_USER));
         when(this.userRepository.findById(USER_ID)).thenReturn(Optional.of(OTHER_USER));
 
-        assertThrows(BadRequestException.class, () -> {
-            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            this.userValidatorService.validateDataInSelfUpdate(USER_ID,USER_SELF_UPDATE_DTO));
     }
     @Test
     void validateDataInSelfUpdateWhenNotExistsUserIdThrowNotFoundException(){

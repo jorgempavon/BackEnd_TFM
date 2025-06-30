@@ -6,7 +6,7 @@ import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.repository.penalty.PenaltyRepository;
-import com.example.library.services.bookingLoan.BookingLoanInfoService;
+import com.example.library.services.booking_loan.BookingLoanInfoService;
 import com.example.library.services.user.ClientService;
 import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;

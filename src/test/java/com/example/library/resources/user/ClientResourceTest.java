@@ -45,7 +45,7 @@ public class ClientResourceTest {
     private static final UserDTO USER_DTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,ROL);
 
     @Test
-    void register_successful() {
+    void registerSuccessful() {
         UserDTO USER_DTO = new UserDTO();
         USER_DTO.setName(EXAMPLE_NAME);
         USER_DTO.setEmail(EXAMPLE_EMAIL);
@@ -63,7 +63,7 @@ public class ClientResourceTest {
     }
 
     @Test
-    void createClient_successful(){
+    void createClientSuccessful(){
         when(this.clientService.create(USER_CREATE_DTO)).thenReturn(USER_DTO);
         ResponseEntity<?> result = clientResource.create(USER_CREATE_DTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -71,7 +71,7 @@ public class ClientResourceTest {
     }
 
     @Test
-    void  deleteClient_successful(){
+    void  deleteClientSuccessful(){
         doNothing().when(clientService).delete(EXAMPLE_ID);
         ResponseEntity<?> result = clientResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
