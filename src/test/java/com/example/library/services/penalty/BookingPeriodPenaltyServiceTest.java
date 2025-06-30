@@ -54,7 +54,7 @@ public class BookingPeriodPenaltyServiceTest {
             USER_ID,
             "user name",
             "11112222Y",
-            "test@example.com",
+            USER_EMAIL,
             "User last name"
     );
     private static final Long CLIENT_ID = 5L;
@@ -97,7 +97,7 @@ public class BookingPeriodPenaltyServiceTest {
             ADMIN_ID,
             USER
     );
-    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,"temporal");
+    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,PENALTY_TYPE);
     private static final BookingPeriodRule BOOKING_PERIOD_RULE = new BookingPeriodRule(
             3L,RULE
     );

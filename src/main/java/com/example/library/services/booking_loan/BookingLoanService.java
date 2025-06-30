@@ -1,4 +1,4 @@
-package com.example.library.services.bookingLoan;
+package com.example.library.services.booking_loan;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
@@ -12,13 +12,11 @@ import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
 import com.example.library.entities.dto.penalty.*;
 import com.example.library.entities.dto.rule.RuleDTO;
 import com.example.library.entities.dto.rule.RuleExistenceDTO;
-import com.example.library.entities.dto.user.UserDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.model.BookingLoan;
 import com.example.library.entities.model.rule.BookingPeriodRule;
 import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.model.user.Client;
-import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
 import com.example.library.services.BookService;
 import com.example.library.services.EmailService;

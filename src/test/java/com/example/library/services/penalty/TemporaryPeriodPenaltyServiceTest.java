@@ -55,7 +55,7 @@ public class TemporaryPeriodPenaltyServiceTest {
             USER_ID,
             "user name",
             "11112222Y",
-            "test@example.com",
+            USER_EMAIL,
             "User last name"
     );
     private static final Long CLIENT_ID = 5L;
@@ -98,7 +98,7 @@ public class TemporaryPeriodPenaltyServiceTest {
             ADMIN_ID,
             USER
     );
-    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,"Temporal");
+    private static final Rule RULE = new Rule(2L,"rule name",8,10,ADMIN,PENALTY_TYPE);
     private static final TemporaryPeriodRule TEMPORARY_PERIOD_RULE = new TemporaryPeriodRule(
               3L,RULE
     );
