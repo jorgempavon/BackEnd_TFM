@@ -5,7 +5,7 @@ import com.example.library.entities.model.BookingLoan;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
-import com.example.library.services.bookingLoan.BookingLoanInfoService;
+import com.example.library.services.booking_loan.BookingLoanInfoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

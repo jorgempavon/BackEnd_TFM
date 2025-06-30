@@ -4,7 +4,7 @@ import com.example.library.config.CustomUserDetails;
 import com.example.library.entities.dto.bookingLoan.BookingLoanCreateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
-import com.example.library.services.bookingLoan.BookingLoanService;
+import com.example.library.services.booking_loan.BookingLoanService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

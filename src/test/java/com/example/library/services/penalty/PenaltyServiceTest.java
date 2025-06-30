@@ -9,7 +9,7 @@ import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.penalty.PenaltyRepository;
-import com.example.library.services.bookingLoan.BookingLoanInfoService;
+import com.example.library.services.booking_loan.BookingLoanInfoService;
 import com.example.library.services.user.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.example.library.services.bookingLoan;
+package com.example.library.services.booking_loan;
 
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.model.BookingLoan;

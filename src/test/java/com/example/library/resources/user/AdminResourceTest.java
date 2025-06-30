@@ -32,7 +32,7 @@ public class AdminResourceTest {
     private static final UserDTO USER_DTO = new UserDTO(EXAMPLE_ID,EXAMPLE_NAME, EXAMPLE_EMAIL, EXAMPLE_DNI, EXAMPLE_LAST_NAME,ROL);
 
     @Test
-    void createAdmin_successful(){
+    void createAdminSuccessful(){
         when(this.adminService.create(USER_CREATE_DTO)).thenReturn(USER_DTO);
         ResponseEntity<?> result =adminResource.create(USER_CREATE_DTO);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -40,7 +40,7 @@ public class AdminResourceTest {
     }
 
     @Test
-    void  deleteAdmin_successful(){
+    void  deleteAdminSuccessful(){
         doNothing().when(adminService).delete(EXAMPLE_ID);
         ResponseEntity<?> result = adminResource.delete(EXAMPLE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
