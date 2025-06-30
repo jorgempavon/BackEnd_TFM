@@ -109,9 +109,7 @@ public class UserServiceTest {
     @Test
     void findByIdWhenNotExistsIdThrowsNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            userService.findById(EXAMPLE_ID);
-        });
+        assertThrows(NotFoundException.class, () -> userService.findById(EXAMPLE_ID));
     }
 
     @Test
@@ -152,9 +150,7 @@ public class UserServiceTest {
         when(mockUserDetails.getPassword()).thenReturn(EXAMPLE_ENCODED_PASS);
         when(passwordService.matchesPasswords(EXAMPLE_PASS, EXAMPLE_ENCODED_PASS)).thenReturn(false);
 
-        assertThrows(UnauthorizedException.class, () -> {
-            userService.login(LOGIN_DTO);
-        });
+        assertThrows(UnauthorizedException.class, () -> userService.login(LOGIN_DTO));
     }
     @Test
     void logOutSuccessful(){
@@ -170,9 +166,7 @@ public class UserServiceTest {
     void logOutWhenUserNotExistsThrowsUnathorizedException(){
         when(this.jwtService.extractUsername(EXAMPLE_TKN)).thenThrow(UnauthorizedException.class);
 
-        assertThrows(UnauthorizedException.class, () -> {
-            userService.logOut(EXAMPLE_TKN);
-        });
+        assertThrows(UnauthorizedException.class, () -> userService.logOut(EXAMPLE_TKN));
     }
     @Test
     void createUserWithNoPasswordProvidedSuccessful(){
@@ -254,9 +248,7 @@ public class UserServiceTest {
     @Test
     void getUserEmailThrowsNotFoundException(){
         when(this.userRepository.existsById(EXAMPLE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            userService.getUserEmail(USER);
-        });
+        assertThrows(NotFoundException.class, () -> userService.getUserEmail(USER));
     }
     @Test
     void updateSelfDTOSuccessful(){

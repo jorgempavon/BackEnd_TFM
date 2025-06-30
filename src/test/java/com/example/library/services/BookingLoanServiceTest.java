@@ -148,9 +148,8 @@ public class BookingLoanServiceTest {
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
         when(this.clientService.isClientEqualsByUserIdAndClient(CLIENT,USER_ID)).thenReturn(false);
 
-        assertThrows(ForbiddenException.class, () -> {
-            this.bookingLoanService.validateUserIsAdminOrOwnerOfBooking(CLIENT,USER_ID);
-        });
+        assertThrows(ForbiddenException.class, () ->
+            this.bookingLoanService.validateUserIsAdminOrOwnerOfBooking(CLIENT,USER_ID));
     }
     @Test
     void deleteBookingLoanThrowsConflictException(){
@@ -167,9 +166,7 @@ public class BookingLoanServiceTest {
         when(this.bookingLoanRepository.findById(BOOKING_LOAN_ID)).thenReturn(Optional.of(bookingLoan));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
 
-        assertThrows(ConflictException.class, () -> {
-            this.bookingLoanService.delete(BOOKING_LOAN_ID,USER_ID);
-        });
+        assertThrows(ConflictException.class, () -> this.bookingLoanService.delete(BOOKING_LOAN_ID,USER_ID));
     }
 
     @Test
@@ -203,9 +200,8 @@ public class BookingLoanServiceTest {
         when(this.temporaryPeriodPenaltyService.getTemporaryPeriodPenaltyByClientId(CLIENT_ID))
                 .thenReturn(temporaryExistenceDTO);
 
-        assertThrows(ConflictException.class, () -> {
-            this.bookingLoanService.validateBookingLoanCreationDate(BOOK,CLIENT,dateAfter);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.bookingLoanService.validateBookingLoanCreationDate(BOOK,CLIENT,dateAfter));
     }
     @Test
     void validateBookingLoanCreationDateThrowsBadRequestException(){
@@ -222,9 +218,8 @@ public class BookingLoanServiceTest {
         when(this.temporaryPeriodPenaltyService.getTemporaryPeriodPenaltyByClientId(CLIENT_ID))
                 .thenReturn(temporaryExistenceDTO);
 
-        assertThrows(BadRequestException.class, () -> {
-            this.bookingLoanService.validateBookingLoanCreationDate(book,CLIENT,dateAfter);
-        });
+        assertThrows(BadRequestException.class, () ->
+            this.bookingLoanService.validateBookingLoanCreationDate(book,CLIENT,dateAfter));
     }
 
     @Test
@@ -240,9 +235,8 @@ public class BookingLoanServiceTest {
         when(this.temporaryPeriodPenaltyService.getTemporaryPeriodPenaltyByClientId(CLIENT_ID))
                 .thenReturn(temporaryExistenceDTO);
 
-        assertThrows(ConflictException.class, () -> {
-            this.bookingLoanService.validateBookingLoanCreationDate(BOOK,CLIENT,dateBefore);
-        });
+        assertThrows(ConflictException.class, () ->
+            this.bookingLoanService.validateBookingLoanCreationDate(BOOK,CLIENT,dateBefore));
     }
 
     @Test
@@ -268,9 +262,8 @@ public class BookingLoanServiceTest {
     @Test
     void findByIdWhenNotExistsBookingThrowNotFoundException(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.bookingLoanService.findById(BOOKING_LOAN_ID,USER_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            this.bookingLoanService.findById(BOOKING_LOAN_ID,USER_ID));
     }
 
     @Test
@@ -355,9 +348,8 @@ public class BookingLoanServiceTest {
             new Date(),new Date(),true,true
         );
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.bookingLoanService.update(BOOKING_LOAN_ID,bookingLoanUpdateDTO);
-        });
+        assertThrows(NotFoundException.class, () ->
+            this.bookingLoanService.update(BOOKING_LOAN_ID,bookingLoanUpdateDTO));
     }
 
     @Test

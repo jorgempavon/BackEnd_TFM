@@ -95,9 +95,8 @@ public class RuleServiceTest {
     @Test
     void findByIdWhenNotExistsRuleIdThrowNotFoundException(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            ruleService.findById(RULE_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            ruleService.findById(RULE_ID));
     }
     
     @Test
@@ -139,9 +138,8 @@ public class RuleServiceTest {
     @Test
     void updateRuleWhenNotExistsRuleIdThrowNotFoundException(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            ruleService.update(RULE_ID,RULE_UPDATE_DTO);
-        });
+        assertThrows(NotFoundException.class, () ->
+            ruleService.update(RULE_ID,RULE_UPDATE_DTO));
     }
 
     @Test
@@ -152,9 +150,8 @@ public class RuleServiceTest {
                 RULE_OTHER_NAME,RULE_OTHER_NUM_PENALTIES,RULE_OTHER_DAYS,RULE_TYPE,RULE_ID
         )).thenReturn(true);
 
-        assertThrows(BadRequestException.class, () -> {
-            ruleService.update(RULE_ID,RULE_UPDATE_DTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            ruleService.update(RULE_ID,RULE_UPDATE_DTO));
     }
 
     @Test
@@ -178,9 +175,8 @@ public class RuleServiceTest {
                 RULE_NAME,RULE_NUM_PENALTIES,RULE_DAYS,RULE_TYPE
         )).thenReturn(true);
 
-        assertThrows(BadRequestException.class, () -> {
-            ruleService.create(ADMIN_ID,RULE_CREATE_DTO,RULE_TYPE);
-        });
+        assertThrows(BadRequestException.class, () ->
+            ruleService.create(ADMIN_ID,RULE_CREATE_DTO,RULE_TYPE));
     }
 
     @Test

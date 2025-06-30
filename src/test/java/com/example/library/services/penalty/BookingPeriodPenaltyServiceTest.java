@@ -150,9 +150,8 @@ public class BookingPeriodPenaltyServiceTest {
     @Test
     void findTemporaryByPenaltyIdWhenNotExistsThrowNotFoundException(){
         when(this.bookingPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            this.bookingPeriodPenaltyService.findByPenaltyId(PENALTY_ID,USER_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            this.bookingPeriodPenaltyService.findByPenaltyId(PENALTY_ID,USER_ID));
     }
     @Test
     void deleteWhenNotExistsTemporaryPenaltySuccessful(){

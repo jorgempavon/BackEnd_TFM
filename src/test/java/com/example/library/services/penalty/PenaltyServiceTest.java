@@ -133,9 +133,8 @@ public class PenaltyServiceTest {
     @Test
     void findPenaltyByIdWhenNotExistsIdThrowNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            penaltyService.findById(PENALTY_ID,USER_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            penaltyService.findById(PENALTY_ID,USER_ID));
     }
     @Test
     void findPenaltyByIdWhenUserIsNotAdminAndNotOwnerThrowForbiddenException(){
@@ -143,9 +142,8 @@ public class PenaltyServiceTest {
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(FIND_PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
         when(this.clientService.isClientEqualsByUserIdAndClient(CLIENT,USER_ID)).thenReturn(false);
-        assertThrows(ForbiddenException.class, () -> {
-            penaltyService.findById(PENALTY_ID,USER_ID);
-        });
+        assertThrows(ForbiddenException.class, () ->
+            penaltyService.findById(PENALTY_ID,USER_ID));
     }
     @Test
     void findPenaltiesByUserAndFulfilled(){
@@ -187,9 +185,8 @@ public class PenaltyServiceTest {
     @Test
     void forgivePenaltyWhenPenaltyNotExistsNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            penaltyService.forgivePenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO);
-        });
+        assertThrows(NotFoundException.class, () ->
+            penaltyService.forgivePenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO));
     }
 
     @Test
@@ -233,16 +230,14 @@ public class PenaltyServiceTest {
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
         when(this.clientService.isClientEqualsByUserIdAndClient(CLIENT,USER_ID)).thenReturn(false);
-        assertThrows(ForbiddenException.class, () -> {
-            penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID);
-        });
+        assertThrows(ForbiddenException.class, () ->
+            penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID));
     }
     @Test
     void fulfillPenaltyWhenPenaltyNotExistNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> {
-            penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID));
     }
 
     @Test

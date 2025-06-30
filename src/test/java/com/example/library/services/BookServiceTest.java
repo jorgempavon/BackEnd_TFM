@@ -108,9 +108,8 @@ public class BookServiceTest {
         );
         when(this.bookRepository.existsByIsbn(BOOK_ISBN)).thenReturn(true);
 
-        assertThrows(BadRequestException.class, () -> {
-            bookService.create(newBookCreateDTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            bookService.create(newBookCreateDTO));
     }
     @Test
     void findByIdSuccessful(){
@@ -129,9 +128,8 @@ public class BookServiceTest {
     void findByIdWhenNotExistsBookThrowsNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> {
-            bookService.findById(BOOK_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            bookService.findById(BOOK_ID));
     }
     @Test
     void deleteSuccessfulWhenExistsBook(){
@@ -180,9 +178,8 @@ public class BookServiceTest {
     void updateBookWhenExistsOtherBookWithIsbnThrowsBadRequestException(){
         when(bookRepository.existsByIsbn(OTHER_BOOK_ISBN)).thenReturn(true);
         when(bookRepository.findByIsbn(OTHER_BOOK_ISBN)).thenReturn(Optional.of(OTHER_BOOK));
-        assertThrows(BadRequestException.class, () -> {
-            bookService.update(BOOK_ID,bookUpdateDTO);
-        });
+        assertThrows(BadRequestException.class, () ->
+            bookService.update(BOOK_ID,bookUpdateDTO));
     }
 
     @Test
@@ -195,9 +192,8 @@ public class BookServiceTest {
     void getBookTitleByBookWhenNotExistsThrowNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> {
-            bookService.getBookTitleByBook(BOOK);
-        });
+        assertThrows(NotFoundException.class, () ->
+            bookService.getBookTitleByBook(BOOK));
     }
     @Test
     void getBookByBookIdSuccessful(){
@@ -210,8 +206,7 @@ public class BookServiceTest {
     void getBookByBookWhenNotExistsThrowNotFoundException(){
         when(this.bookRepository.existsById(BOOK_ID)).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> {
-            bookService.getBookByBookId(BOOK_ID);
-        });
+        assertThrows(NotFoundException.class, () ->
+            bookService.getBookByBookId(BOOK_ID));
     }
 }
