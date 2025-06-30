@@ -76,7 +76,7 @@ public class BookingPeriodRuleServiceTest {
             BOOKING_PERIOD_RULE_ID,RULE
     );
     @Test
-    void createBookingPeriodRule_successful(){
+    void createBookingPeriodRuleSuccessful(){
         RuleAndRuleDTO ruleAndRuleDTO = new RuleAndRuleDTO(RULE,RULE_DTO);
         when(this.ruleService.create(RULE_ID,RULE_CREATE_DTO,RULE_TYPE)).thenReturn(ruleAndRuleDTO);
 
@@ -90,13 +90,13 @@ public class BookingPeriodRuleServiceTest {
     }
 
     @Test
-    void delete_successful_whenExistsBookingPeriodRule(){
+    void deleteSuccessfulWhenExistsBookingPeriodRule(){
         when(this.bookingPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(true);
         when(this.bookingPeriodRuleRepository.findByRuleId(RULE_ID)).thenReturn(Optional.of(BOOKING_PERIOD_RULE));
         bookingPeriodRuleService.deleteByRuleId(RULE_ID);
     }
     @Test
-    void delete_successful_whenNotExistsBookingPeriodRule(){
+    void deleteSuccessfulWhenNotExistsBookingPeriodRule(){
         when(this.bookingPeriodRuleRepository.existsByRuleId(RULE_ID)).thenReturn(false);
         bookingPeriodRuleService.deleteByRuleId(RULE_ID);
     }

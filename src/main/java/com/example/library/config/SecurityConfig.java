@@ -34,14 +34,14 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
     @Value("${frontend.url}")
-    private String frontendUrl;
+    private String frontEndUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.setAllowedOrigins(java.util.List.of(frontendUrl));
+                    corsConfig.setAllowedOrigins(java.util.List.of(frontEndUrl));
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
                     corsConfig.setAllowCredentials(true);
@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/bibliokie/users/login",
-                                "/bibliokie/users/register"
+                                "/bibliokie/users/client/register"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

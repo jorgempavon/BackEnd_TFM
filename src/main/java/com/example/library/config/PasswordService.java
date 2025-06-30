@@ -12,7 +12,7 @@ import java.util.List;
 public class PasswordService {
 
     private final PasswordEncoder passwordEncoder;
-    private final SecureRandom RANDOM = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
 
     public PasswordService(PasswordEncoder passwordEncoder){
         this.passwordEncoder = passwordEncoder;
@@ -47,7 +47,7 @@ public class PasswordService {
             passwordChars.add(c);
         }
 
-        Collections.shuffle(passwordChars, RANDOM);
+        Collections.shuffle(passwordChars, random);
 
         StringBuilder finalPassword = new StringBuilder(PASSWORD_LENGTH);
         for (char c : passwordChars) {
@@ -58,7 +58,7 @@ public class PasswordService {
     }
 
     private char getRandomChar(String charSet) {
-        int randomIndex = RANDOM.nextInt(charSet.length());
+        int randomIndex = random.nextInt(charSet.length());
         return charSet.charAt(randomIndex);
     }
 }

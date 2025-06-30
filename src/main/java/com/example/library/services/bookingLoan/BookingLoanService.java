@@ -1,4 +1,4 @@
-package com.example.library.services;
+package com.example.library.services.bookingLoan;
 
 import com.example.library.api.exceptions.models.BadRequestException;
 import com.example.library.api.exceptions.models.ConflictException;
@@ -20,6 +20,8 @@ import com.example.library.entities.model.rule.TemporaryPeriodRule;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
+import com.example.library.services.BookService;
+import com.example.library.services.EmailService;
 import com.example.library.services.penalty.PenaltyService;
 import com.example.library.services.rule.BookingPeriodRuleInfoService;
 import com.example.library.services.rule.TemporaryPeriodRuleInfoService;

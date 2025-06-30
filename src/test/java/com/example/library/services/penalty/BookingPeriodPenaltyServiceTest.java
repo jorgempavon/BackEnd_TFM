@@ -109,7 +109,7 @@ public class BookingPeriodPenaltyServiceTest {
     );
 
     @Test
-    void createTemporaryPeriodPenalty_Successful(){
+    void createTemporaryPeriodPenaltySuccessful(){
         when(this.penaltyService.create(PENALTY_CREATE_DTO)).thenReturn(PENALTY_AND_PENALTY_DTO);
         when(this.bookingPeriodRuleService.getRuleNameByBookingPeriodRule(any(BookingPeriodRule.class)))
                 .thenReturn(BOOKING_PERIOD_RULE_NAME);
@@ -128,7 +128,7 @@ public class BookingPeriodPenaltyServiceTest {
 
     }
     @Test
-    void findTemporaryByPenaltyId_successful(){
+    void findTemporaryByPenaltyIdSuccessful(){
         when(this.bookingPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
         when(this.bookingPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         when(this.penaltyService.findById(PENALTY_ID,USER_ID)).thenReturn(PENALTY_DTO);
@@ -148,26 +148,26 @@ public class BookingPeriodPenaltyServiceTest {
     }
 
     @Test
-    void findTemporaryByPenaltyId_whenNotExists_throwNotFoundException(){
+    void findTemporaryByPenaltyIdWhenNotExistsThrowNotFoundException(){
         when(this.bookingPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.bookingPeriodPenaltyService.findByPenaltyId(PENALTY_ID,USER_ID);
         });
     }
     @Test
-    void delete_whenNotExistsTemporaryPenalty_successful(){
+    void deleteWhenNotExistsTemporaryPenaltySuccessful(){
         when(this.bookingPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
         this.bookingPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
     }
     @Test
-    void delete_whenExistsTemporaryPenalty_successful(){
+    void deleteWhenExistsTemporaryPenaltySuccessful(){
         when(this.bookingPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
         when(this.bookingPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         this.bookingPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
     }
 
     @Test
-    void getBookingPeriodPenaltyByClientId_returnsNotExists(){
+    void getBookingPeriodPenaltyByClientIdReturnsNotExists(){
         PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
             false,PENALTY_ID
         );
@@ -179,7 +179,7 @@ public class BookingPeriodPenaltyServiceTest {
     }
 
     @Test
-    void getBookingPeriodPenaltyByClientId_returnsExists(){
+    void getBookingPeriodPenaltyByClientIdReturnsExists(){
         PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
                 true,PENALTY_ID
         );

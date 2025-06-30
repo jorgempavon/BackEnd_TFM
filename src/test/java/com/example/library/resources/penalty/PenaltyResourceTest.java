@@ -45,7 +45,7 @@ public class PenaltyResourceTest {
     );
 
     @Test
-    void findByUserAndFulfilled_successful(){
+    void findByUserAndFulfilledSuccessful(){
         List<PenaltyDTO> LIST_PENALTIES_DTO = List.of(PENALTY_DTO);
         when(this.penaltyService.findByUserAndFulfilled(USER_ID,false)).thenReturn(LIST_PENALTIES_DTO);
 
@@ -53,7 +53,7 @@ public class PenaltyResourceTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
     @Test
-    void forgivePenalty_successful(){
+    void forgivePenaltySuccessful(){
         when(this.penaltyService.forgivePenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO)).thenReturn(PENALTY_DTO);
 
         ResponseEntity<?> result = penaltyResource.forgivePenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO);
@@ -61,7 +61,7 @@ public class PenaltyResourceTest {
         assertEquals(result.getBody(),PENALTY_DTO);
     }
     @Test
-    void fulfillPenalty_successful(){
+    void fulfillPenaltySuccessful(){
         when(this.mockUserDetails.getId()).thenReturn(USER_ID);
         when(this.penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID)).thenReturn(PENALTY_DTO);
         ResponseEntity<?> result = penaltyResource.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,this.mockUserDetails);

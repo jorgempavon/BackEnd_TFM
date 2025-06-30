@@ -61,7 +61,7 @@ public class AdminServiceTest {
     private static final Admin ADMIN = new Admin(ADMIN_ID,USER);
 
     @Test
-    void createAdmin_createDto_successful(){
+    void createAdminCreateDtoSuccessful(){
         when(this.userService.create(USER_CREATE_DTO,ROL,"")).thenReturn(USER_AND_USER_DTO);
 
         UserDTO response = this.adminService.create(USER_CREATE_DTO);
@@ -73,14 +73,14 @@ public class AdminServiceTest {
     }
 
     @Test
-    void deleteAdmin_successful_whenUserNotExists(){
+    void deleteAdminSuccessfulWhenUserNotExists(){
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(false);
         doNothing().when(this.userService).delete(EXAMPLE_ID);
         this.adminService.delete(EXAMPLE_ID);
     }
 
     @Test
-    void deleteClient_successful_whenUserIsClient(){
+    void deleteClientSuccessfulWhenUserIsClient(){
         when(this.adminRepository.existsByUserId(EXAMPLE_ID)).thenReturn(true);
         when(this.adminRepository.findByUserId(EXAMPLE_ID)).thenReturn(Optional.of(ADMIN));
         doNothing().when(this.userService).delete(EXAMPLE_ID);
@@ -88,7 +88,7 @@ public class AdminServiceTest {
         this.adminService.delete(EXAMPLE_ID);
     }
     @Test
-    void getUserFullNameByAdmin_successful(){
+    void getUserFullNameByAdminSuccessful(){
         when(this.adminRepository.existsById(ADMIN_ID)).thenReturn(true);
         when(this.userService.getUserFullName(USER)).thenReturn(FULL_NAME);
 
@@ -97,14 +97,14 @@ public class AdminServiceTest {
         assertEquals(responseFullName,FULL_NAME);
     }
     @Test
-    void getUserFullNameByAdmin_NotExistsAdmin_throwNotFoundException(){
+    void getUserFullNameByAdminNotExistsAdminThrowNotFoundException(){
         when(this.adminRepository.existsById(ADMIN_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             adminService.getUserFullNameByAdmin(ADMIN);
         });
     }
     @Test
-    void getAdminByUserId_successful(){
+    void getAdminByUserIdSuccessful(){
         when(this.adminRepository.existsByUserId(USER_ID)).thenReturn(true);
         when(this.adminRepository.findByUserId(USER_ID)).thenReturn(Optional.of(ADMIN));
 
@@ -113,19 +113,19 @@ public class AdminServiceTest {
         assertEquals(responseUser,ADMIN);
     }
     @Test
-    void getAdminByUserId_NotExistsAdmin_throwNotFoundException(){
+    void getAdminByUserIdNotExistsAdminThrowNotFoundException(){
         when(this.adminRepository.existsByUserId(USER_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             adminService.getAdminByUserId(USER_ID);
         });
     }
     @Test
-    void isAdminByUserId_true(){
+    void isAdminByUserIdTrue(){
         when(this.adminRepository.existsByUserId(USER_ID)).thenReturn(true);
         assertTrue(this.adminService.isAdminByUserId(USER_ID));
     }
     @Test
-    void isAdminByUserId_false(){
+    void isAdminByUserIdFalse(){
         when(this.adminRepository.existsByUserId(USER_ID)).thenReturn(false);
         assertFalse(this.adminService.isAdminByUserId(USER_ID));
     }

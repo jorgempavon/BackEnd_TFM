@@ -47,7 +47,7 @@ public class TemporaryPeriodRuleResourceTest {
     );
 
     @Test
-    void createTemporaryPeriodRule_successful() {
+    void createTemporaryPeriodRuleSuccessful() {
         when(this.temporaryPeriodRuleService.create(RULE_ID,RULE_CREATE_DTO)).thenReturn(RULE_DTO);
         when(this.mockUserDetails.getId()).thenReturn(RULE_ID);
 
@@ -62,7 +62,7 @@ public class TemporaryPeriodRuleResourceTest {
     }
 
     @Test
-    void deleteTemporaryPeriodRule_successful(){
+    void deleteTemporaryPeriodRuleSuccessful(){
         doNothing().when(this.temporaryPeriodRuleService).deleteByRuleId(RULE_ID);
         ResponseEntity<?> result = temporaryPeriodRuleResource.delete(RULE_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());

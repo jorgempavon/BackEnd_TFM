@@ -9,7 +9,7 @@ import com.example.library.entities.model.penalty.Penalty;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.penalty.PenaltyRepository;
-import com.example.library.services.BookingLoanInfoService;
+import com.example.library.services.bookingLoan.BookingLoanInfoService;
 import com.example.library.services.user.ClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +95,7 @@ public class PenaltyServiceTest {
             PENALTY_JUSTIFICATION
     );
     @Test
-    void findPenaltyById_UserIsAdmin_successful(){
+    void findPenaltyByIdUserIsAdminSuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(FIND_PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(false);
@@ -117,7 +113,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void findPenaltyById_UserIsNotAdmin_successful(){
+    void findPenaltyByIdUserIsNotAdminSuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(FIND_PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
@@ -135,14 +131,14 @@ public class PenaltyServiceTest {
         assertEquals(responsePenaltyDTO.getForgived(),false);
     }
     @Test
-    void findPenaltyById_whenNotExistsId_throwNotFoundException(){
+    void findPenaltyByIdWhenNotExistsIdThrowNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             penaltyService.findById(PENALTY_ID,USER_ID);
         });
     }
     @Test
-    void findPenaltyById_whenUserIsNotAdminAndNotOwner_throwForbiddenException(){
+    void findPenaltyByIdWhenUserIsNotAdminAndNotOwnerThrowForbiddenException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(FIND_PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
@@ -172,7 +168,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void forgivePenalty_successful(){
+    void forgivePenaltySuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         when(this.clientService.getUserFullNameByClient(CLIENT)).thenReturn(CLIENT_FULL_NAME);
@@ -189,7 +185,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void forgivePenalty_whenPenaltyNotExists_NotFoundException(){
+    void forgivePenaltyWhenPenaltyNotExistsNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             penaltyService.forgivePenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO);
@@ -197,7 +193,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void fulfillPenalty_whenUserIsAdmin_successful(){
+    void fulfillPenaltyWhenUserIsAdminSuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(false);
@@ -214,7 +210,7 @@ public class PenaltyServiceTest {
         assertEquals(responsePenaltyDTO.getForgived(),false);
     }
     @Test
-    void fulfillPenalty_whenClientIsOwnerOfPenalty_successful(){
+    void fulfillPenaltyWhenClientIsOwnerOfPenaltySuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
@@ -232,7 +228,7 @@ public class PenaltyServiceTest {
         assertEquals(responsePenaltyDTO.getForgived(),false);
     }
     @Test
-    void fulfillPenalty_whenUserIsNotAdminAndNotOwner_throwForbiddenException(){
+    void fulfillPenaltyWhenUserIsNotAdminAndNotOwnerThrowForbiddenException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         when(this.clientService.isClientByUserId(USER_ID)).thenReturn(true);
@@ -242,7 +238,7 @@ public class PenaltyServiceTest {
         });
     }
     @Test
-    void fulfillPenalty_whenPenaltyNotExists_NotFoundException(){
+    void fulfillPenaltyWhenPenaltyNotExistNotFoundException(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             penaltyService.fulfillPenalty(PENALTY_ID,PENALTY_JUSTIFICATION_DTO,USER_ID);
@@ -250,7 +246,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void createPenalty_successful(){
+    void createPenaltySuccessful(){
         when(this.clientService.getUserFullNameByClient(CLIENT)).thenReturn(CLIENT_FULL_NAME);
         when(this.clientService.getUserEmailByClient(CLIENT)).thenReturn(USER_EMAIL);
         when(this.bookingLoanInfoService.getBookTitleByBookingLoan(BOOKING_LOAN)).thenReturn(BOOK_TITLE);
@@ -272,19 +268,19 @@ public class PenaltyServiceTest {
         assertEquals(penalty.getForgived(),false);
     }
     @Test
-    void delete_NotExistsPenalty_successful(){
+    void deleteNotExistsPenaltySuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(false);
         this.penaltyService.delete(PENALTY_ID);
     }
     @Test
-    void delete_ExistsPenalty_successful(){
+    void deleteExistsPenaltySuccessful(){
         when(this.penaltyRepository.existsById(PENALTY_ID)).thenReturn(true);
         when(this.penaltyRepository.findById(PENALTY_ID)).thenReturn(Optional.of(PENALTY));
         this.penaltyService.delete(PENALTY_ID);
     }
 
     @Test
-    void getPenaltyByClientIdAndType_NotExists(){
+    void getPenaltyByClientIdAndTypeNotExists(){
         when(this.penaltyRepository.existsByClientIdAndTypeAndForgived(CLIENT_ID,PENALTY_TYPE,false))
                 .thenReturn(false);
         PenaltyExistenceDTO response = penaltyService.getPenaltyByClientIdAndType(CLIENT_ID,PENALTY_TYPE);
@@ -293,7 +289,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void getPenaltyByClientIdAndType_Exists(){
+    void getPenaltyByClientIdAndTypeExists(){
         when(this.penaltyRepository.existsByClientIdAndTypeAndForgived(CLIENT_ID,PENALTY_TYPE,false))
                 .thenReturn(true);
         when(this.penaltyRepository.findByClientIdAndTypeAndForgived(CLIENT_ID,PENALTY_TYPE,false))
@@ -305,7 +301,7 @@ public class PenaltyServiceTest {
     }
 
     @Test
-    void getNumPenaltiesOfClient_successful(){
+    void getNumPenaltiesOfClientSuccessful(){
         Integer numPenalties = 7;
         when(this.penaltyRepository.countByClientId(CLIENT_ID)).thenReturn(numPenalties);
         Integer response = this.penaltyService.getNumPenaltiesOfClient(CLIENT);

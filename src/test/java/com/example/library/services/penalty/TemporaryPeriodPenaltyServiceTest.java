@@ -110,7 +110,7 @@ public class TemporaryPeriodPenaltyServiceTest {
     );
 
     @Test
-    void createTemporaryPeriodPenalty_Successful(){
+    void createTemporaryPeriodPenaltySuccessful(){
         when(this.penaltyService.create(PENALTY_CREATE_DTO)).thenReturn(PENALTY_AND_PENALTY_DTO);
         when(this.temporaryPeriodRuleService.getRuleNameByTemporaryPeriodRule(any(TemporaryPeriodRule.class)))
                 .thenReturn(TEMPORARY_PERIOD_RULE_NAME);
@@ -129,7 +129,7 @@ public class TemporaryPeriodPenaltyServiceTest {
 
     }
     @Test
-    void findTemporaryByPenaltyId_successful(){
+    void findTemporaryByPenaltyIdSuccessful(){
         when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
         when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         when(this.penaltyService.findById(PENALTY_ID,USER_ID)).thenReturn(PENALTY_DTO);
@@ -149,25 +149,25 @@ public class TemporaryPeriodPenaltyServiceTest {
     }
 
     @Test
-    void findTemporaryByPenaltyId_whenNotExists_throwNotFoundException(){
+    void findTemporaryByPenaltyIdWhenNotExistsThrowNotFoundException(){
         when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             this.temporaryPeriodPenaltyService.findByPenaltyId(PENALTY_ID,USER_ID);
         });
     }
     @Test
-    void delete_whenNotExistsTemporaryPenalty_successful(){
+    void deleteWhenNotExistsTemporaryPenaltySuccessful(){
         when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(false);
         this.temporaryPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
     }
     @Test
-    void delete_whenExistsTemporaryPenalty_successful(){
+    void deleteWhenExistsTemporaryPenaltySuccessful(){
         when(this.temporaryPeriodPenaltyRepository.existsByPenaltyId(PENALTY_ID)).thenReturn(true);
         when(this.temporaryPeriodPenaltyRepository.findByPenaltyId(PENALTY_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_PENALTY));
         this.temporaryPeriodPenaltyService.deleteByPenaltyId(PENALTY_ID);
     }
     @Test
-    void getTemporaryPeriodPenaltyByClientId_returnsNotExists(){
+    void getTemporaryPeriodPenaltyByClientIdReturnsNotExists(){
         PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
                 false,PENALTY_ID
         );
@@ -180,7 +180,7 @@ public class TemporaryPeriodPenaltyServiceTest {
     }
 
     @Test
-    void getTemporaryPeriodPenaltyByClientId_returnsNotExists_IsBeforeEndDate(){
+    void getTemporaryPeriodPenaltyByClientIdReturnsNotExistsIsBeforeEndDate(){
         PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
                 true,PENALTY_ID
         );
@@ -202,7 +202,7 @@ public class TemporaryPeriodPenaltyServiceTest {
     }
 
     @Test
-    void getTemporaryPeriodPenaltyByClientId_returnsExists(){
+    void getTemporaryPeriodPenaltyByClientIdReturnsExists(){
         PenaltyExistenceDTO penaltyExistenceDTO = new PenaltyExistenceDTO(
                 true,PENALTY_ID
         );

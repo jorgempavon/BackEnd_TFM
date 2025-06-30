@@ -1,13 +1,11 @@
 package com.example.library.services;
 
-import com.example.library.api.exceptions.models.NotFoundException;
-import com.example.library.entities.dto.user.UserAndUserDTO;
-import com.example.library.entities.dto.user.UserDTO;
 import com.example.library.entities.model.Book;
 import com.example.library.entities.model.BookingLoan;
 import com.example.library.entities.model.user.Client;
 import com.example.library.entities.model.user.User;
 import com.example.library.entities.repository.BookingLoanRepository;
+import com.example.library.services.bookingLoan.BookingLoanInfoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -67,7 +65,7 @@ public class BookingLoanInfoServiceTest {
     );
 
     @Test
-    void getBookTitleByBookingLoan_successful(){
+    void getBookTitleByBookingLoanSuccessful(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(true);
         when(this.bookService.getBookTitleByBook(BOOK)).thenReturn(BOOK_TITLE);
 
@@ -76,7 +74,7 @@ public class BookingLoanInfoServiceTest {
     }
 
     @Test
-    void getBookTitleByBookingLoan_notExists_throwNotFoundException(){
+    void getBookTitleByBookingLoanWhenNotExistsThrowNotFoundException(){
         when(this.bookingLoanRepository.existsById(BOOKING_LOAN_ID)).thenReturn(true);
         when(this.bookService.getBookTitleByBook(BOOK)).thenReturn(BOOK_TITLE);
 

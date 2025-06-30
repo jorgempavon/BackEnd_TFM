@@ -6,7 +6,7 @@ import com.example.library.entities.dto.bookingLoan.BookingLoanCreateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
 
-import com.example.library.services.BookingLoanService;
+import com.example.library.services.bookingLoan.BookingLoanService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,7 +45,7 @@ public class BookingLoanResourceTest {
 
 
     @Test
-    void findBookingLoanById_successful(){
+    void findBookingLoanByIdSuccessful(){
         when(this.bookingLoanService.findById(BOOKING_LOAN_ID,USER_ID)).thenReturn(BOOKING_LOAN_DTO);
         when(this.userDetailsService.getId()).thenReturn(USER_ID);
         ResponseEntity<?> result = bookingLoanResource.findById(userDetailsService,BOOKING_LOAN_ID);
@@ -53,14 +53,14 @@ public class BookingLoanResourceTest {
         assertTrue(result.getBody() instanceof BookingLoanDTO);
     }
     @Test
-    void deleteBookingLoanById_successful(){
+    void deleteBookingLoanByIdSuccessful(){
         when(this.userDetailsService.getId()).thenReturn(USER_ID);
         ResponseEntity<?> result = bookingLoanResource.delete(userDetailsService,BOOKING_LOAN_ID);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
-    void updateBookingLoan_successful(){
+    void updateBookingLoanSuccessful(){
         BookingLoanUpdateDTO bookingLoanUpdateDTO = new BookingLoanUpdateDTO(
             DATE,DATE,false,false
         );
@@ -72,7 +72,7 @@ public class BookingLoanResourceTest {
     }
 
     @Test
-    void createBookingLoan_successful(){
+    void createBookingLoanSuccessful(){
         BookingLoanCreateDTO bookingLoanUpdateDTO = new BookingLoanCreateDTO(
                 DATE,83L,17L
         );

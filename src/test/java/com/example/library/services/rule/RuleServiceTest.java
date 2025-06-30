@@ -77,7 +77,7 @@ public class RuleServiceTest {
     );
 
     @Test
-    void findById_successful(){
+    void findByIdSuccessful(){
         Rule RULE_IN_FIND = new Rule(RULE_ID,RULE_NAME,RULE_NUM_PENALTIES,RULE_DAYS,ADMIN,RULE_TYPE);
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(true);
         when(this.ruleRepository.findById(RULE_ID)).thenReturn(Optional.of(RULE_IN_FIND));
@@ -93,7 +93,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void findById_whenNotExistsRuleId_throwNotFoundException(){
+    void findByIdWhenNotExistsRuleIdThrowNotFoundException(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             ruleService.findById(RULE_ID);
@@ -101,7 +101,7 @@ public class RuleServiceTest {
     }
     
     @Test
-    void findByNameAndNumMimPenalties_successful(){
+    void findByNameAndNumMimPenaltiesSuccessful(){
         List<Rule> mockRules = List.of(RULE);
 
         when(this.ruleRepository.findAll(any(Specification.class))).thenReturn(mockRules);
@@ -119,7 +119,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void updateRule_successful(){
+    void updateRuleSuccessful(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(true);
         when(this.ruleRepository.findById(RULE_ID)).thenReturn(Optional.of(RULE));
         when(this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndTypeAndIdNot(
@@ -137,7 +137,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void updateRule_whenNotExistsRuleId_throwNotFoundException(){
+    void updateRuleWhenNotExistsRuleIdThrowNotFoundException(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () -> {
             ruleService.update(RULE_ID,RULE_UPDATE_DTO);
@@ -145,7 +145,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void updateRule_whenExistsOtherRuleWithSameData_throwBadRequestException(){
+    void updateRuleWhenExistsOtherRuleWithSameDataThrowBadRequestException(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(true);
         when(this.ruleRepository.findById(RULE_ID)).thenReturn(Optional.of(RULE));
         when(this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndTypeAndIdNot(
@@ -158,7 +158,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void createRule_successful(){
+    void createRuleSuccessful(){
         when(this.adminService.getAdminByUserId(ADMIN_ID)).thenReturn(ADMIN);
         when(this.adminService.getUserFullNameByAdmin(any(Admin.class))).thenReturn(ADMIN_FULL_NAME);
 
@@ -173,7 +173,7 @@ public class RuleServiceTest {
     }
 
     @Test
-    void createRule_whenExistsOtherRuleWithSameData_throwBadRequestException(){
+    void createRuleWhenExistsOtherRuleWithSameDataThrowBadRequestException(){
         when(this.ruleRepository.existsByNameAndNumPenaltiesAndDaysAndType(
                 RULE_NAME,RULE_NUM_PENALTIES,RULE_DAYS,RULE_TYPE
         )).thenReturn(true);
@@ -184,13 +184,13 @@ public class RuleServiceTest {
     }
 
     @Test
-    void delete_successful_whenExistsRule(){
+    void deleteSuccessfulWhenExistsRule(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(true);
         when(this.ruleRepository.findById(RULE_ID)).thenReturn(Optional.of(RULE));
         ruleService.delete(RULE_ID);
     }
     @Test
-    void delete_successful_whenNotExistsRule(){
+    void deleteSuccessfulWhenNotExistsRule(){
         when(this.ruleRepository.existsById(RULE_ID)).thenReturn(false);
         ruleService.delete(RULE_ID);
     }

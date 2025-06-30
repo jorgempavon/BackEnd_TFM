@@ -79,11 +79,11 @@ public class BookingPeriodPenaltyService implements BookingPenaltyLookUpService 
         );
     }
     @Override
-    public BookingPeriodPenaltyExistenceDTO getBookingPeriodPenaltyByClientId(Long ClientId){
+    public BookingPeriodPenaltyExistenceDTO getBookingPeriodPenaltyByClientId(Long clientId){
         BookingPeriodPenaltyExistenceDTO response = new BookingPeriodPenaltyExistenceDTO(false,0);
         String type = "Intervalo de reserva";
 
-        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(ClientId,type);
+        PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(clientId,type);
         if (!responseExistsPenalty.getExistsPenalty()){
             return response;
         }
