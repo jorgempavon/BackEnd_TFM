@@ -151,11 +151,16 @@ public class EmailService {
     public void sendTemporaryPeriodPenaltyEmail(String email, String userName, String bookTitle, Date date) {
         try {
             String subject = "Penalización temporal en " + bibliokie;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+            LocalDate localDate = date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            String endDateFormatted = localDate.format(formatter);
             String body =
                     dear + userName + ":\n\n" +
                             "Le informamos que se le ha penalizado por la reserva del libro "+bookTitle+" en " + bibliokie + ".\n" +
-                            "No podrás realizar una nueva reserva de libros hasta la siguiente fecha: " + date.toString() + "\n" +
+                            "No podrás realizar una nueva reserva de libros hasta la siguiente fecha: " + endDateFormatted + "\n" +
                             fulfill+
                             "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
                             "Atentamente,\n" +
