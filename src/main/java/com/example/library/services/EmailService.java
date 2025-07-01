@@ -5,6 +5,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
@@ -198,12 +201,21 @@ public class EmailService {
     public void sendBookingLoanEmail(String email, String userName, String bookTitle, Date beginDate,Date endDate) {
         try {
             String subject = "Reserva de libro en " + bibliokie;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+            LocalDate localBeginDate = beginDate.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            LocalDate localEndDate = endDate.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            String beginDateFormatted = localBeginDate.format(formatter);
+            String endDateFormatted = localEndDate.format(formatter);
             String body =
                     dear + userName + ":\n\n" +
                             "Le informamos que ha realizado la reserva del libro "+bookTitle+" en " + bibliokie + ".\n" +
-                            "El periodo de reserva del libro comienza el " + beginDate.toString()+ " y finaliza el "
-                            + endDate.toString() + "\n"+
+                            "El periodo de reserva del libro comienza el " + beginDateFormatted+ " y finaliza el "
+                            + endDateFormatted + "\n"+
                             "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
                             "Atentamente,\n" +
                             bibliokie + "\n" +
