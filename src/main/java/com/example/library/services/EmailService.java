@@ -195,16 +195,15 @@ public class EmailService {
         }
     }
 
-    public void sendBookingLoanPenaltyEmail(String email, String userName, String bookTitle, Date beginDate,Date endDate) {
+    public void sendBookingLoanEmail(String email, String userName, String bookTitle, Date beginDate,Date endDate) {
         try {
-            String subject = "Penalización de intervalo en " + bibliokie;
+            String subject = "Reserva de libro en " + bibliokie;
 
             String body =
                     dear + userName + ":\n\n" +
                             "Le informamos que ha realizado la reserva del libro "+bookTitle+" en " + bibliokie + ".\n" +
                             "El periodo de reserva del libro comienza el " + beginDate.toString()+ " y finaliza el "
-                            + endDate.toString() + " días para devolverlo \n" +
-                            fulfill+
+                            + endDate.toString() + "\n"+
                             "Si usted no solicitó dicha reserva, por favor contáctenos de inmediato.\n" +
                             "Atentamente,\n" +
                             bibliokie + "\n" +
