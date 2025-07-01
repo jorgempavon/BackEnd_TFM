@@ -6,6 +6,7 @@ import com.example.library.api.exceptions.models.ForbiddenException;
 import com.example.library.api.exceptions.models.NotFoundException;
 import com.example.library.entities.BookingPenaltyLookUpService;
 import com.example.library.entities.TemporaryPenaltyLookUpService;
+import com.example.library.entities.dto.book.BookUpdateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanCreateDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanDTO;
 import com.example.library.entities.dto.bookingLoan.BookingLoanUpdateDTO;
@@ -203,18 +204,22 @@ public class BookingLoanService {
         this.validateBookingLoanCreationDate(book,client,createDTO.getBeginDate());
 
         Date endDate = this.getEndDateForBooking(client.getId(),createDTO.getBeginDate());
-        BookingLoan bookingLoan = new BookingLoan(
-                createDTO.getBeginDate(),endDate,false,false,
-                book,client
+        BookingLoan bookingLoan = new BookingLoan(createDTO.getBeginDate(),endDate,
+                false,false, book,client
         );
 
         String bookTitle = this.bookService.getBookTitleByBook(book);
         String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
         String clientEmail = this.clientService.getUserEmailByClient(client);
-        this.emailService.sendBookingLoanPenaltyEmail(clientEmail,clientName,bookTitle,
-                createDTO.getBeginDate(),endDate);
+        this.emailService.sendBookingLoanEmail(clientEmail,clientName,bookTitle,
+                createDTO.getBeginDate()
+                ,endDate);
 
         this.bookingLoanRepository.save(bookingLoan);
+        Integer newStock = book.getStock() - 1;
+        BookUpdateDTO bookUpdateDTO = new BookUpdateDTO();
+        bookUpdateDTO.setStock(newStock);
+        this.bookService.update(book.getId(),bookUpdateDTO);
         return new BookingLoanDTO(bookingLoan.getBeginDate(),bookingLoan.getEndDate(),
                 bookingLoan.getCollected(), bookingLoan.getReturned(), bookTitle, clientName
         );
