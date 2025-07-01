@@ -21,7 +21,7 @@ public class AdminService {
 
     @Transactional
     public UserDTO create(UserCreateDTO userCreateDTO){
-        UserAndUserDTO responseCreateUser = this.userService.create(userCreateDTO,"client","");
+        UserAndUserDTO responseCreateUser = this.userService.create(userCreateDTO,"admin","");
         User userCreated = responseCreateUser.getUser();
         UserDTO userCreatedDTO = responseCreateUser.getUserDTO();
 
