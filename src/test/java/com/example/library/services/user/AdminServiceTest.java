@@ -39,7 +39,7 @@ public class AdminServiceTest {
             EXAMPLE_EMAIL,
             EXAMPLE_LAST_NAME
     );
-    private static final String ROL = "client";
+    private static final String ROL = "admin";
     private static final UserDTO USER_DTO = new UserDTO(
             EXAMPLE_ID,
             EXAMPLE_NAME,
