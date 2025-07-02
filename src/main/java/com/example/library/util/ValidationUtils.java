@@ -56,7 +56,7 @@ public class ValidationUtils {
     public static Specification<Rule> buildQueryIntegerByField(Specification<Rule> spec, String field, Integer value) {
         if (value != null) {
             return spec.and((root, query, cb) ->
-                    cb.greaterThan(root.get(field), value)
+                    cb.greaterThanOrEqualTo(root.get(field), value)
             );
         }
         return spec;
