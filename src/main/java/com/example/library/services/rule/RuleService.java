@@ -40,7 +40,7 @@ public class RuleService {
         Specification<Rule> spec = Specification.where(null);
 
         spec = ValidationUtils.buildQueryStringByField(spec,"name",name);
-        spec = ValidationUtils.buildQueryIntegerByField(spec,"numMimPenalties",numMimPenalties);
+        spec = ValidationUtils.buildQueryIntegerByField(spec,"numPenalties",numMimPenalties);
 
         List<Rule> rules = this.ruleRepository.findAll(spec);
         List<RuleDTO> responseList= new ArrayList<>();
