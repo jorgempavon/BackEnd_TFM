@@ -83,6 +83,7 @@ public class BookingLoanService {
         String bookTitle = this.getBookTitleByBookingLoan(bookingLoan);
         String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
         return new BookingLoanDTO(
+                bookingLoan.getId(),
                 bookingLoan.getBeginDate(),
                 bookingLoan.getEndDate(),
                 bookingLoan.getCollected(),
@@ -104,6 +105,7 @@ public class BookingLoanService {
             String bookTitle = this.getBookTitleByBookingLoan(bookingLoan);
             String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
             BookingLoanDTO bookingLoanDTO = new BookingLoanDTO(
+                    bookingLoan.getId(),
                     bookingLoan.getBeginDate(),
                     bookingLoan.getEndDate(),
                     bookingLoan.getCollected(),
@@ -127,6 +129,7 @@ public class BookingLoanService {
         String bookTitle = this.getBookTitleByBookingLoan(bookingLoan);
         String clientName = this.clientService.getUserFullNameByClient(bookingLoan.getClient());
         return new BookingLoanDTO(
+                bookingLoan.getId(),
                 bookingLoan.getBeginDate(),
                 bookingLoan.getEndDate(),
                 bookingLoan.getCollected(),
@@ -220,7 +223,7 @@ public class BookingLoanService {
         BookUpdateDTO bookUpdateDTO = new BookUpdateDTO();
         bookUpdateDTO.setStock(newStock);
         this.bookService.update(book.getId(),bookUpdateDTO);
-        return new BookingLoanDTO(bookingLoan.getBeginDate(),bookingLoan.getEndDate(),
+        return new BookingLoanDTO(bookingLoan.getId(),bookingLoan.getBeginDate(),bookingLoan.getEndDate(),
                 bookingLoan.getCollected(), bookingLoan.getReturned(), bookTitle, clientName
         );
     }
