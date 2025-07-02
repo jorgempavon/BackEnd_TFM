@@ -35,7 +35,7 @@ public class RuleResource {
         List<RuleDTO> responseListRuleDTO = this.ruleService.findByNameAndNumMimPenalties(name,minNumPenalties);
         return ResponseEntity.ok(responseListRuleDTO);
     }
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody RuleUpdateDTO ruleUpdateDTO) {
         RuleDTO responseRuleDTO = this.ruleService.update(id,ruleUpdateDTO);
         return ResponseEntity.ok(responseRuleDTO);
