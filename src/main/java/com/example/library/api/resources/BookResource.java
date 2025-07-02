@@ -56,7 +56,7 @@ public class BookResource {
         return ResponseEntity.ok(responseListBookDTO);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody BookUpdateDTO bookUpdateDTO) {
         BookDTO responseBookDTO = this.bookService.update(id,bookUpdateDTO);
