@@ -8,9 +8,7 @@ import com.example.library.entities.model.user.Client;
 import com.example.library.entities.repository.penalty.PenaltyRepository;
 import com.example.library.services.booking_loan.BookingLoanInfoService;
 import com.example.library.services.user.ClientService;
-import com.example.library.util.ValidationUtils;
 import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -54,22 +52,20 @@ public class PenaltyService {
     }
 
     public List<PenaltyDTO> findByUserAndFulfilled(Long userId, Boolean fulfilled) {
-        Specification<Penalty> spec = Specification.where(null);
         Long clientId = this.clientService.getClientIdByUserId(userId);
-
-        spec = ValidationUtils.buildQueryLongByField(spec,"clientId",clientId);
-        spec = ValidationUtils.buildQueryBooleanByField(spec,"fulfilled",fulfilled);
-
-        List<Penalty> penalties = this.penaltyRepository.findAll(spec);
         List<PenaltyDTO> responseList= new ArrayList<>();
 
-        for (Penalty penalty : penalties) {
-            String clientFullName = this.clientService.getUserFullNameByClient(penalty.getClient());
-            String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+        if (!this.penaltyRepository.existsByClientIdAndFulfilled(clientId,fulfilled)){
+            return responseList;
+        }
+        List<Penalty> penalties = this.penaltyRepository.findByClientIdAndFulfilled(clientId,fulfilled).get();
 
+        for (Penalty penalty : penalties) {
+            String bookTitle = this.bookingLoanInfoService.getBookTitleByBookingLoan(penalty.getBookingLoan());
+            String clientName = this.clientService.getUserFullNameByClient(penalty.getClient());
             PenaltyDTO penaltyDTO = new PenaltyDTO(penalty.getId(),penalty.getDescription(),penalty.getType(),
-                    penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived(),
-                    bookTitle,clientFullName,penalty.getCreationDate());
+                    penalty.getJustificationPenalty(),penalty.getFulfilled(),penalty.getForgived()
+                    ,bookTitle,clientName,penalty.getCreationDate());
             responseList.add(penaltyDTO);
         }
         return responseList;
@@ -117,6 +113,7 @@ public class PenaltyService {
     }
     @Transactional
     public PenaltyAndPenaltyDTO create(PenaltyCreateDTO penaltyCreateDTO){
+        System.out.println(penaltyCreateDTO.getBookingLoan());
         Penalty penalty = new Penalty(penaltyCreateDTO.getDescription(),
                 "",false,false,penaltyCreateDTO.getType(),
                 penaltyCreateDTO.getBookingLoan(), penaltyCreateDTO.getClient());

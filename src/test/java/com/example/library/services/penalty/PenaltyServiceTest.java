@@ -146,10 +146,11 @@ public class PenaltyServiceTest {
             penaltyService.findById(PENALTY_ID,USER_ID));
     }
     @Test
-    void findPenaltiesByUserAndFulfilled(){
+    void findPenaltiesByUserAndFulfilledNotEmpty(){
         List<Penalty> mockPenalties = List.of(FIND_PENALTY);
 
-        when(this.penaltyRepository.findAll(any(Specification.class))).thenReturn(mockPenalties);
+        when(this.penaltyRepository.existsByClientIdAndFulfilled(any(Long.class),any(Boolean.class))).thenReturn(true);
+        when(this.penaltyRepository.findByClientIdAndFulfilled(any(Long.class),any(Boolean.class))).thenReturn(Optional.of(mockPenalties));
         when(this.clientService.getUserFullNameByClient(CLIENT)).thenReturn(CLIENT_FULL_NAME);
         when(this.bookingLoanInfoService.getBookTitleByBookingLoan(BOOKING_LOAN)).thenReturn(BOOK_TITLE);
         List<PenaltyDTO> result = penaltyService.findByUserAndFulfilled(USER_ID, false);
@@ -163,6 +164,17 @@ public class PenaltyServiceTest {
         assertEquals(result.get(0).getForgived(),false);
         assertEquals(result.get(0).getBookTitle(),BOOK_TITLE);
         assertEquals(result.get(0).getClientName(),CLIENT_FULL_NAME);
+    }
+
+    @Test
+    void findPenaltiesByUserAndFulfilledEmpty(){
+
+        when(this.penaltyRepository.existsByClientIdAndFulfilled(any(Long.class),any(Boolean.class))).thenReturn(false);
+
+        List<PenaltyDTO> result = penaltyService.findByUserAndFulfilled(USER_ID, false);
+
+        assertEquals(0, result.size());
+
     }
 
     @Test

@@ -32,11 +32,11 @@ public class TemporaryPeriodRuleInfoService {
         return ruleExistenceDTO;
     }
 
-    public TemporaryPeriodRule findById(Long id){
-        if (!this.temporaryPeriodRuleRepository.existsById(id)){
+    public TemporaryPeriodRule findByRuleId(Long id){
+        if (!this.temporaryPeriodRuleRepository.existsByRuleId(id)){
             throw new NotFoundException("No existe la regla con el id proporcionado");
         }
-        return this.temporaryPeriodRuleRepository.findById(id).get();
+        return this.temporaryPeriodRuleRepository.findByRuleId(id).get();
     }
 
 }
