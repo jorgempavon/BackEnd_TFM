@@ -45,7 +45,7 @@ public class TemporaryPeriodPenaltyServiceTest {
     private static final String TEMPORARY_PERIOD_RULE_NAME = "temporary period rule name";
     private static final String PENALTY_DESCRIPTION = "penalty description";
     private static final String PENALTY_JUSTIFICATION = "penalty justification";
-    private static final String PENALTY_TYPE = "Temporal";
+    private static final String PENALTY_TYPE = "temporal";
     private static final String CLIENT_FULL_NAME = "client full name";
     private static final String USER_EMAIL = "test@example.com";
     private static final Long USER_ID = 7L;

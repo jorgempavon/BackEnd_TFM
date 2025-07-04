@@ -98,19 +98,19 @@ public class BookingPeriodRuleInfoServiceTest {
         assertTrue(response.getExistsRule());
     }
     @Test
-    void findByIdBookingPeriodRuleSuccessful(){
-        when(this.bookingPeriodRuleRepository.existsById(BOOKING_RULE_ID)).thenReturn(true);
-        when(this.bookingPeriodRuleRepository.findById(BOOKING_RULE_ID)).thenReturn(Optional.of(BOOKING_PERIOD_RULE));
+    void findByRuleIdBookingPeriodRuleSuccessful(){
+        when(this.bookingPeriodRuleRepository.existsByRuleId(BOOKING_RULE_ID)).thenReturn(true);
+        when(this.bookingPeriodRuleRepository.findByRuleId(BOOKING_RULE_ID)).thenReturn(Optional.of(BOOKING_PERIOD_RULE));
 
-        BookingPeriodRule response = this.bookingPeriodRuleInfoService.findById(BOOKING_RULE_ID);
+        BookingPeriodRule response = this.bookingPeriodRuleInfoService.findByRuleId(BOOKING_RULE_ID);
         assertEquals(response.getId(),BOOKING_RULE_ID);
         assertEquals(response.getRule(),RULE);
     }
 
     @Test
-    void findByIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
-        when(this.bookingPeriodRuleRepository.existsById(BOOKING_RULE_ID)).thenReturn(false);
+    void findByRuleIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
+        when(this.bookingPeriodRuleRepository.existsByRuleId(BOOKING_RULE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () ->
-            bookingPeriodRuleInfoService.findById(BOOKING_RULE_ID));
+            bookingPeriodRuleInfoService.findByRuleId(BOOKING_RULE_ID));
     }
 }

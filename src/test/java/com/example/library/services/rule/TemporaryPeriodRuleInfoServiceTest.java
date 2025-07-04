@@ -102,19 +102,19 @@ public class TemporaryPeriodRuleInfoServiceTest {
     }
 
     @Test
-    void findByIdBookingPeriodRuleSuccessful(){
-        when(this.temporaryPeriodRuleRepository.existsById(TEMPORARY_PERIOD_RULE_ID)).thenReturn(true);
-        when(this.temporaryPeriodRuleRepository.findById(TEMPORARY_PERIOD_RULE_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_RULE));
+    void findByRuleIdBookingPeriodRuleSuccessful(){
+        when(this.temporaryPeriodRuleRepository.existsByRuleId(TEMPORARY_PERIOD_RULE_ID)).thenReturn(true);
+        when(this.temporaryPeriodRuleRepository.findByRuleId(TEMPORARY_PERIOD_RULE_ID)).thenReturn(Optional.of(TEMPORARY_PERIOD_RULE));
 
-        TemporaryPeriodRule response = this.temporaryPeriodRuleInfoService.findById(TEMPORARY_PERIOD_RULE_ID);
+        TemporaryPeriodRule response = this.temporaryPeriodRuleInfoService.findByRuleId(TEMPORARY_PERIOD_RULE_ID);
         assertEquals(response.getId(),TEMPORARY_PERIOD_RULE_ID);
         assertEquals(response.getRule(),RULE);
     }
 
     @Test
-    void findByIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
-        when(this.temporaryPeriodRuleRepository.existsById(TEMPORARY_PERIOD_RULE_ID)).thenReturn(false);
+    void findByRuleIdBookingPeriodRuleWhenNotExistsThrowNotFoundException(){
+        when(this.temporaryPeriodRuleRepository.existsByRuleId(TEMPORARY_PERIOD_RULE_ID)).thenReturn(false);
         assertThrows(NotFoundException.class, () ->
-            temporaryPeriodRuleInfoService.findById(TEMPORARY_PERIOD_RULE_ID));
+            temporaryPeriodRuleInfoService.findByRuleId(TEMPORARY_PERIOD_RULE_ID));
     }
 }

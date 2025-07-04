@@ -86,7 +86,7 @@ public class TemporaryPeriodPenaltyService implements TemporaryPenaltyLookUpServ
     @Override
     public TemporaryPeriodPenaltyExistenceDTO getTemporaryPeriodPenaltyByClientId(Long clientId){
         TemporaryPeriodPenaltyExistenceDTO response = new TemporaryPeriodPenaltyExistenceDTO(false,null);
-        String type = "Temporal";
+        String type = "temporal";
 
         PenaltyExistenceDTO responseExistsPenalty = this.penaltyService.getPenaltyByClientIdAndType(clientId,type);
         if (!responseExistsPenalty.getExistsPenalty()){

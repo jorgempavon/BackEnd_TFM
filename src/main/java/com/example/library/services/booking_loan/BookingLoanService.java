@@ -176,7 +176,7 @@ public class BookingLoanService {
             PenaltyCreateDTO penaltyCreateDTO = new PenaltyCreateDTO(ruleDTO.getName(),ruleDTO.getType(),
                     bookingLoan,bookingLoan.getClient());
 
-            BookingPeriodRule bookingPeriodRule = this.bookingPeriodRuleInfoService.findById(ruleDTO.getId());
+            BookingPeriodRule bookingPeriodRule = this.bookingPeriodRuleInfoService.findByRuleId(ruleDTO.getId());
             BookingPeriodPenaltyCreateDTO bookingPenaltyCreateDTO = new BookingPeriodPenaltyCreateDTO(
                     penaltyCreateDTO,ruleDTO.getDays(),bookingPeriodRule
             );
@@ -190,7 +190,7 @@ public class BookingLoanService {
             PenaltyCreateDTO penaltyCreateDTO = new PenaltyCreateDTO(ruleDTO.getName(),ruleDTO.getType(),
                     bookingLoan,bookingLoan.getClient());
 
-            TemporaryPeriodRule temporaryPeriodRule = this.temporaryPeriodRuleInfoService.findById(ruleDTO.getId());
+            TemporaryPeriodRule temporaryPeriodRule = this.temporaryPeriodRuleInfoService.findByRuleId(ruleDTO.getId());
             LocalDate localDate = LocalDate.now().plusDays(ruleDTO.getDays());
             Date endDatePenalty = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 

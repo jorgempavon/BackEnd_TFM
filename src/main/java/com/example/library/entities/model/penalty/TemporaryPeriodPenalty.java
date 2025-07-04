@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "temporaryperiodrule", schema = "library")
+@Table(name = "temporaryperiodpenalty", schema = "library")
 public class TemporaryPeriodPenalty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
