@@ -30,7 +30,7 @@ public class Penalty {
     @Column(name = "type",nullable = false)
     private String type;
     @OneToOne
-    @JoinColumn(name = "bookingLoan", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "bookingloanid", referencedColumnName = "id", unique = true)
     private BookingLoan bookingLoan;
     @OneToOne
     @JoinColumn(name = "clientid", referencedColumnName = "id", unique = true)

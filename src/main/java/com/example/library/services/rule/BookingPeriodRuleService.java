@@ -42,7 +42,7 @@ public class BookingPeriodRuleService {
     }
 
     public String getRuleNameByBookingPeriodRule(BookingPeriodRule bookingPeriodRule){
-        if(!this.bookingPeriodRuleRepository.existsByRuleId(bookingPeriodRule.getId())){
+        if(!this.bookingPeriodRuleRepository.existsById(bookingPeriodRule.getId())){
             throw new NotFoundException("No existe la regla de intervalo de reserva con el id proporcionado");
         }
         return this.ruleService.getRuleNameByRule(bookingPeriodRule.getRule());

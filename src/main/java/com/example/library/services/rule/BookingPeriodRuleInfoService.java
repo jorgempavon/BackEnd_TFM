@@ -31,10 +31,10 @@ public class BookingPeriodRuleInfoService {
         return ruleExistenceDTO;
     }
 
-    public BookingPeriodRule findById(Long id){
-        if (!this.bookingPeriodRuleRepository.existsById(id)){
+    public BookingPeriodRule findByRuleId(Long id){
+        if (!this.bookingPeriodRuleRepository.existsByRuleId(id)){
             throw new NotFoundException("No existe la regla con el id proporcionado");
         }
-        return this.bookingPeriodRuleRepository.findById(id).get();
+        return this.bookingPeriodRuleRepository.findByRuleId(id).get();
     }
 }
